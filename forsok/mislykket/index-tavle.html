@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tingrang</title>
+</head>
+
+<body>
+  <a href="rot13.html">rot13</a>
+  <!-- <a href="sortable.html">jQuerySortable</a>  -->
+  <!-- <a href="purejs-sortable.html">pureJsSortable</a> -->
+  <ol id="output"></ol>
+  <script>
+    const output = document.getElementById('output')
+    // fetch('spill.json')
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     console.log(data)
+    //     data.forEach(spill => {
+    //       let li = document.createElement('li')
+    //       li.innerHTML = spill.tittel
+    //       output.appendChild(li)
+    //     });
+    //   })
+
+    fetch('spill.txt')
+      .then(res => res.text())
+      .then(data => {
+        console.log(data)
+        let array = data.split('\n')
+        console.log(array)
+        array.forEach(spill => {
+          let li = document.createElement('li')
+          li.innerHTML = spill
+          output.appendChild(li)
+        });
+      })
+
+  </script>
+</body>
+
+</html>
