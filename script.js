@@ -1,52 +1,60 @@
 'use strict';
 const orderedList = document.getElementById('orderedList')
 
+// Generer GUI liste fra tekstfil
 fetch('spill.txt')
   .then(res => res.text())
   .then(data => {
-    // console.log(data)
-    // let rot13Data = rot13(data)
+    // Tekstfilen består av flere linjer som hver skal bli en <li>
     let array = data.split('\n')
-    // console.log(array)
+    var liNo = 0
     array.forEach(spill => {
-      // Del opp dataen
+      liNo++
+      // Tekstlinjene består av tankestrek(–) separerte verdier som hver skal behandles ulikt
       let spilldata = spill.split('– ')
-      // console.log(spilldata)
-      // print ut
+
+      // Lag hierarkiet av elementer
       let li = document.createElement('li')
+      li.id = liNo
       let flexDiv = document.createElement('div')
+      li.appendChild(flexDiv)
       flexDiv.classList.add('flex')
+      orderedList.appendChild(li)
+
+      // Lag innholdet i elementer
       flexDiv.innerHTML = '<div><img src="images/' + spilldata[2] + '" alt=""></div>'
       flexDiv.innerHTML += '<div><span class="tittel">' + spilldata[0] + '</span>' + '<br>' + '<span class="utgiver">' + spilldata[1] + '</span></div>'
-      li.appendChild(flexDiv)
-      orderedList.appendChild(li)
+      flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)">Flytt element opp</button> <button onclick = "moveElement(' + liNo + ', `down`)"> Flytt element ned</button>'
     });
   })
 
 
-
-function moveElement() {
+/**
+ * Flytt valgt element i bestemt retning
+ * @param {number} itemIdToBeMoved 
+ * @param {string} direction 
+ */
+function moveElement(itemIdToBeMoved, direction) {
+  // Hent elementet som skal flyttes
+  var itemToBeMoved = document.getElementById(itemIdToBeMoved)
+  var ol = document.getElementById('orderedList')
   // Flytt elementet
-  let element4 = document.querySelector('li:nth-child(4)')
-  let element6 = document.querySelector('li:nth-child(6)')
-  console.log(element4)
-  let ol = element4.parentNode
-  console.log(ol)
-  ol.insertBefore(element4, element6)
-
-  // Logg resultatet som en string? (helst det)
-  // send ny tekststring til php for å lagre det
-  saveOrder()
+  if (direction == 'up') {
+    var replaceThis = itemToBeMoved
+    var itemToBeMoved = itemToBeMoved.previousElementSibling
+  } else {
+    var replaceThis = itemToBeMoved.nextElementSibling
+  }
+  ol.insertBefore(replaceThis, itemToBeMoved)
 }
 
 /**
- * Vi har en liste i GUI, den vil vi lagre
- * som en tekstreng, og sende til PHP for
- * å skrive den permanent inn i tekstfilen
+ * Lagre GUI listen i tekstfilen.
+ * Konverter GUI listen til en tekststreng,
+ * og send denne til PHP som kan ordne opp i resten
  */
 function saveOrder() {
   // Hent gjeldende rangering som string
-  var ol = document.getElementById('orderedList')
   var lis = document.querySelectorAll('li')
 
   /* Finn de rette semantiske ordene i listepunktene, formater dem
@@ -68,27 +76,23 @@ function saveOrder() {
       olAsTextString += '\n' + liAsTextString
     }
   }
-  console.log(olAsTextString)
 
-  var infoForPhp = { newOrder: olAsTextString } // newOrder: 'tekst streng med gjeldende rangering'
+  // Vi har den nye rangeringen som tekstreng, send denne til PHP
+  var infoForPhp = { newOrder: olAsTextString } // newOrder: 'tekststreng med gjeldende rangering'
   fetch(`updateFile.php`, {
     method: 'POST',
     headers: { "Content-type": "application/x-www-form-urlencoded" },
     body: formEncode(infoForPhp)
   })
-    .then(res => res.text()) // When a reply has arrived
-    .then(data => {
-      console.log(data)
-    })
-  // return olAsTextString
 }
 
 /**
+ * Kode for å pakke inn verdier som skal til PHP, inn i en form, slik at man slipper å måtte
+ * ha brukerinput for å sende verdier til PHP.
  * formEncode() og enkelte deler
  * fra saveOrder() er lagd av
  * Anders_bondehagen på
  * https://forums.fusetools.com/t/how-do-i-receive-post-data-in-php-sent-from-fuse-javascript-by-fetch/5357/3
- * Dette er kode for å sende verdier til PHP, uten en faktisk <form>
  */
 function formEncode(obj) {
   var str = []
