@@ -23,10 +23,28 @@ fetch('spill.txt')
 
       // Lag innholdet i elementer
       flexDiv.innerHTML = '<div><img src="images/' + spilldata[2] + '" alt=""></div>'
-      flexDiv.innerHTML += '<div><span class="tittel">' + spilldata[0] + '</span>' + '<br>' + '<span class="utgiver">' + spilldata[1] + '</span></div>'
-      flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)">Flytt element opp</button> <button onclick = "moveElement(' + liNo + ', `down`)"> Flytt element ned</button>'
+      flexDiv.innerHTML += '<div class="text-width"><span class="tittel">' + spilldata[0] + '</span>' + '<br>' + '<span class="utvikler">' + spilldata[1] + '</span></div>'
+      flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
     });
   })
+
+
+
+
+// send form verdier asynkront til PHP (placeImgInFolder.php). Følg denne.
+// https://gist.github.com/jesperorb/a6c12f7d4418a167ea4b3454d4f8fb61
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**
@@ -40,12 +58,38 @@ function moveElement(itemIdToBeMoved, direction) {
   var ol = document.getElementById('orderedList')
   // Flytt elementet
   if (direction == 'up') {
-    var replaceThis = itemToBeMoved
-    var itemToBeMoved = itemToBeMoved.previousElementSibling
+    /* Flytt elementet foran i listen under valgt element.
+    Dersom foregående element ikke finnes (valgt element ligger øverst i listen), ikke utfør */ 
+    var itemToMoveDown = itemToBeMoved.previousElementSibling
+    var replaceThisItem = itemToBeMoved
+    if (itemToMoveDown != null) {
+      ol.insertBefore(replaceThisItem, itemToMoveDown)
+    }
   } else {
-    var replaceThis = itemToBeMoved.nextElementSibling
+    /* Flytt valgt element under den neste i listen.
+    Dersom neste element ikke finnes (valgt element ligger nederst i listen), ikke utfør */
+    var itemToMoveDown = itemToBeMoved
+    var replaceThisItem = itemToBeMoved.nextElementSibling
+    // Sjekk om elementet ikke ligger nederst
+    if (replaceThisItem != null) {
+      ol.insertBefore(replaceThisItem, itemToMoveDown)
+    }
   }
-  ol.insertBefore(replaceThis, itemToBeMoved)
+  highlight(itemToBeMoved)
+}
+
+/**
+ * Gi en diskré highlight til elementet
+ * som ble flyttet
+ * @param {element} itemToBeMoved 
+ */
+function highlight(itemToBeMoved) {
+  itemToBeMoved.style.transition = 'background-color 0ms linear'
+  itemToBeMoved.style.backgroundColor = 'rgb(34, 34, 34)'
+  setTimeout(function () {
+    itemToBeMoved.style.transition = 'background-color 500ms linear'
+    itemToBeMoved.style.backgroundColor = ''
+  }, 500);
 }
 
 /**
@@ -66,7 +110,7 @@ function saveOrder() {
   for (let i = 0; i < lis.length; i++) {
     let img = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('images/') + 7, lis[i].innerHTML.indexOf('.png') + 4)
     let title = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('tittel') + 8, lis[i].innerHTML.indexOf(' </span>'))
-    let author = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('utgiver') + 9, lis[i].innerHTML.indexOf(' </span>', lis[i].innerHTML.indexOf(' </span>') + 1))
+    let author = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('utvikler') + 10, lis[i].innerHTML.indexOf(' </span>', lis[i].innerHTML.indexOf(' </span>') + 1))
     let liAsTextString = title + ' – ' + author + ' – ' + img
     /* olAsTextString's første linje må ikke starte
     med linjeskift, men de neste linjene må det */

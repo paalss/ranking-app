@@ -4,35 +4,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rangeringsliste</title>
+  <title>Rangering</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<style>
-  .tittel {
-    font-weight: bold;
-    font-size: 16pt;
-  }
-
-  .utgiver {
-    color: grey;
-  }
-
-
-  li img {
-    max-width: 50px;
-    max-height: 60px;
-  }
-
-  .flex {
-    display: flex;
-    column-gap: 16px;
-    padding: 13px 16px;
-    margin-bottom: 5px;
-    border-bottom: 1px solid grey;
-  }
-</style>
 
 <body>
+  <h1>Rangering</h1>
+  <h2>Spill</h2>
   <ol id="orderedList"></ol>
+  <!-- <div id="create-new" class="create-new">
+    <h3>Legg til listepunkt</h3>
+    <form method="POST" enctype="multipart/form-data" onclick="return false">
+      <div class="flex">
+        <div>
+          <label for="uploadFile">Bilde</label><br>
+          <input type="file" name="uploadFile" id="uploadFile">
+        </div>
+        <div>
+          <label for="tittel">Tittel</label><br>
+          <span class="tittel"><input type="text" id="title"></span>
+        </div>
+        <div>
+          <label for="utvikler">Artist</label><br>
+          <span class="utvikler"><input type="text" id="utvikler"></span>
+        </div>
+        <button id="create-element">Legg til</button>
+      </div>
+    </form>
+  </div> -->
   <button onclick="saveOrder()">Lagre rangering</button>
 </body>
 <script src="script.js"></script>

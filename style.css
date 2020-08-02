@@ -1,0 +1,98 @@
+html {
+  font-size: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+  background-color: #000;
+  padding: 0 3%;
+}
+
+h1, h2, h3 {
+  text-transform: uppercase;
+  margin: 0;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+h2, h3 {
+  font-weight: normal;
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+.tittel {
+  font-weight: normal;
+  font-size: 14pt;
+}
+
+.utvikler {
+  color: grey;
+}
+
+ol {
+  padding-inline-start: 2%;
+}
+
+li img {
+  max-width: 50px;
+  max-height: 60px;
+}
+
+.text-width {
+  width: 233px;
+}
+
+.flex {
+  display: flex;
+  column-gap: 16px;
+  padding: 13px 16px;
+  margin-bottom: 5px;
+  /* border-bottom: 1px solid grey; */
+}
+
+ol button {
+  border-radius: 30px;
+  height: 60px;
+  background-color: #000;
+}
+
+/* 
+Arrow classes er basert på
+arrows av Chris Coyier på:
+https://css-tricks.com/snippets/css/css-triangle/
+*/
+
+.arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 20px solid rgb(172, 172, 172);
+  /* background-color: #000; */
+}
+
+.arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 20px solid rgb(172, 172, 172);
+  /* background-color: #000; */
+}
+
+.create-new {
+  background-color: rgb(44, 44, 44);
+}
+
+.create-new input {
+  height: 25px;
+  font-size: 12pt;
+}
