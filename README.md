@@ -1,4 +1,4 @@
-# Rangeringsapp
+# Rangeringsapp (work in progress)
 En liten app for å rangere forskjellige elementer, og lagre endringene permanent
 
 ## Åpne løsningen i nettleser
@@ -7,7 +7,7 @@ En liten app for å rangere forskjellige elementer, og lagre endringene permanen
 
 1.2 For XAMPP på Mac: Du må mount'e slik at lampp filstrukturen blir tilgjengelig i Finder.
 
-1.3 Last ned repository-filene i xampp/htdocs/ (xampp windows), lampp/htdocs (xampp mac) eller lignende. 
+1.3 Last ned repository-filene under xampp/htdocs/ (xampp windows), lampp/htdocs (xampp mac) eller lignende. 
 
 ### 2. Åpne nettsiden i en localhost server:
 2.1 Start Apache i XAMPP e.l.
