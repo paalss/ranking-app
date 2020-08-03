@@ -1,16 +1,20 @@
 <?php
-// if (is_uploaded_file($_FILES['uploadFile']['tmp_name'])) {
-//   // echo '<script>console.log("lastet opp fil i form")</script>';
-//   // echo 'lastet opp fil i form';
-//   if (move_uploaded_file($_FILES['uploadFile']['tmp_name'], "../images/")) {
-//     // Lastet ned bilde vellykket
-//     echo 'fil lastet ned i mappe';
-//   } else {
-//     // Lastet ned bilde feilet
-//     // echo '<script>alert("klarte ikke laste ned bilde")</script>';
-//     echo 'klarte ikke laste ned';
-//   }
-// } else {
-//   // echo '<script>console.log("lastet ikke opp fil i form")</script>';
-//   echo 'lastet ikke opp fil i form';
-// }
+// Tilgjengelige data fra <form>:
+// echo $_POST['artist'];
+// echo $_POST['title'];
+// echo $_FILES['uploadFile']['tmp_name'];
+// echo $_FILES['uploadFile']['name'];
+
+if (is_uploaded_file($_FILES['uploadFile']['tmp_name'])) {
+  $tmp_name = $_FILES["uploadFile"]['tmp_name'];
+  $name = $_FILES['uploadFile']['name'];
+
+  // Flytt filen inn i images/mappa, og echo feedback
+  if (move_uploaded_file($tmp_name, "images/$name")) {
+    echo 'bleLastetNed';
+  } else {
+    echo 'bleIkkeLastetNed'; // nedlasting av bilde feilet
+  }
+} else {
+  echo 'lastetIkkeOpp'; // brukeren lastet ikke opp noe bilde
+}

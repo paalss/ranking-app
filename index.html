@@ -12,26 +12,27 @@
   <h1>Rangering</h1>
   <h2>Spill</h2>
   <ol id="orderedList"></ol>
-  <!-- <div id="create-new" class="create-new">
+  <div class="create-new">
     <h3>Legg til listepunkt</h3>
-    <form method="POST" enctype="multipart/form-data" onclick="return false">
+    <form id="form-create-new" method="POST" enctype="multipart/form-data" name="form-create-new">
       <div class="flex">
         <div>
           <label for="uploadFile">Bilde</label><br>
-          <input type="file" name="uploadFile" id="uploadFile">
+          <input type="file" id="uploadFile" name="uploadFile">
         </div>
         <div>
-          <label for="tittel">Tittel</label><br>
-          <span class="tittel"><input type="text" id="title"></span>
+          <label for="title">Tittel</label><br>
+          <input type="text" id="title" name="title">
         </div>
         <div>
-          <label for="utvikler">Artist</label><br>
-          <span class="utvikler"><input type="text" id="utvikler"></span>
+          <label for="artist">Artist</label><br>
+          <input type="text" id="artist" name="artist">
         </div>
-        <button id="create-element">Legg til</button>
+        <input type="submit" id="button-create-new" value="Legg til">
+        <!-- <button type="submit" id="button-create-new">Legg til</button> -->
       </div>
     </form>
-  </div> -->
+  </div>
   <button onclick="saveOrder()">Lagre rangering</button>
 </body>
 <script src="script.js"></script>

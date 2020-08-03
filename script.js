@@ -23,29 +23,76 @@ fetch('spill.txt')
 
       // Lag innholdet i elementer
       flexDiv.innerHTML = '<div><img src="images/' + spilldata[2] + '" alt=""></div>'
-      flexDiv.innerHTML += '<div class="text-width"><span class="tittel">' + spilldata[0] + '</span>' + '<br>' + '<span class="utvikler">' + spilldata[1] + '</span></div>'
+      flexDiv.innerHTML += '<div class="text-width"><span class="title">' + spilldata[0] + '</span>' + '<br>' + '<span class="artist">' + spilldata[1] + '</span></div>'
       flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
     });
   })
 
+/**
+ * Sende form asynkront til PHP. Les mer på denne siden:
+ * PHP form submitting with fetch + async/await · GitHub > Submitting a form with JavaScript
+ * https://gist.github.com/jesperorb/a6c12f7d4418a167ea4b3454d4f8fb61#submitting-a-form-with-javascript
+ */
+const form = document.getElementById('form-create-new')
+form.addEventListener('submit', (event) => {
+  event.preventDefault() // forhindre page reload (default behaviour)
+  const formattedFormData = new FormData(form)
+  postData(formattedFormData)
+})
 
+async function postData(formattedFormData) {
+  const response = await fetch('placeImgInFolder.php', {
+    method: 'POST',
+    body: formattedFormData
+  })
+  /* Hent echo verdien fra PHP.
+  const data vil inneholde det nedlastede bildets navn hvis alt er OK,
+  ellers en string som forteller JS hvilket utfall det ble */
+  const data = await response.text()
 
+  // Hvis brukeren ikke lastet opp bilde i <form>:
+  if (data == 'lastetIkkeOpp') {
+    var imgUploaded = false
+  }
+  // Hvis brukeren lastet opp bilde, men nedlasting feilet:
+  else if (data == 'bleIkkeLastetNed') {
+    var imgUploaded = 'feil'
+    alert('Bilde ble ikke lastet ned')
+  }
+  // Hvis brukeren lastet opp et bilde, med vellykket nedlastning:
+  else if (data == 'bleLastetNed') {
+    var imgUploaded = true
+  }
 
-// send form verdier asynkront til PHP (placeImgInFolder.php). Følg denne.
-// https://gist.github.com/jesperorb/a6c12f7d4418a167ea4b3454d4f8fb61
+  if (imgUploaded == true) {
+    // Finn ut hvor mange listepunkter det er der
+    // var liNo = countLi() ---
 
+    // append dataen
+    let title = document.getElementById('title').value
+    let artist = document.getElementById('artist').value
+    let uploadFile = document.forms['form-create-new']['uploadFile'].files[0].name
 
+    // Lag hierarkiet av elementer ------
+    // let li = document.createElement('li')
+    // li.id = liNo
+    // let flexDiv = document.createElement('div')
+    // li.appendChild(flexDiv)
+    // flexDiv.classList.add('flex')
+    // orderedList.appendChild(li)
 
+    // Lag innholdet i elementer ----
+    // flexDiv.innerHTML = '<div><img src="images/' + uploadFile + '" alt=""></div>'
+    // flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + '</span>' + '<br>' + '<span class="artist">' + artist + '</span></div>'
+    // flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
+  
+    console.log(uploadFile) // navnet på opplastet fil
+  }
+}
 
-
-
-
-
-
-
-
-
-
+// function countLi() { ------
+//   orderedList.
+// }
 
 /**
  * Flytt valgt element i bestemt retning
@@ -59,7 +106,7 @@ function moveElement(itemIdToBeMoved, direction) {
   // Flytt elementet
   if (direction == 'up') {
     /* Flytt elementet foran i listen under valgt element.
-    Dersom foregående element ikke finnes (valgt element ligger øverst i listen), ikke utfør */ 
+    Dersom foregående element ikke finnes (valgt element ligger øverst i listen), ikke utfør */
     var itemToMoveDown = itemToBeMoved.previousElementSibling
     var replaceThisItem = itemToBeMoved
     if (itemToMoveDown != null) {
@@ -109,9 +156,9 @@ function saveOrder() {
   å bevare semantikken) */
   for (let i = 0; i < lis.length; i++) {
     let img = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('images/') + 7, lis[i].innerHTML.indexOf('.png') + 4)
-    let title = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('tittel') + 8, lis[i].innerHTML.indexOf(' </span>'))
-    let author = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('utvikler') + 10, lis[i].innerHTML.indexOf(' </span>', lis[i].innerHTML.indexOf(' </span>') + 1))
-    let liAsTextString = title + ' – ' + author + ' – ' + img
+    let title = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('title') + 7, lis[i].innerHTML.indexOf(' </span>'))
+    let artist = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('artist') + 8, lis[i].innerHTML.indexOf(' </span>', lis[i].innerHTML.indexOf(' </span>') + 1))
+    let liAsTextString = title + ' – ' + artist + ' – ' + img
     /* olAsTextString's første linje må ikke starte
     med linjeskift, men de neste linjene må det */
     if (i == 0) {
