@@ -14,7 +14,7 @@ En liten app for å rangere forskjellige elementer, og lagre endringene permanen
 
 2.2 Åpne nettsiden med URL: localhost/path/til/mappe (xampp windows), localhost:8080/path/til/mappe (xampp mac)
 
-## Fortsatt manglende funksjonalitet
+## Manglende funksjonalitet som kommer etterhvert
 Sletting av listepunkt
 
 Endre listepunkt

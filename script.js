@@ -10,8 +10,8 @@ fetch('spill.txt')
     var liNo = 0
     array.forEach(spill => {
       liNo++
-      // Tekstlinjene består av tankestrek(–) separerte verdier som hver skal behandles ulikt
-      let spilldata = spill.split('– ')
+      // Tekstlinjene består av kommaseparerte verdier som hver skal behandles ulikt
+      let spilldata = spill.split(', ')
 
       // Lag hierarkiet av elementer
       let li = document.createElement('li')
@@ -90,7 +90,7 @@ async function postData(formattedFormData) {
     } else {
       flexDiv.innerHTML = '<div><img src="images/default.png" alt=""></div>'
     }
-    flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + ' </span>' + '<br>' + '<span class="artist">' + artist + ' </span></div>'
+    flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + '</span>' + '<br>' + '<span class="artist">' + artist + '</span></div>'
     flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
   }
 
@@ -178,9 +178,9 @@ function saveOrder() {
   å bevare semantikken) */
   for (let i = 0; i < lis.length; i++) {
     let img = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('images/') + 7, lis[i].innerHTML.indexOf('alt=') - 2)
-    let title = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('title') + 7, lis[i].innerHTML.indexOf(' </span>'))
-    let artist = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('artist') + 8, lis[i].innerHTML.indexOf(' </span>', lis[i].innerHTML.indexOf(' </span>') + 1))
-    let liAsTextString = title + ' – ' + artist + ' – ' + img
+    let title = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('title') + 7, lis[i].innerHTML.indexOf('</span>'))
+    let artist = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('artist') + 8, lis[i].innerHTML.indexOf('</span>', lis[i].innerHTML.indexOf('</span>') + 1))
+    let liAsTextString = title + ', ' + artist + ', ' + img
     /* olAsTextString's første linje må ikke starte
     med linjeskift, men de neste linjene må det */
     if (i == 0) {
