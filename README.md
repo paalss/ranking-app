@@ -14,9 +14,6 @@ En liten app for å rangere forskjellige elementer, og lagre endringene permanen
 
 2.2 Åpne nettsiden med URL: localhost/path/til/mappe (xampp windows), localhost:8080/path/til/mappe (xampp mac)
 
-## Bruk
-Så langt kan man bare laste opp png-filer når man oppretter nytt listepunkt. Man må også laste opp et bilde ved oppretting av listepunkt. Jeg har ikke ennå lagt til noe i designet som sier dette til brukeren :/, eller tilrettelagt for oppretting uten bilde.
-
 ## Fortsatt manglende funksjonalitet
 Sletting av listepunkt
 

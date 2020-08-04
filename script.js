@@ -41,6 +41,7 @@ form.addEventListener('submit', (event) => {
 })
 
 async function postData(formattedFormData) {
+  // PHP laster ned bilde i mappe, eller forteller JS om bilde ikke ble lastet opp
   const response = await fetch('placeImgInFolder.php', {
     method: 'POST',
     body: formattedFormData
@@ -64,14 +65,16 @@ async function postData(formattedFormData) {
     var imgUploaded = true
   }
 
-  if (imgUploaded == true) {
+  if (imgUploaded == true || imgUploaded == false) {
     // Finn ledig li id
     var liNo = countLi()
 
     // append dataen
     let title = document.getElementById('title').value
     let artist = document.getElementById('artist').value
-    let uploadFile = document.forms['form-create-new']['uploadFile'].files[0].name
+    if (imgUploaded == true) {
+      var uploadFile = document.forms['form-create-new']['uploadFile'].files[0].name
+    }
 
     // Lag hierarkiet av elementer
     let li = document.createElement('li')
@@ -82,14 +85,19 @@ async function postData(formattedFormData) {
     orderedList.appendChild(li)
 
     // Lag innholdet i elementer
-    flexDiv.innerHTML = '<div><img src="images/' + uploadFile + '" alt=""></div>'
+    if (imgUploaded == true) {
+      flexDiv.innerHTML = '<div><img src="images/' + uploadFile + '" alt=""></div>'
+    } else {
+      flexDiv.innerHTML = '<div><img src="images/default.png" alt=""></div>'
+    }
     flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + ' </span>' + '<br>' + '<span class="artist">' + artist + ' </span></div>'
     flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
   }
+
 }
 
 /**
- * Returner tall som ingen bruker som id.
+ * Returner tall som ingen har som id.
  * Hent alle listepunkter, gå gjennom dem pluss én omgang til.
  * Vi starter på iterasjon 1, for å sammenligne med id.
  * Ettersom iterasjon starter på 1 på lis.length legges til med to
@@ -168,8 +176,8 @@ function saveOrder() {
   /* Juster tallene som plusses på / trekkes fra etter hvor mange bokstaver som må utelukkes.
   Vi går jo gjennom en innerHTML her, men vi vil bare ha den rene teksten (men vi henter fra innerHTML for
   å bevare semantikken) */
-  for (let i = 0; i < lis.length; i++) {    
-    let img = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('images/') + 7, lis[i].innerHTML.indexOf('.png') + 4)
+  for (let i = 0; i < lis.length; i++) {
+    let img = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('images/') + 7, lis[i].innerHTML.indexOf('alt=') - 2)
     let title = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('title') + 7, lis[i].innerHTML.indexOf(' </span>'))
     let artist = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('artist') + 8, lis[i].innerHTML.indexOf(' </span>', lis[i].innerHTML.indexOf(' </span>') + 1))
     let liAsTextString = title + ' – ' + artist + ' – ' + img
