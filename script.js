@@ -65,34 +65,47 @@ async function postData(formattedFormData) {
   }
 
   if (imgUploaded == true) {
-    // Finn ut hvor mange listepunkter det er der
-    // var liNo = countLi() ---
+    // Finn ledig li id
+    var liNo = countLi()
 
     // append dataen
     let title = document.getElementById('title').value
     let artist = document.getElementById('artist').value
     let uploadFile = document.forms['form-create-new']['uploadFile'].files[0].name
 
-    // Lag hierarkiet av elementer ------
-    // let li = document.createElement('li')
-    // li.id = liNo
-    // let flexDiv = document.createElement('div')
-    // li.appendChild(flexDiv)
-    // flexDiv.classList.add('flex')
-    // orderedList.appendChild(li)
+    // Lag hierarkiet av elementer
+    let li = document.createElement('li')
+    li.id = liNo
+    let flexDiv = document.createElement('div')
+    li.appendChild(flexDiv)
+    flexDiv.classList.add('flex')
+    orderedList.appendChild(li)
 
-    // Lag innholdet i elementer ----
-    // flexDiv.innerHTML = '<div><img src="images/' + uploadFile + '" alt=""></div>'
-    // flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + '</span>' + '<br>' + '<span class="artist">' + artist + '</span></div>'
-    // flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
-  
-    console.log(uploadFile) // navnet på opplastet fil
+    // Lag innholdet i elementer
+    flexDiv.innerHTML = '<div><img src="images/' + uploadFile + '" alt=""></div>'
+    flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + ' </span>' + '<br>' + '<span class="artist">' + artist + ' </span></div>'
+    flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
   }
 }
 
-// function countLi() { ------
-//   orderedList.
-// }
+/**
+ * Returner tall som ingen bruker som id.
+ * Hent alle listepunkter, gå gjennom dem pluss én omgang til.
+ * Vi starter på iterasjon 1, for å sammenligne med id.
+ * Ettersom iterasjon starter på 1 på lis.length legges til med to
+ * og ikke én.
+ */
+function countLi() {
+  let lis = document.querySelectorAll('li')
+  for (let i = 1; i < lis.length + 2; i++) {
+    let element = document.getElementById(i)
+    // Dersom ingen elementer har dette tallet som id, er denne id'en ledig
+    if (element == null) {
+      return i
+    }
+  }
+
+}
 
 /**
  * Flytt valgt element i bestemt retning
@@ -146,15 +159,16 @@ function highlight(itemToBeMoved) {
  */
 function saveOrder() {
   // Hent gjeldende rangering som string
-  var lis = document.querySelectorAll('li')
+  let lis = document.querySelectorAll('li')
 
   /* Finn de rette semantiske ordene i listepunktene, formater dem
   og legg dem til tekststrenger som vi skal sende */
   var olAsTextString = ''
+
   /* Juster tallene som plusses på / trekkes fra etter hvor mange bokstaver som må utelukkes.
   Vi går jo gjennom en innerHTML her, men vi vil bare ha den rene teksten (men vi henter fra innerHTML for
   å bevare semantikken) */
-  for (let i = 0; i < lis.length; i++) {
+  for (let i = 0; i < lis.length; i++) {    
     let img = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('images/') + 7, lis[i].innerHTML.indexOf('.png') + 4)
     let title = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('title') + 7, lis[i].innerHTML.indexOf(' </span>'))
     let artist = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('artist') + 8, lis[i].innerHTML.indexOf(' </span>', lis[i].innerHTML.indexOf(' </span>') + 1))
