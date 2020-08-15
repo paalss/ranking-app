@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 const orderedList = document.getElementById('orderedList')
 
 // Generer GUI liste fra tekstfil
@@ -18,17 +18,18 @@ fetch('spill.txt')
       li.id = liNo
       let flexDiv = document.createElement('div')
       li.appendChild(flexDiv)
-      flexDiv.classList.add('flex')
+      flexDiv.classList.add('flex-li')
       orderedList.appendChild(li)
 
       // Lag innholdet i elementer
       flexDiv.innerHTML = '<div><img src="images/' + spilldata[2] + '" alt=""></div>'
       flexDiv.innerHTML += '<div class="text-width"><span class="title">' + spilldata[0] + '</span>' + '<br>' + '<span class="artist">' + spilldata[1] + '</span></div>'
-      flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
+      flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button><button onclick="settings(' + liNo + ')">Innstillinger</button>'
     });
   })
 
 /**
+ * Uploading new item
  * Sende form asynkront til PHP. Les mer på denne siden:
  * PHP form submitting with fetch + async/await · GitHub > Submitting a form with JavaScript
  * https://gist.github.com/jesperorb/a6c12f7d4418a167ea4b3454d4f8fb61#submitting-a-form-with-javascript
@@ -81,7 +82,7 @@ async function postData(formattedFormData) {
     li.id = liNo
     let flexDiv = document.createElement('div')
     li.appendChild(flexDiv)
-    flexDiv.classList.add('flex')
+    flexDiv.classList.add('flex-li')
     orderedList.appendChild(li)
 
     // Lag innholdet i elementer
@@ -91,7 +92,7 @@ async function postData(formattedFormData) {
       flexDiv.innerHTML = '<div><img src="images/default.png" alt=""></div>'
     }
     flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + '</span>' + '<br>' + '<span class="artist">' + artist + '</span></div>'
-    flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
+    flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button><button onclick="settings(' + liNo + ')">Innstillinger</button>'
   }
 
 }
@@ -148,16 +149,112 @@ function moveElement(itemIdToBeMoved, direction) {
 
 /**
  * Gi en diskré highlight til elementet
- * som ble flyttet
- * @param {element} itemToBeMoved 
+ * som ble flyttet/endret
+ * @param {element} itemToHighlight 
  */
-function highlight(itemToBeMoved) {
-  itemToBeMoved.style.transition = 'background-color 0ms linear'
-  itemToBeMoved.style.backgroundColor = 'rgb(34, 34, 34)'
-  setTimeout(function () {
-    itemToBeMoved.style.transition = 'background-color 500ms linear'
-    itemToBeMoved.style.backgroundColor = ''
+function highlight(itemToHighlight) {
+  itemToHighlight.style.transition = 'background-color 0ms linear'
+  itemToHighlight.style.backgroundColor = 'rgb(34, 34, 34)'
+  setTimeout(() => {
+    itemToHighlight.style.transition = 'background-color 500ms linear'
+    itemToHighlight.style.backgroundColor = ''
   }, 500);
+}
+
+function settings(itemIdToBeViewed) {
+  const container = document.getElementById('container')
+
+  let itemToBeViewed = document.getElementById(itemIdToBeViewed)
+  let title = titlePartOf(itemToBeViewed)
+  let artist = artistPartOf(itemToBeViewed)
+  let imageFilename = imagePartOf(itemToBeViewed)
+
+  let settingsWindow = document.getElementById('settings-window')
+  if (settingsWindow == null) {
+    // Instillinger vinduet er lukket (finnes ikke i dokumentet). Legg det til. 
+    settingsWindow = document.createElement('div')
+    settingsWindow.classList.add('settings-window')
+    settingsWindow.setAttribute('id', 'settings-window')
+    container.appendChild(settingsWindow)
+
+    settingsWindow.innerHTML = `
+      <div class="flex-settings">
+        <div class="edit-data">
+          <div>
+            <h2>Innstillinger</h2>
+              <!-- <form id="form-edit" method="POST" enctype="multipart/form-data" name="form-edit"> -->
+                <div class="image-upload">
+                  <label for="edit-image">
+                    <img id="settings-image" class="settings-image" src="images/${imageFilename}" alt=""><br>
+                  </label>
+                  <!-- <input type="file" id="edit-image"> -->
+                </div>
+      
+                <label for="edit-title" class="settings-label">Tittel</label>
+                <input id="edit-title" class="settings-input" type="text" value="${title}"><br>
+      
+                <label for="edit-artist" class="settings-label">Artist</label>
+                <input id="edit-artist" class="settings-input" type="text" value="${artist}">
+      
+                <button id="apply-data-changes-button" class="settings-button" onclick="applyDataChanges(${itemIdToBeViewed})">Påfør endringer</button>
+              </div>
+            <!-- </form> -->
+        </div>
+        <div class="div-containing-close-settings-button">
+          <button onclick="closeSettings()">Lukk vindu</button>
+        </div>
+      </div>
+    `
+  } else {
+    // Hent info fra listeelementet vi gjør instillnger på, og legg dem i instillinger inputs
+    let imagePlaceholder = document.getElementById('settings-image')
+    let titlePlaceholder = document.getElementById('edit-title')
+    let artistPlaceholder = document.getElementById('edit-artist')
+    let applyButton = document.getElementById('apply-data-changes-button')
+
+    imagePlaceholder.src = `images/${imageFilename}`
+    titlePlaceholder.value = title
+    artistPlaceholder.value = artist
+    applyButton.setAttribute('onclick', `applyDataChanges(${itemIdToBeViewed})`)
+
+  }
+}
+
+/**
+ * Fjern instillinger vinduet fra dokumentet
+ */
+function closeSettings() {
+  const container = document.getElementById('container')
+  const settingsWindow = document.getElementById('settings-window')
+  container.removeChild(settingsWindow)
+}
+
+/**
+ * Påfør endringer gjort i instillinger vinduet
+ * @param {number} itemIdTochange id'en av elementet vi vil påføre endringene til
+ */
+function applyDataChanges(itemIdTochange) {
+  // Hent data og endre GUI listeverdier
+  // let newImage = document.getElementById('edit-image')
+  let newTitle = document.getElementById('edit-title')
+  let newArtist = document.getElementById('edit-artist')
+
+  // let newImageValue = newImage.value
+  // let newImageFilename = newImageValue.substring(newImageValue.indexOf('fakepath')+9)
+  // console.log('newImageFilename: ', newImageFilename)
+  // newImageFilename = document.forms['form-edit']['edit-image'].files[0].name
+  // console.log('newImageFilename: ', newImageFilename)
+
+  let itemToChange = document.getElementById(itemIdTochange)
+
+  // let imageToChange = itemToChange.querySelector('.flex-li img')
+  let titleToChange = itemToChange.querySelector('.title')
+  let artistToChange = itemToChange.querySelector('.artist')
+
+  // imageToChange.src = newImageFilename
+  titleToChange.innerHTML = newTitle.value
+  artistToChange.innerHTML = newArtist.value
+  highlight(itemToChange)
 }
 
 /**
@@ -177,10 +274,10 @@ function saveOrder() {
   Vi går jo gjennom en innerHTML her, men vi vil bare ha den rene teksten (men vi henter fra innerHTML for
   å bevare semantikken) */
   for (let i = 0; i < lis.length; i++) {
-    let img = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('images/') + 7, lis[i].innerHTML.indexOf('alt=') - 2)
-    let title = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('title') + 7, lis[i].innerHTML.indexOf('</span>'))
-    let artist = lis[i].innerHTML.substring(lis[i].innerHTML.indexOf('artist') + 8, lis[i].innerHTML.indexOf('</span>', lis[i].innerHTML.indexOf('</span>') + 1))
-    let liAsTextString = title + ', ' + artist + ', ' + img
+    let imageFilename = imagePartOf(lis[i])
+    let title = titlePartOf(lis[i])
+    let artist = artistPartOf(lis[i])
+    let liAsTextString = title + ', ' + artist + ', ' + imageFilename
     /* olAsTextString's første linje må ikke starte
     med linjeskift, men de neste linjene må det */
     if (i == 0) {
@@ -197,6 +294,19 @@ function saveOrder() {
     headers: { "Content-type": "application/x-www-form-urlencoded" },
     body: formEncode(infoForPhp)
   })
+}
+
+// Funksjoner for å returnere bestemte innerHTML substrings fra element
+function imagePartOf(element) {
+  return element.innerHTML.substring(element.innerHTML.indexOf('images/') + 7, element.innerHTML.indexOf('alt=') - 2)
+}
+
+function titlePartOf(element) {
+  return element.innerHTML.substring(element.innerHTML.indexOf('title') + 7, element.innerHTML.indexOf('</span>'))
+}
+
+function artistPartOf(element) {
+  return element.innerHTML.substring(element.innerHTML.indexOf('artist') + 8, element.innerHTML.indexOf('</span>', element.innerHTML.indexOf('</span>') + 1))
 }
 
 /**

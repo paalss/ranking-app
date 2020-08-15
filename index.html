@@ -11,11 +11,15 @@
 <body>
   <h1>Rangering</h1>
   <h2>Spill</h2>
-  <ol id="orderedList"></ol>
+  <div class="flex-container" id="container">
+    <div>
+      <ol id="orderedList"></ol>
+    </div>
+  </div>
   <div class="create-new">
     <h3>Legg til listepunkt</h3>
     <form id="form-create-new" method="POST" enctype="multipart/form-data" name="form-create-new">
-      <div class="flex">
+      <div class="flex-li">
         <div>
           <label for="uploadFile">Bilde</label><br>
           <input type="file" id="uploadFile" name="uploadFile">
