@@ -1,5 +1,5 @@
 'use strict'
-const orderedList = document.getElementById('orderedList')
+const orderedList = document.getElementById('ordered-list')
 
 // Generer GUI liste fra tekstfil
 fetch('spill.txt')
@@ -13,88 +13,77 @@ fetch('spill.txt')
       // Tekstlinjene består av kommaseparerte verdier som hver skal behandles ulikt
       let spilldata = spill.split(', ')
 
-      // Lag hierarkiet av elementer
-      let li = document.createElement('li')
-      li.id = liNo
-      let flexDiv = document.createElement('div')
-      li.appendChild(flexDiv)
-      flexDiv.classList.add('flex-li')
-      orderedList.appendChild(li)
+      let image = spilldata[2]
+      let title = spilldata[0]
+      let artist = spilldata[1]
 
-      // Lag innholdet i elementer
-      flexDiv.innerHTML = '<div><img src="images/' + spilldata[2] + '" alt=""></div>'
-      flexDiv.innerHTML += '<div class="text-width"><span class="title">' + spilldata[0] + '</span>' + '<br>' + '<span class="artist">' + spilldata[1] + '</span></div>'
-      flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button><button onclick="settings(' + liNo + ')">Innstillinger</button>'
+      createListItem(image, title, artist, liNo)
     });
   })
 
-/**
- * Uploading new item
- * Sende form asynkront til PHP. Les mer på denne siden:
- * PHP form submitting with fetch + async/await · GitHub > Submitting a form with JavaScript
- * https://gist.github.com/jesperorb/a6c12f7d4418a167ea4b3454d4f8fb61#submitting-a-form-with-javascript
- */
-const form = document.getElementById('form-create-new')
-form.addEventListener('submit', (event) => {
-  event.preventDefault() // forhindre page reload (default behaviour)
-  const formattedFormData = new FormData(form)
-  postData(formattedFormData)
-})
+function createListItem(image, title, artist, liNo) {
+  // Lag hierarkiet av elementer
+  let li = document.createElement('li')
+  li.id = liNo
+  let flexDiv = document.createElement('div')
+  li.appendChild(flexDiv)
+  flexDiv.classList.add('flex-li')
+  orderedList.appendChild(li)
 
-async function postData(formattedFormData) {
-  // PHP laster ned bilde i mappe, eller forteller JS om bilde ikke ble lastet opp
-  const response = await fetch('placeImgInFolder.php', {
-    method: 'POST',
-    body: formattedFormData
-  })
-  /* Hent echo verdien fra PHP.
-  const data vil inneholde det nedlastede bildets navn hvis alt er OK,
-  ellers en string som forteller JS hvilket utfall det ble */
-  const data = await response.text()
+  // Lag innholdet i elementer
+  flexDiv.innerHTML = `
+    <div>
+      <img src="images/${image}" alt="${image}">
+    </div>
+    <div class="text-width">
+      <span id="title" class="title">${title}</span><br>
+      <span id="artist" class="artist">${artist}</span>
+    </div>
+    <button onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
+    <button onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
+    <button onclick="editingMode(${liNo})">Endre</button>
+  `
+}
 
-  // Hvis brukeren ikke lastet opp bilde i <form>:
-  if (data == 'lastetIkkeOpp') {
-    var imgUploaded = false
+function editingMode(liNo) {
+  const item = document.getElementById(liNo)
+  const divTextwith = item.querySelector('.text-width')
+
+  if (item.classList.contains('editing-mode')) {
+    item.classList.remove('editing-mode')
+
+    const img = item.querySelector('img')
+    const inputTitle = item.querySelector('.title')
+    const inputArtist = item.querySelector('.artist')
+
+    const title = inputTitle.value
+    const artist = inputArtist.value
+
+    divTextwith.innerHTML = `
+      <span class="title">${title}</span><br>
+      <span class="artist">${artist}</span>
+    `
+
+  } else {
+    item.classList.add('editing-mode')
+
+    const img = item.querySelector('img')
+    const spanTitle = item.querySelector('.title')
+    const spanArtist = item.querySelector('.artist')
+
+    const imgSrc = img.src
+    const title = spanTitle.innerHTML
+    const artist = spanArtist.innerHTML
+
+    divTextwith.innerHTML = `
+      <input class="title" type="text" placeholder="tittel" value="${title}"><br>
+      <input class="artist" type="text" placeholder="artist" value="${artist}">
+    `
+
+
+    
+    
   }
-  // Hvis brukeren lastet opp bilde, men nedlasting feilet:
-  else if (data == 'bleIkkeLastetNed') {
-    var imgUploaded = 'feil'
-    alert('Bilde ble ikke lastet ned')
-  }
-  // Hvis brukeren lastet opp et bilde, med vellykket nedlastning:
-  else if (data == 'bleLastetNed') {
-    var imgUploaded = true
-  }
-
-  if (imgUploaded == true || imgUploaded == false) {
-    // Finn ledig li id
-    var liNo = countLi()
-
-    // append dataen
-    let title = document.getElementById('title').value
-    let artist = document.getElementById('artist').value
-    if (imgUploaded == true) {
-      var uploadFile = document.forms['form-create-new']['uploadFile'].files[0].name
-    }
-
-    // Lag hierarkiet av elementer
-    let li = document.createElement('li')
-    li.id = liNo
-    let flexDiv = document.createElement('div')
-    li.appendChild(flexDiv)
-    flexDiv.classList.add('flex-li')
-    orderedList.appendChild(li)
-
-    // Lag innholdet i elementer
-    if (imgUploaded == true) {
-      flexDiv.innerHTML = '<div><img src="images/' + uploadFile + '" alt=""></div>'
-    } else {
-      flexDiv.innerHTML = '<div><img src="images/default.png" alt=""></div>'
-    }
-    flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + '</span>' + '<br>' + '<span class="artist">' + artist + '</span></div>'
-    flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button><button onclick="settings(' + liNo + ')">Innstillinger</button>'
-  }
-
 }
 
 /**
@@ -113,148 +102,51 @@ function countLi() {
       return i
     }
   }
-
 }
 
 /**
  * Flytt valgt element i bestemt retning
- * @param {number} itemIdToBeMoved 
+ * @param {number} liNo 
  * @param {string} direction 
  */
-function moveElement(itemIdToBeMoved, direction) {
+function moveElement(liNo, direction) {
   // Hent elementet som skal flyttes
-  var itemToBeMoved = document.getElementById(itemIdToBeMoved)
-  var ol = document.getElementById('orderedList')
+  var itemToMove = document.getElementById(liNo)
+  var ol = document.getElementById('ordered-list')
   // Flytt elementet
   if (direction == 'up') {
     /* Flytt elementet foran i listen under valgt element.
     Dersom foregående element ikke finnes (valgt element ligger øverst i listen), ikke utfør */
-    var itemToMoveDown = itemToBeMoved.previousElementSibling
-    var replaceThisItem = itemToBeMoved
+    var itemToMoveDown = itemToMove.previousElementSibling
+    var replaceThisItem = itemToMove
     if (itemToMoveDown != null) {
       ol.insertBefore(replaceThisItem, itemToMoveDown)
     }
   } else {
     /* Flytt valgt element under den neste i listen.
     Dersom neste element ikke finnes (valgt element ligger nederst i listen), ikke utfør */
-    var itemToMoveDown = itemToBeMoved
-    var replaceThisItem = itemToBeMoved.nextElementSibling
+    var itemToMoveDown = itemToMove
+    var replaceThisItem = itemToMove.nextElementSibling
     // Sjekk om elementet ikke ligger nederst
     if (replaceThisItem != null) {
       ol.insertBefore(replaceThisItem, itemToMoveDown)
     }
   }
-  highlight(itemToBeMoved)
+  highlight(itemToMove)
 }
 
 /**
  * Gi en diskré highlight til elementet
  * som ble flyttet/endret
- * @param {element} itemToHighlight 
+ * @param {element} item 
  */
-function highlight(itemToHighlight) {
-  itemToHighlight.style.transition = 'background-color 0ms linear'
-  itemToHighlight.style.backgroundColor = 'rgb(34, 34, 34)'
+function highlight(item) {
+  item.style.transition = 'background-color 0ms linear'
+  item.style.backgroundColor = 'rgb(34, 34, 34)'
   setTimeout(() => {
-    itemToHighlight.style.transition = 'background-color 500ms linear'
-    itemToHighlight.style.backgroundColor = ''
+    item.style.transition = 'background-color 500ms linear'
+    item.style.backgroundColor = ''
   }, 500);
-}
-
-function settings(itemIdToBeViewed) {
-  const container = document.getElementById('container')
-
-  let itemToBeViewed = document.getElementById(itemIdToBeViewed)
-  let title = titlePartOf(itemToBeViewed)
-  let artist = artistPartOf(itemToBeViewed)
-  let imageFilename = imagePartOf(itemToBeViewed)
-
-  let settingsWindow = document.getElementById('settings-window')
-  if (settingsWindow == null) {
-    // Instillinger vinduet er lukket (finnes ikke i dokumentet). Legg det til. 
-    settingsWindow = document.createElement('div')
-    settingsWindow.classList.add('settings-window')
-    settingsWindow.setAttribute('id', 'settings-window')
-    container.appendChild(settingsWindow)
-
-    settingsWindow.innerHTML = `
-      <div class="flex-settings">
-        <div class="edit-data">
-          <div>
-            <h2>Innstillinger</h2>
-              <!-- <form id="form-edit" method="POST" enctype="multipart/form-data" name="form-edit"> -->
-                <div class="image-upload">
-                  <label for="edit-image">
-                    <img id="settings-image" class="settings-image" src="images/${imageFilename}" alt=""><br>
-                  </label>
-                  <!-- <input type="file" id="edit-image"> -->
-                </div>
-      
-                <label for="edit-title" class="settings-label">Tittel</label>
-                <input id="edit-title" class="settings-input" type="text" value="${title}"><br>
-      
-                <label for="edit-artist" class="settings-label">Artist</label>
-                <input id="edit-artist" class="settings-input" type="text" value="${artist}">
-      
-                <button id="apply-data-changes-button" class="settings-button" onclick="applyDataChanges(${itemIdToBeViewed})">Påfør endringer</button>
-              </div>
-            <!-- </form> -->
-        </div>
-        <div class="div-containing-close-settings-button">
-          <button onclick="closeSettings()">Lukk vindu</button>
-        </div>
-      </div>
-    `
-  } else {
-    // Hent info fra listeelementet vi gjør instillnger på, og legg dem i instillinger inputs
-    let imagePlaceholder = document.getElementById('settings-image')
-    let titlePlaceholder = document.getElementById('edit-title')
-    let artistPlaceholder = document.getElementById('edit-artist')
-    let applyButton = document.getElementById('apply-data-changes-button')
-
-    imagePlaceholder.src = `images/${imageFilename}`
-    titlePlaceholder.value = title
-    artistPlaceholder.value = artist
-    applyButton.setAttribute('onclick', `applyDataChanges(${itemIdToBeViewed})`)
-
-  }
-}
-
-/**
- * Fjern instillinger vinduet fra dokumentet
- */
-function closeSettings() {
-  const container = document.getElementById('container')
-  const settingsWindow = document.getElementById('settings-window')
-  container.removeChild(settingsWindow)
-}
-
-/**
- * Påfør endringer gjort i instillinger vinduet
- * @param {number} itemIdTochange id'en av elementet vi vil påføre endringene til
- */
-function applyDataChanges(itemIdTochange) {
-  // Hent data og endre GUI listeverdier
-  // let newImage = document.getElementById('edit-image')
-  let newTitle = document.getElementById('edit-title')
-  let newArtist = document.getElementById('edit-artist')
-
-  // let newImageValue = newImage.value
-  // let newImageFilename = newImageValue.substring(newImageValue.indexOf('fakepath')+9)
-  // console.log('newImageFilename: ', newImageFilename)
-  // newImageFilename = document.forms['form-edit']['edit-image'].files[0].name
-  // console.log('newImageFilename: ', newImageFilename)
-
-  let itemToChange = document.getElementById(itemIdTochange)
-
-  // let imageToChange = itemToChange.querySelector('.flex-li img')
-  let titleToChange = itemToChange.querySelector('.title')
-  let artistToChange = itemToChange.querySelector('.artist')
-
-  // imageToChange.src = newImageFilename
-  titleToChange.innerHTML = newTitle.value
-  artistToChange.innerHTML = newArtist.value
-  highlight(itemToChange)
 }
 
 /**
@@ -263,6 +155,10 @@ function applyDataChanges(itemIdTochange) {
  * og send denne til PHP som kan ordne opp i resten
  */
 function saveOrder() {
+  /* Sørg for at lis ikke er i editing mode
+  koden nedenfor er ikke bygd for at denne modusen er åpen*/
+  makeSureNoLiIsInEditingMode()
+
   // Hent gjeldende rangering som string
   let lis = document.querySelectorAll('li')
 
@@ -270,13 +166,11 @@ function saveOrder() {
   og legg dem til tekststrenger som vi skal sende */
   var olAsTextString = ''
 
-  /* Juster tallene som plusses på / trekkes fra etter hvor mange bokstaver som må utelukkes.
-  Vi går jo gjennom en innerHTML her, men vi vil bare ha den rene teksten (men vi henter fra innerHTML for
-  å bevare semantikken) */
   for (let i = 0; i < lis.length; i++) {
-    let imageFilename = imagePartOf(lis[i])
-    let title = titlePartOf(lis[i])
-    let artist = artistPartOf(lis[i])
+    let imageFilename = lis[i].querySelector('img').src
+    imageFilename = imageFilename.substring(imageFilename.indexOf('images/')+7)
+    let title = lis[i].querySelector('.title').innerHTML
+    let artist = lis[i].querySelector('.artist').innerHTML
     let liAsTextString = title + ', ' + artist + ', ' + imageFilename
     /* olAsTextString's første linje må ikke starte
     med linjeskift, men de neste linjene må det */
@@ -296,17 +190,24 @@ function saveOrder() {
   })
 }
 
-// Funksjoner for å returnere bestemte innerHTML substrings fra element
-function imagePartOf(element) {
-  return element.innerHTML.substring(element.innerHTML.indexOf('images/') + 7, element.innerHTML.indexOf('alt=') - 2)
-}
+function makeSureNoLiIsInEditingMode() {
+  // Finn ut om noen lis har editing-mode
+  const lisWithEditingMode = document.getElementsByClassName('editing-mode')
 
-function titlePartOf(element) {
-  return element.innerHTML.substring(element.innerHTML.indexOf('title') + 7, element.innerHTML.indexOf('</span>'))
-}
+  if (lisWithEditingMode.length != 0) {
+    let lisId_WithEditingMode = []
 
-function artistPartOf(element) {
-  return element.innerHTML.substring(element.innerHTML.indexOf('artist') + 8, element.innerHTML.indexOf('</span>', element.innerHTML.indexOf('</span>') + 1))
+    // Gå gjennom disse og registrer hvilke det gjelder
+    for (let i = 0; i < lisWithEditingMode.length; i++) {
+      lisId_WithEditingMode.push(lisWithEditingMode[i].id)
+    }
+
+    /* Bruke registrerte id'er og kjør editingMode på dem for å slå dem av
+    Dette kunne ikke ha blitt gjort i forrige loop, fordi det tuller til HTML-collectionen. */
+    lisId_WithEditingMode.forEach(element => {
+      editingMode(element)
+    })
+  }
 }
 
 /**

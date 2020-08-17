@@ -2,11 +2,6 @@ html {
   font-size: 100%;
 }
 
-header {
-  display: flex;
-  column-gap: 2rem;
-}
-
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #fff;
@@ -40,10 +35,6 @@ h3 {
 
 .artist {
   color: grey;
-}
-
-.editing-mode .artist {
-  color: #000;
 }
 
 ol {
@@ -84,9 +75,17 @@ button, input[type=submit] {
   /* background-color: #000; */
 }
 
-button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
-  border-color: yellow;
+.settings-window {
+  background-color: rgb(49, 49, 49);
 }
+
+.settings-window h2 {
+  margin: 0 15%;
+}
+
+/* .image-upload>input {
+  display: none;
+} */
 
 .flex-settings {
   display: flex;
@@ -94,6 +93,43 @@ button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
   padding: 20px 0;
 }
 
+.edit-data {
+  flex: 4;
+  display: flex;
+  justify-content: center;
+  /* background-color: brown; */
+}
+
+.edit-data>div {
+  width: 60%;
+  /* background-color: darkgreen; */
+}
+
+.edit-data>div>* {
+  margin-bottom: 10px;
+}
+
+.div-containing-close-settings-button {
+  flex: 1;
+}
+
+.settings-image {
+  /* slik at starter på linje med inputs under */
+  margin: 0 17%;
+  width: 70%;
+}
+
+.settings-label {
+  margin-left: 5%;
+}
+
+.settings-input {
+  margin-right: 5%;
+}
+
+.settings-button {
+  margin: 0 10%;
+}
 /* 
 Arrow classes er basert på
 arrows av Chris Coyier på:
@@ -116,4 +152,13 @@ https://css-tricks.com/snippets/css/css-triangle/
   border-right: 20px solid transparent;
   border-top: 20px solid rgb(172, 172, 172);
   /* background-color: #000; */
+}
+
+.create-new {
+  background-color: rgb(44, 44, 44);
+}
+
+input {
+  height: 25px;
+  font-size: 12pt;
 }
