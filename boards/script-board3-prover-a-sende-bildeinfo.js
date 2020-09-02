@@ -29,7 +29,7 @@ function createList() {
 
 function createListItem(image, title, artist, liNo) {
   const orderedList = document.getElementById('ordered-list')
-  // Lag element med flexdiv
+  // Lag hierarkiet av elementer
   let li = document.createElement('li')
   li.id = liNo
   let flexDiv = document.createElement('div')
@@ -37,7 +37,7 @@ function createListItem(image, title, artist, liNo) {
   flexDiv.classList.add('flex-li')
   orderedList.appendChild(li)
 
-  // Lag flexdiv innhold
+  // Lag innholdet i elementer
   flexDiv.innerHTML = `
     <form class="form-create-li" name="form-create-li" method="post" enctype="multipart/form-data">
       <div class="image">
@@ -56,6 +56,7 @@ function createListItem(image, title, artist, liNo) {
 
 /**
  * prevent default behaviour på alle li forms (Endre-funksjonalitet)
+ * og ordne for opplasting av bilde
  * @param {number} liNo nummer på list item
  */
 function formPreventDefault(liNo) {
@@ -63,8 +64,82 @@ function formPreventDefault(liNo) {
   var form = item.querySelector('.form-create-li')
   form.addEventListener('submit', (event) => {
     event.preventDefault()
-    
+    /* execute kun hvis brukeren har editing-mode åpen på denne listen,
+    og skal submitte sine endringer */
+    if (!item.classList.contains('editing-mode')) {
+
+      // console.log('submitted i editing-mode. Legg til bilde her. kanskje denne block\'en kan puttes i toggleEditingMode');
+      /* Send form data (det er bare input="type"s value vi trenger)
+      til PHP som kan laste ned bilde i mappe */
+      const formattedFormData = new FormData(form)
+      console.log('dette er dataen som sendes til php. men den anerkjennes ikke av php. (uploadFile er undefined index sier den)')
+      console.log(form.innerHTML)
+      postData(formattedFormData)
+
+    } else {
+      // Redeklarer form, for å se om det er noen bilder lastet opp
+      form = item.querySelector('.form-create-li')
+    }
   })
+}
+
+async function postData(formattedFormData) {
+  // PHP laster ned bilde i mappe, eller forteller JS om bilde ikke ble lastet opp
+  const response = await fetch('placeImgInFolder.php', {
+    method: 'POST',
+    body: formattedFormData
+  })
+  /* Hent echo verdien fra PHP.
+  const data vil inneholde en string
+  som forteller JS hvilket utfall det ble */
+  const data = await response.text()
+  console.log('resultatet ble: ', data)
+
+  // Hvis brukeren ikke lastet opp bilde i <form>:
+  if (data == 'lastetIkkeOpp') {
+    var imgUploaded = false
+    // console.log('lastet ikke opp')
+  }
+  // Hvis brukeren lastet opp bilde, men nedlasting feilet:
+  else if (data == 'bleIkkeLastetNed') {
+    var imgUploaded = 'feil'
+    alert('Bilde ble ikke lastet ned')
+  }
+  // Hvis brukeren lastet opp et bilde, med vellykket nedlastning:
+  else if (data == 'bleLastetNed') {
+    var imgUploaded = true
+    // console.log('lastet opp bilde. og det ble lastet ned')
+  }
+
+  if (imgUploaded == true || imgUploaded == false) {
+    // Finn ledig li id
+    var liNo = countLi()
+
+    // append dataen
+    let title = document.getElementById('title').value
+    let artist = document.getElementById('artist').value
+    if (imgUploaded == true) {
+      var uploadFile = document.forms['form-create-new']['uploadFile'].files[0].name
+    }
+
+    // Lag hierarkiet av elementer
+    let li = document.createElement('li')
+    li.id = liNo
+    let flexDiv = document.createElement('div')
+    li.appendChild(flexDiv)
+    flexDiv.classList.add('flex-li')
+    orderedList.appendChild(li)
+
+    // Lag innholdet i elementer
+    if (imgUploaded == true) {
+      flexDiv.innerHTML = '<div><img src="images/' + uploadFile + '" alt=""></div>'
+    } else {
+      flexDiv.innerHTML = '<div><img src="images/default.png" alt=""></div>'
+    }
+    flexDiv.innerHTML += '<div class="text-width"><span class="title">' + title + '</span>' + '<br>' + '<span class="artist">' + artist + '</span></div>'
+    flexDiv.innerHTML += '<button onclick="moveElement(' + liNo + ', `up`)"><div class="arrow-up"></div></button> <button onclick = "moveElement(' + liNo + ', `down`)"><div class="arrow-down"></div></button>'
+  }
+
 }
 
 function toggleEditingMode(liNo) {
@@ -102,6 +177,13 @@ function toggleEditingMode(liNo) {
     const imageSourcePath = item.querySelector('img').src
     const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
 
+    // console.log(imageFilename)
+    if (imageFilename==null) {
+      // ikke noe bilde er lastet opp
+      console.log('ikke nboe builkde lkastet oipp')
+      
+    }
+
     const title = spanTitle.innerHTML
     const artist = spanArtist.innerHTML
 
@@ -114,6 +196,8 @@ function toggleEditingMode(liNo) {
       <input class="title" type="text" placeholder="tittel" value="${title}"><br>
       <input class="artist" type="text" placeholder="artist" value="${artist}">
     `
+
+
 
 
   }

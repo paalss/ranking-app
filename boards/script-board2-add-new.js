@@ -29,7 +29,7 @@ fetch('spill.txt')
   })
 
 /**
- * Uploading new item
+ * Uploading new item ----------------------------------------------
  * Sende form asynkront til PHP. Les mer på denne siden:
  * PHP form submitting with fetch + async/await · GitHub > Submitting a form with JavaScript
  * https://gist.github.com/jesperorb/a6c12f7d4418a167ea4b3454d4f8fb61#submitting-a-form-with-javascript

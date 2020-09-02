@@ -50,6 +50,10 @@ ol {
   padding-inline-start: 2%;
 }
 
+.editing-mode .image {
+  width: 16%;
+}
+
 li img {
   max-width: 50px;
   max-height: 60px;
@@ -75,6 +79,16 @@ li img {
   /* border-bottom: 1px solid grey; */
 }
 
+form {
+  display: flex;
+  column-gap: 16px;
+}
+
+.editing-mode form {
+  width: 90%;
+  max-width: 370px;
+}
+
 button, input[type=submit] {
   color: #fff;
   /* så lenge vi har tekst her */
@@ -87,6 +101,10 @@ button, input[type=submit] {
 button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
   border-color: yellow;
 }
+
+/* input[type=file] {
+  width: 90%;
+} */
 
 .flex-settings {
   display: flex;
