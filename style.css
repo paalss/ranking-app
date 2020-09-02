@@ -51,7 +51,7 @@ ol {
 }
 
 .editing-mode .image {
-  width: 16%;
+  width: 6%;
 }
 
 li img {
@@ -79,17 +79,16 @@ li img {
   /* border-bottom: 1px solid grey; */
 }
 
-form {
+form.edit-li {
   display: flex;
   column-gap: 16px;
 }
 
 .editing-mode form {
-  width: 90%;
   max-width: 370px;
 }
 
-button, input[type=submit] {
+button.round-button, input[type=submit].round-button {
   color: #fff;
   /* så lenge vi har tekst her */
   border-radius: 30px;
@@ -98,7 +97,7 @@ button, input[type=submit] {
   /* background-color: #000; */
 }
 
-button:hover, button:focus, input[type=submit]:hover, input[type=submit]:focus {
+button.round-button:hover, button.round-button:focus, input[type=submit].round-button:hover, input[type=submit].round-button:focus {
   border-color: yellow;
 }
 

@@ -22,7 +22,7 @@ function createList() {
         let artist = spilldata[1]
 
         createListItem(image, title, artist, liNo)
-        formPreventDefault(liNo)
+        formEditLiPreventDefault(liNo)
       });
     })
 }
@@ -39,32 +39,19 @@ function createListItem(image, title, artist, liNo) {
 
   // Lag flexdiv innhold
   flexDiv.innerHTML = `
-    <form class="form-create-li" name="form-create-li" method="post" enctype="multipart/form-data">
-      <div class="image">
-        <img src="images/${image}" alt="${image}">
-      </div>
+    <div class="image">
+      <img src="images/${image}" alt="${image}">
+    </div>
+    <form class="edit-li" name="edit-li" method="post">
       <div class="text-width">
         <span id="title" class="title">${title}</span><br>
         <span id="artist" class="artist">${artist}</span>
       </div>
-      <button onclick="toggleEditingMode(${liNo})">Endre</button>
+      <button class="round-button" onclick="toggleEditingMode(${liNo})">Endre</button>
     </form>
-    <button onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
-    <button onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
+    <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
+    <button class="round-button" onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
   `
-}
-
-/**
- * prevent default behaviour på alle li forms (Endre-funksjonalitet)
- * @param {number} liNo nummer på list item
- */
-function formPreventDefault(liNo) {
-  const item = document.getElementById(liNo)
-  var form = item.querySelector('.form-create-li')
-  form.addEventListener('submit', (event) => {
-    event.preventDefault()
-    
-  })
 }
 
 function toggleEditingMode(liNo) {
@@ -106,8 +93,11 @@ function toggleEditingMode(liNo) {
     const artist = spanArtist.innerHTML
 
     divImage.innerHTML = `
-      <img src="images/${imageFilename}" alt="${imageFilename}"><br>
-      <input type="file" class="upload-file" name="uploadFile">
+      <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
+        <img src="images/${imageFilename}" alt="${imageFilename}"><br>
+        <input type="file" class="upload-file" name="upload-file">
+        <input type="submit" value="Last opp">
+      </form>
     `
 
     divTextwith.innerHTML = `
@@ -115,8 +105,77 @@ function toggleEditingMode(liNo) {
       <input class="artist" type="text" placeholder="artist" value="${artist}">
     `
 
+    const formImageUpload = item.querySelector('.image-upload')
+    formImageUpload.addEventListener('submit', (event) => {
+      event.preventDefault()
+      const formattedFormData = new FormData(formImageUpload)
+      postData(formattedFormData, liNo)
+    })
 
   }
+}
+
+/**
+ * prevent default behaviour på alle li forms (Endre-funksjonalitet)
+ * @param {number} liNo nummer på list item
+ */
+function formEditLiPreventDefault(liNo) {
+  const item = document.getElementById(liNo)
+  const form = item.querySelector('.edit-li')
+  form.addEventListener('submit', (event) => {
+    event.preventDefault()
+  })
+}
+
+/**
+ * Be PHP om å laste ned bilde i mappe, og endre bildet til dette
+ * @param {*} formattedFormData 
+ * @param {number} liNo nummer på list item
+ */
+async function postData(formattedFormData, liNo) {
+  // PHP laster ned bilde i mappe, eller forteller JS om bilde ikke ble lastet opp
+  const response = await fetch('placeImgInFolder.php', {
+    method: 'POST',
+    body: formattedFormData
+  })
+  /* Hent echo verdien fra PHP.
+  const data vil inneholde en string
+  som forteller JS hvilket utfall det ble */
+  const data = await response.text()
+  // console.log('resultatet ble: ', data)
+
+  // Hvis brukeren ikke lastet opp bilde i <form>:
+  if (data == 'lastetIkkeOpp') {
+    var imgUploaded = false
+  }
+  else if (data == 'bleIkkeLastetNed') {
+    var imgUploaded = 'feil'
+    alert('Bilde ble ikke lastet ned')
+  }
+  else if (data == 'bleLastetNed') {
+    var imgUploaded = true
+    // console.log('lastet opp bilde. og det ble lastet ned')
+  }
+
+  if (imgUploaded == true) {
+    // sett inn bilde
+    const imageFilename = document.forms['image-upload']['upload-file'].files[0].name
+    const item = document.getElementById(liNo)
+    const divImage = item.querySelector('.image')
+
+    divImage.innerHTML = `
+      <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
+        <img src="images/${imageFilename}" alt="${imageFilename}"><br>
+        <input type="file" class="upload-file" name="upload-file">
+        <input type="submit" value="Last opp">
+      </form>
+    `
+
+    
+
+
+  }
+
 }
 
 /**
