@@ -223,33 +223,29 @@ function moveElement(liNo, direction) {
   if (direction == 'up') {
     /* Flytt elementet foran forrige element.
     så lenge den ikke ligger øverst i listen */
-    var previousElement = itemToMove.previousElementSibling
+    const element = itemToMove
+    const previousElement = itemToMove.previousElementSibling
     if (previousElement != null) {
-      ol.insertBefore(itemToMove, previousElement)
+      ol.insertBefore(element, previousElement)
     }
   } else {
     /* Flytt valgt element under den neste i listen.
     så lenge den ikke ligger nederst i listen.
     Teknisk sett er det elementet under som flyttes opp,
     og ikke ditt element som flyttes ned. */
-    var itemToMoveUp = itemToMove.nextElementSibling
-    if (itemToMoveUp != null) {
-      ol.insertBefore(itemToMoveUp, itemToMove)
+    const element = itemToMove
+    const nextElement = itemToMove.nextElementSibling
+    if (nextElement != null) {
+      ol.insertBefore(nextElement, element)
     }
   }
   highlight(itemToMove)
 }
 
 function deleteElement(liNo) {
-  // Fjern fra listen
   const itemToDelete = document.getElementById(liNo)
   const ol = document.getElementById('ordered-list')
   ol.removeChild(itemToDelete)
-
-  // Sett inn i en “undo snackbar”
-  // const body = document.body
-  // const header = document.querySelector('header')
-  // body.insertBefore(itemToDelete, header)
 }
 /**
  * Lagre GUI listen i tekstfilen.
