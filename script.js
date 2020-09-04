@@ -49,6 +49,7 @@ function createListItem(image, title, artist, liNo) {
       </div>
       <button class="round-button" onclick="toggleEditingMode(${liNo})">Endre</button>
     </form>
+    <button class="round-button" onclick="deleteElement(${liNo})">Slett</button>
     <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
     <button class="round-button" onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
   `
@@ -79,7 +80,6 @@ function toggleEditingMode(liNo) {
       <span class="title">${title}</span><br>
       <span class="artist">${artist}</span>
     `
-
   } else {
     item.classList.add('editing-mode')
 
@@ -197,37 +197,6 @@ function countLi() {
 }
 
 /**
- * Flytt valgt element i bestemt retning
- * @param {number} liNo 
- * @param {string} direction 
- */
-function moveElement(liNo, direction) {
-  // Hent elementet som skal flyttes
-  var itemToMove = document.getElementById(liNo)
-  var ol = document.getElementById('ordered-list')
-  // Flytt elementet
-  if (direction == 'up') {
-    /* Flytt elementet foran i listen under valgt element.
-    Dersom foregående element ikke finnes (valgt element ligger øverst i listen), ikke utfør */
-    var itemToMoveDown = itemToMove.previousElementSibling
-    var replaceThisItem = itemToMove
-    if (itemToMoveDown != null) {
-      ol.insertBefore(replaceThisItem, itemToMoveDown)
-    }
-  } else {
-    /* Flytt valgt element under den neste i listen.
-    Dersom neste element ikke finnes (valgt element ligger nederst i listen), ikke utfør */
-    var itemToMoveDown = itemToMove
-    var replaceThisItem = itemToMove.nextElementSibling
-    // Sjekk om elementet ikke ligger nederst
-    if (replaceThisItem != null) {
-      ol.insertBefore(replaceThisItem, itemToMoveDown)
-    }
-  }
-  highlight(itemToMove)
-}
-
-/**
  * Gi en diskré highlight til elementet
  * som ble flyttet/endret
  * @param {element} item 
@@ -241,6 +210,47 @@ function highlight(item) {
   }, 500);
 }
 
+/**
+ * Flytt valgt element i bestemt retning
+ * @param {number} liNo 
+ * @param {string} direction 
+ */
+function moveElement(liNo, direction) {
+  // Hent elementet som skal flyttes
+  const itemToMove = document.getElementById(liNo)
+  const ol = document.getElementById('ordered-list')
+  // Flytt elementet
+  if (direction == 'up') {
+    /* Flytt elementet foran forrige element.
+    så lenge den ikke ligger øverst i listen */
+    var previousElement = itemToMove.previousElementSibling
+    if (previousElement != null) {
+      ol.insertBefore(itemToMove, previousElement)
+    }
+  } else {
+    /* Flytt valgt element under den neste i listen.
+    så lenge den ikke ligger nederst i listen.
+    Teknisk sett er det elementet under som flyttes opp,
+    og ikke ditt element som flyttes ned. */
+    var itemToMoveUp = itemToMove.nextElementSibling
+    if (itemToMoveUp != null) {
+      ol.insertBefore(itemToMoveUp, itemToMove)
+    }
+  }
+  highlight(itemToMove)
+}
+
+function deleteElement(liNo) {
+  // Fjern fra listen
+  const itemToDelete = document.getElementById(liNo)
+  const ol = document.getElementById('ordered-list')
+  ol.removeChild(itemToDelete)
+
+  // Sett inn i en “undo snackbar”
+  // const body = document.body
+  // const header = document.querySelector('header')
+  // body.insertBefore(itemToDelete, header)
+}
 /**
  * Lagre GUI listen i tekstfilen.
  * Konverter GUI listen til en tekststreng,
