@@ -21,15 +21,16 @@ function createList() {
         let title = spilldata[0]
         let artist = spilldata[1]
 
-        createListItem(image, title, artist, liNo)
+        createElement(image, title, artist, liNo)
         formEditLiPreventDefault(liNo)
       });
     })
 }
 
-function createListItem(image, title, artist, liNo) {
+function createElement(image, title, artist, liNo) {
+  console.log('createElement: ', image, title, artist, liNo)
   const orderedList = document.getElementById('ordered-list')
-  // Lag element med flexdiv
+  // Lag listeelement med flexdiv
   let li = document.createElement('li')
   li.id = liNo
   let flexDiv = document.createElement('div')
@@ -53,6 +54,65 @@ function createListItem(image, title, artist, liNo) {
     <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
     <button class="round-button" onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
   `
+}
+
+function userCreateElement(image, title, artist, liNo) {
+  createElement(image, title, artist, liNo)
+  toggleEditingMode(liNo)
+  formEditLiPreventDefault(liNo)
+}
+
+
+/**
+ * Gi en diskré highlight til elementet
+ * som ble flyttet/endret
+ * @param {element} item
+ */
+function highlight(item) {
+  item.style.transition = 'background-color 0ms linear'
+  item.style.backgroundColor = 'rgb(34, 34, 34)'
+  setTimeout(() => {
+    item.style.transition = 'background-color 500ms linear'
+    item.style.backgroundColor = ''
+  }, 500);
+}
+
+/**
+ * Flytt valgt element i bestemt retning
+ * @param {number} liNo 
+ * @param {string} direction 
+ */
+function moveElement(liNo, direction) {
+  // Hent elementet som skal flyttes
+  const itemToMove = document.getElementById(liNo)
+  const ol = document.getElementById('ordered-list')
+  // Flytt elementet
+  if (direction == 'up') {
+    /* Flytt elementet foran forrige element.
+    så lenge den ikke ligger øverst i listen */
+    const element = itemToMove
+    const previousElement = itemToMove.previousElementSibling
+    if (previousElement != null) {
+      ol.insertBefore(element, previousElement)
+    }
+  } else {
+    /* Flytt valgt element under den neste i listen.
+    så lenge den ikke ligger nederst i listen.
+    Teknisk sett er det elementet under som flyttes opp,
+    og ikke ditt element som flyttes ned. */
+    const element = itemToMove
+    const nextElement = itemToMove.nextElementSibling
+    if (nextElement != null) {
+      ol.insertBefore(nextElement, element)
+    }
+  }
+  highlight(itemToMove)
+}
+
+function deleteElement(liNo) {
+  const itemToDelete = document.getElementById(liNo)
+  const ol = document.getElementById('ordered-list')
+  ol.removeChild(itemToDelete)
 }
 
 function toggleEditingMode(liNo) {
@@ -111,7 +171,6 @@ function toggleEditingMode(liNo) {
       const formattedFormData = new FormData(formImageUpload)
       postData(formattedFormData, liNo)
     })
-
   }
 }
 
@@ -185,7 +244,7 @@ async function postData(formattedFormData, liNo) {
  * Ettersom iterasjon starter på 1 på lis.length legges til med to
  * og ikke én.
  */
-function countLi() {
+function findFreeLiId() {
   let lis = document.querySelectorAll('li')
   for (let i = 1; i < lis.length + 2; i++) {
     let element = document.getElementById(i)
@@ -196,57 +255,6 @@ function countLi() {
   }
 }
 
-/**
- * Gi en diskré highlight til elementet
- * som ble flyttet/endret
- * @param {element} item 
- */
-function highlight(item) {
-  item.style.transition = 'background-color 0ms linear'
-  item.style.backgroundColor = 'rgb(34, 34, 34)'
-  setTimeout(() => {
-    item.style.transition = 'background-color 500ms linear'
-    item.style.backgroundColor = ''
-  }, 500);
-}
-
-/**
- * Flytt valgt element i bestemt retning
- * @param {number} liNo 
- * @param {string} direction 
- */
-function moveElement(liNo, direction) {
-  // Hent elementet som skal flyttes
-  const itemToMove = document.getElementById(liNo)
-  const ol = document.getElementById('ordered-list')
-  // Flytt elementet
-  if (direction == 'up') {
-    /* Flytt elementet foran forrige element.
-    så lenge den ikke ligger øverst i listen */
-    const element = itemToMove
-    const previousElement = itemToMove.previousElementSibling
-    if (previousElement != null) {
-      ol.insertBefore(element, previousElement)
-    }
-  } else {
-    /* Flytt valgt element under den neste i listen.
-    så lenge den ikke ligger nederst i listen.
-    Teknisk sett er det elementet under som flyttes opp,
-    og ikke ditt element som flyttes ned. */
-    const element = itemToMove
-    const nextElement = itemToMove.nextElementSibling
-    if (nextElement != null) {
-      ol.insertBefore(nextElement, element)
-    }
-  }
-  highlight(itemToMove)
-}
-
-function deleteElement(liNo) {
-  const itemToDelete = document.getElementById(liNo)
-  const ol = document.getElementById('ordered-list')
-  ol.removeChild(itemToDelete)
-}
 /**
  * Lagre GUI listen i tekstfilen.
  * Konverter GUI listen til en tekststreng,
