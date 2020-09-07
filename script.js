@@ -22,46 +22,43 @@ function createList() {
         let artist = spilldata[1]
 
         createElement(image, title, artist, liNo)
-        formEditLiPreventDefault(liNo)
       });
     })
 }
 
 function createElement(image, title, artist, liNo) {
-  console.log('createElement: ', image, title, artist, liNo)
   const orderedList = document.getElementById('ordered-list')
-  // Lag listeelement med flexdiv
-  let li = document.createElement('li')
-  li.id = liNo
-  let flexDiv = document.createElement('div')
-  li.appendChild(flexDiv)
-  flexDiv.classList.add('flex-li')
+  const li = document.createElement('li')
   orderedList.appendChild(li)
 
   // Lag flexdiv innhold
-  flexDiv.innerHTML = `
-    <div class="image">
-      <img src="images/${image}" alt="${image}">
-    </div>
-    <form class="edit-li" name="edit-li" method="post">
-      <div class="text-width">
-        <span id="title" class="title">${title}</span><br>
-        <span id="artist" class="artist">${artist}</span>
+  li.outerHTML = `
+    <li id="${liNo}">
+      <div class="flex-li">
+        <div class="image">
+          <img src="images/${image}" alt="${image}">
+        </div>
+        <form class="edit-li">
+          <div class="text-width">
+            <span id="title" class="title">${title}</span><br>
+            <span id="artist" class="artist">${artist}</span>
+          </div>
+          <button class="round-button" onclick="toggleEditingMode(${liNo})">Endre</button>
+        </form>
+        <button class="round-button" onclick="deleteElement(${liNo})">Slett</button>
+        <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
+        <button class="round-button" onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
       </div>
-      <button class="round-button" onclick="toggleEditingMode(${liNo})">Endre</button>
-    </form>
-    <button class="round-button" onclick="deleteElement(${liNo})">Slett</button>
-    <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
-    <button class="round-button" onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
+    </li>
   `
+  formEditLiPreventDefault(liNo)
 }
 
 function userCreateElement(image, title, artist, liNo) {
   createElement(image, title, artist, liNo)
   toggleEditingMode(liNo)
-  formEditLiPreventDefault(liNo)
+  checkIfListIsSaved()
 }
-
 
 /**
  * Gi en diskré highlight til elementet
@@ -107,12 +104,14 @@ function moveElement(liNo, direction) {
     }
   }
   highlight(itemToMove)
+  checkIfListIsSaved()
 }
 
 function deleteElement(liNo) {
   const itemToDelete = document.getElementById(liNo)
   const ol = document.getElementById('ordered-list')
   ol.removeChild(itemToDelete)
+  checkIfListIsSaved()
 }
 
 function toggleEditingMode(liNo) {
@@ -140,6 +139,7 @@ function toggleEditingMode(liNo) {
       <span class="title">${title}</span><br>
       <span class="artist">${artist}</span>
     `
+    checkIfListIsSaved()
   } else {
     item.classList.add('editing-mode')
 
@@ -161,8 +161,8 @@ function toggleEditingMode(liNo) {
     `
 
     divTextwith.innerHTML = `
-      <input class="title" type="text" placeholder="tittel" value="${title}"><br>
-      <input class="artist" type="text" placeholder="artist" value="${artist}">
+      <input class="title" type="text" placeholder="tittel" oninput="checkIfListIsSaved()" value="${title}"><br>
+      <input class="artist" type="text" placeholder="artist" oninput="checkIfListIsSaved()" value="${artist}">
     `
 
     const formImageUpload = item.querySelector('.image-upload')
@@ -230,7 +230,7 @@ async function postData(formattedFormData, liNo) {
       </form>
     `
 
-    
+
 
 
   }
@@ -260,40 +260,22 @@ function findFreeLiId() {
  * Konverter GUI listen til en tekststreng,
  * og send denne til PHP som kan ordne opp i resten
  */
-function saveOrder() {
+function saveList() {
   /* Sørg for at lis ikke er i editing mode
-  koden nedenfor er ikke bygd for at denne modusen er åpen*/
+  koden nedenfor er ikke bygd for at denne modusen er åpen */
   makeSureNoLiIsInEditingMode()
 
-  // Hent gjeldende rangering som string
-  let lis = document.querySelectorAll('li')
-
-  /* Finn de rette semantiske ordene i listepunktene, formater dem
-  og legg dem til tekststrenger som vi skal sende */
-  var olAsTextString = ''
-
-  for (let i = 0; i < lis.length; i++) {
-    let imageSourcePath = lis[i].querySelector('img').src
-    let imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
-    let title = lis[i].querySelector('.title').innerHTML
-    let artist = lis[i].querySelector('.artist').innerHTML
-    let liAsTextString = title + ', ' + artist + ', ' + imageFilename
-    /* olAsTextString's første linje må ikke starte
-    med linjeskift, men de neste linjene må det */
-    if (i == 0) {
-      olAsTextString += liAsTextString
-    } else {
-      olAsTextString += '\n' + liAsTextString
-    }
-  }
+  var listAsTextString = ''
+  listAsTextString = convertListToTextstring(listAsTextString)
 
   // Vi har den nye rangeringen som tekstreng, send denne til PHP
-  var infoForPhp = { newOrder: olAsTextString } // newOrder: 'tekststreng med gjeldende rangering'
+  var infoForPhp = { newOrder: listAsTextString } // newOrder: 'tekststreng med gjeldende rangering'
   fetch(`updateFile.php`, {
     method: 'POST',
     headers: { "Content-type": "application/x-www-form-urlencoded" },
     body: formEncode(infoForPhp)
   })
+  setSaveButtonTextTo('&check; Lagret')
 }
 
 function makeSureNoLiIsInEditingMode() {
@@ -317,6 +299,62 @@ function makeSureNoLiIsInEditingMode() {
   }
 }
 
+/**
+ * Sjekker om listen har noen ulagrede endringer,
+ * for så å legge inn en indikator på dette i saveList-knappen.
+ * En lagret endring er når brukeren har endret listen, ikke lagret,
+ * og så endret tilbake til startspunktet.
+ */
+function checkIfListIsSaved() {
+  // Sammenlign tekstfil og gjeldende liste
+  var listAsTextString = ''
+  listAsTextString = convertListToTextstring(listAsTextString)
+
+  fetch('spill.txt')
+    .then(res => res.text())
+    .then(data => {
+      var textFileAsTextString = data
+      
+      if (textFileAsTextString == listAsTextString) {
+        setSaveButtonTextTo('&check; Lagret')
+      } else {
+        setSaveButtonTextTo('Lagre rangering')
+      }
+    })
+}
+
+/**
+ * Definer teksten til save-knappen. Denne kalles gjerne
+ * av checkIfListIsSaved() og saveList()
+ */
+function setSaveButtonTextTo(text) {
+  const saveButton = document.getElementById('saveButton')
+  saveButton.innerHTML = text
+}
+
+function convertListToTextstring(listAsTextString) {
+  // Hent gjeldende rangering som string
+  let lis = document.querySelectorAll('li')
+
+  /* Finn de rette semantiske ordene i listepunktene, formater dem
+  og legg dem til tekststrenger som vi skal sende */
+  for (let i = 0; i < lis.length; i++) {
+    let imageSourcePath = lis[i].querySelector('img').src
+    let imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
+    let title = lis[i].querySelector('.title').innerHTML
+    let artist = lis[i].querySelector('.artist').innerHTML
+    let liAsTextString = title + ', ' + artist + ', ' + imageFilename
+    /* listAsTextString's første linje må ikke starte
+    med linjeskift, men de neste linjene må det */
+    if (i == 0) {
+      listAsTextString += liAsTextString
+    } else {
+      listAsTextString += '\n' + liAsTextString
+    }
+  }
+  return listAsTextString
+}
+
 function refresh() {
   window.location = 'index.html'
 }
@@ -325,7 +363,7 @@ function refresh() {
  * Kode for å pakke inn verdier som skal til PHP, inn i en form, slik at man slipper å måtte
  * ha brukerinput for å sende verdier til PHP.
  * formEncode() og enkelte deler
- * fra saveOrder() er lagd av
+ * fra saveList() er lagd av
  * Anders_bondehagen på
  * https://forums.fusetools.com/t/how-do-i-receive-post-data-in-php-sent-from-fuse-javascript-by-fetch/5357/3
  */
