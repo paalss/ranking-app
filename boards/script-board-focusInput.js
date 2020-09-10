@@ -58,7 +58,7 @@ function createElement(image, title, artist, liNo) {
 function userCreateElement(image, title, artist, liNo) {
   createElement(image, title, artist, liNo)
   toggleEditingMode(liNo)
-  determineSaveButtonText()
+  checkForUnsavedChanges()
 }
 
 /**
@@ -105,14 +105,14 @@ function moveElement(liNo, direction) {
     }
   }
   highlight(itemToMove)
-  determineSaveButtonText()
+  checkForUnsavedChanges()
 }
 
 function deleteElement(liNo) {
   const itemToDelete = document.getElementById(liNo)
   const ol = document.getElementById('ordered-list')
   ol.removeChild(itemToDelete)
-  determineSaveButtonText()
+  checkForUnsavedChanges()
 }
 
 function toggleEditingMode(liNo) {
@@ -140,7 +140,7 @@ function toggleEditingMode(liNo) {
       <span class="title">${title}</span><br>
       <span class="artist">${artist}</span>
     `
-    determineSaveButtonText()
+    checkForUnsavedChanges()
   } else {
     item.classList.add('editing-mode')
 
@@ -162,16 +162,20 @@ function toggleEditingMode(liNo) {
     `
 
     divTextwith.innerHTML = `
-      <input class="title" type="text" placeholder="tittel" oninput="determineSaveButtonText()" value="${title}"><br>
-      <input class="artist" type="text" placeholder="artist" oninput="determineSaveButtonText()" value="${artist}">
+      <input class="title" type="text" placeholder="tittel" oninput="checkForUnsavedChanges()" value="${title}"><br>
+      <input class="artist" type="text" placeholder="artist" oninput="checkForUnsavedChanges()" value="${artist}">
     `
 
+    // Sett opp bilde form
     const formImageUpload = item.querySelector('.image-upload')
     formImageUpload.addEventListener('submit', (event) => {
       event.preventDefault()
       const formattedFormData = new FormData(formImageUpload)
       postData(formattedFormData, liNo)
     })
+
+    const inputTitle = item.querySelector('.title')
+    inputTitle.focus()
   }
 }
 
@@ -276,10 +280,8 @@ function saveList() {
     headers: { "Content-type": "application/x-www-form-urlencoded" },
     body: formEncode(infoForPhp)
   })
+  checkForUnsavedChanges()
   // setSaveButtonTextTo('&check; Lagret')
-  // vi vet ikke om fetch fungerer, (funker bare når browser developer tools er åpen)
-  // Gjør en sjekk om listen virkelig har blitt lagret.
-  determineSaveButtonText()
 }
 
 function makeSureNoLiIsInEditingMode() {
@@ -305,11 +307,11 @@ function makeSureNoLiIsInEditingMode() {
 
 /**
  * Sjekker om listen har noen ulagrede endringer,
- * for så å avgjøre hvilken tekst som skal være i saveList-knappen.
+ * for så å legge inn en indikator på dette i saveList-knappen.
  * En lagret endring er når brukeren har endret listen, ikke lagret,
  * og så endret tilbake til startspunktet.
  */
-function determineSaveButtonText() {
+function checkForUnsavedChanges() {
   // Sammenlign tekstfil og gjeldende liste
   var listAsTextString = ''
   listAsTextString = convertListToTextstring(listAsTextString)
@@ -329,7 +331,7 @@ function determineSaveButtonText() {
 
 /**
  * Definer teksten til save-knappen. Denne kalles gjerne
- * av determineSaveButtonText() og saveList()
+ * av checkForUnsavedChanges() og saveList()
  */
 function setSaveButtonTextTo(text) {
   const saveButton = document.getElementById('saveButton')

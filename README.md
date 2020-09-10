@@ -17,15 +17,11 @@ For XAMPP på Mac: Du får ikke den nødvendige filstrukturen i automatisk, du m
 Opprett listeelementer, arranger og lagre.
 
 ### NB
-For en eller annen grunn må man åpne consollet før man kan lagre listen 
+For en eller annen grunn må man åpne developer tools (inspiser element, console etc.) før man lagringsfunksjonen skal fungere.
+
+Eller klikke mange ganger på lagringsknappen…
 
 ## Manglende funksjonalitet som kommer etterhvert
-Sletting av listepunkt
-
-Endre listepunkt
-
 Opprette egne lister
-
-Fint «lag nytt listepunkt» GUI
 
 En angre «snackbar» for å trekke tilbake slettede elementer
