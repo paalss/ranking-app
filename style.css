@@ -90,20 +90,14 @@ form.edit-li {
 
 button.round-button, input[type=submit].round-button {
   color: #fff;
-  /* så lenge vi har tekst her */
   border-radius: 30px;
   height: 60px;
   background: none;
-  /* background-color: #000; */
 }
 
 button.round-button:hover, button.round-button:focus, input[type=submit].round-button:hover, input[type=submit].round-button:focus {
   border-color: yellow;
 }
-
-/* input[type=file] {
-  width: 90%;
-} */
 
 .flex-settings {
   display: flex;
@@ -112,8 +106,8 @@ button.round-button:hover, button.round-button:focus, input[type=submit].round-b
 }
 
 /* 
-Arrow classes er basert på
-arrows av Chris Coyier på:
+Arrow classes are based on
+arrows by Chris Coyier on:
 https://css-tricks.com/snippets/css/css-triangle/
 */
 
@@ -123,7 +117,6 @@ https://css-tricks.com/snippets/css/css-triangle/
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
   border-bottom: 20px solid rgb(172, 172, 172);
-  /* background-color: #000; */
 }
 
 .arrow-down {
@@ -132,5 +125,4 @@ https://css-tricks.com/snippets/css/css-triangle/
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
   border-top: 20px solid rgb(172, 172, 172);
-  /* background-color: #000; */
 }

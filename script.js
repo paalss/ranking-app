@@ -5,26 +5,26 @@ window.onload = () => {
 }
 
 function createList() {
-  // Generer GUI liste fra tekstfil
-  fetch('spill.txt')
+  // Generate GUI list from text file
+  fetch('music.txt')
     .then(res => res.text())
     .then(data => {
-      // Tekstfilen består av flere linjer som hver skal bli en <li>
+      // The text file contains multiple lines where each shall be a <li>
       let array = data.split('\n')
       var liNo = 0
-      array.forEach(spill => {
+      array.forEach(element => {
         liNo++
-        // Tekstlinjene består av kommaseparerte verdier som hver skal behandles ulikt
-        let spilldata = spill.split(', ')
+        // The text lines contains comma separated values
+        let data = element.split(', ')
 
-        let image = spilldata[2]
-        let title = spilldata[0]
-        let artist = spilldata[1]
+        let image = data[2]
+        let title = data[0]
+        let artist = data[1]
 
         createElement(image, title, artist, liNo)
       });
     })
-  setSaveButtonTextTo('&check; Lagret')
+  setSaveButtonTextTo('&check; Saved')
 }
 
 function createElement(image, title, artist, liNo) {
@@ -32,7 +32,7 @@ function createElement(image, title, artist, liNo) {
   const li = document.createElement('li')
   orderedList.appendChild(li)
 
-  // Lag flexdiv innhold
+  // Create <li> and its contents
   li.outerHTML = `
     <li id="${liNo}">
       <div class="flex-li">
@@ -44,9 +44,9 @@ function createElement(image, title, artist, liNo) {
             <span id="title" class="title">${title}</span><br>
             <span id="artist" class="artist">${artist}</span>
           </div>
-          <button class="round-button" onclick="toggleEditingMode(${liNo})">Endre</button>
+          <button class="round-button" onclick="toggleEditingMode(${liNo})">Rename</button>
         </form>
-        <button class="round-button" onclick="deleteElement(${liNo})">Slett</button>
+        <button class="round-button" onclick="deleteElement(${liNo})">Delete</button>
         <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
         <button class="round-button" onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
       </div>
@@ -61,11 +61,6 @@ function userCreateElement(image, title, artist, liNo) {
   determineSaveButtonText()
 }
 
-/**
- * Gi en diskré highlight til elementet
- * som ble flyttet/endret
- * @param {element} item
- */
 function highlight(item) {
   item.style.transition = 'background-color 0ms linear'
   item.style.backgroundColor = 'rgb(34, 34, 34)'
@@ -76,28 +71,24 @@ function highlight(item) {
 }
 
 /**
- * Flytt valgt element i bestemt retning
+ * Move chosen element in a direction
  * @param {number} liNo 
  * @param {string} direction 
  */
 function moveElement(liNo, direction) {
-  // Hent elementet som skal flyttes
   const itemToMove = document.getElementById(liNo)
   const ol = document.getElementById('ordered-list')
-  // Flytt elementet
   if (direction == 'up') {
-    /* Flytt elementet foran forrige element.
-    så lenge den ikke ligger øverst i listen */
+    /* Move chosen element up
+    as long as it's not at the top of the list */
     const element = itemToMove
     const previousElement = itemToMove.previousElementSibling
     if (previousElement != null) {
       ol.insertBefore(element, previousElement)
     }
   } else {
-    /* Flytt valgt element under den neste i listen.
-    så lenge den ikke ligger nederst i listen.
-    Teknisk sett er det elementet under som flyttes opp,
-    og ikke ditt element som flyttes ned. */
+    /* Move chosen element down
+    as long as it's not at the bottom of the list  */
     const element = itemToMove
     const nextElement = itemToMove.nextElementSibling
     if (nextElement != null) {
@@ -157,12 +148,12 @@ function toggleEditingMode(liNo) {
       <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
         <img src="images/${imageFilename}" alt="${imageFilename}"><br>
         <input type="file" class="upload-file" name="upload-file">
-        <input type="submit" value="Last opp">
+        <input type="submit" value="Upload">
       </form>
     `
 
     divTextwith.innerHTML = `
-      <input class="title" type="text" placeholder="tittel" oninput="determineSaveButtonText()" value="${title}"><br>
+      <input class="title" type="text" placeholder="title" oninput="determineSaveButtonText()" value="${title}"><br>
       <input class="artist" type="text" placeholder="artist" oninput="determineSaveButtonText()" value="${artist}">
     `
 
@@ -175,10 +166,6 @@ function toggleEditingMode(liNo) {
   }
 }
 
-/**
- * prevent default behaviour på alle li forms (Endre-funksjonalitet)
- * @param {number} liNo nummer på list item
- */
 function formEditLiPreventDefault(liNo) {
   const item = document.getElementById(liNo)
   const form = item.querySelector('.edit-li')
@@ -188,37 +175,31 @@ function formEditLiPreventDefault(liNo) {
 }
 
 /**
- * Be PHP om å laste ned bilde i mappe, og endre bildet til dette
- * @param {*} formattedFormData 
- * @param {number} liNo nummer på list item
+ * Ask PHP to download image into folder,
+ * once it's done, place image in element
  */
 async function postData(formattedFormData, liNo) {
-  // PHP laster ned bilde i mappe, eller forteller JS om bilde ikke ble lastet opp
+  // PHP attempts to download image
   const response = await fetch('placeImgInFolder.php', {
     method: 'POST',
     body: formattedFormData
   })
-  /* Hent echo verdien fra PHP.
-  const data vil inneholde en string
-  som forteller JS hvilket utfall det ble */
+  // PHP provides feedback about image download attempt
   const data = await response.text()
-  // console.log('resultatet ble: ', data)
 
-  // Hvis brukeren ikke lastet opp bilde i <form>:
-  if (data == 'lastetIkkeOpp') {
+  if (data == 'did_not_upload') {
     var imgUploaded = false
   }
-  else if (data == 'bleIkkeLastetNed') {
+  else if (data == 'was_not_downloaded') {
     var imgUploaded = 'feil'
     alert('Bilde ble ikke lastet ned')
   }
-  else if (data == 'bleLastetNed') {
+  else if (data == 'was_downloaded') {
     var imgUploaded = true
-    // console.log('lastet opp bilde. og det ble lastet ned')
   }
 
   if (imgUploaded == true) {
-    // sett inn bilde
+    // Insert image
     const imageFilename = document.forms['image-upload']['upload-file'].files[0].name
     const item = document.getElementById(liNo)
     const divImage = item.querySelector('.image')
@@ -227,76 +208,69 @@ async function postData(formattedFormData, liNo) {
       <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
         <img src="images/${imageFilename}" alt="${imageFilename}"><br>
         <input type="file" class="upload-file" name="upload-file">
-        <input type="submit" value="Last opp">
+        <input type="submit" value="Upload">
       </form>
     `
-
-
-
-
   }
 
 }
 
 /**
- * Returner tall som ingen har som id.
- * Hent alle listepunkter, gå gjennom dem pluss én omgang til.
- * Vi starter på iterasjon 1, for å sammenligne med id.
- * Ettersom iterasjon starter på 1 på lis.length legges til med to
- * og ikke én.
+ * Finds an ID in which isn't already in use.
+ * Executed as a parameter in userCreateElement
  */
 function findFreeLiId() {
   let lis = document.querySelectorAll('li')
   for (let i = 1; i < lis.length + 2; i++) {
     let element = document.getElementById(i)
-    // Dersom ingen elementer har dette tallet som id, er denne id'en ledig
     if (element == null) {
+      // No element has this as its ID, the ID's free to take
       return i
     }
   }
 }
 
 /**
- * Lagre GUI listen i tekstfilen.
- * Konverter GUI listen til en tekststreng,
- * og send denne til PHP som kan ordne opp i resten
+ * Save the list to text file:
+ * Convert the list to a text string,
+ * and ask PHP to overwrite the existing file
  */
 function saveList() {
-  /* Sørg for at lis ikke er i editing mode
-  koden nedenfor er ikke bygd for at denne modusen er åpen */
+  /* Make sure no list item is in editing mode
+  the code below isn't built for any list items being
+  in editing mode */
   makeSureNoLiIsInEditingMode()
 
   var listAsTextString = ''
   listAsTextString = convertListToTextstring(listAsTextString)
 
-  // Vi har den nye rangeringen som tekstreng, send denne til PHP
-  var infoForPhp = { newOrder: listAsTextString } // newOrder: 'tekststreng med gjeldende rangering'
+  // We have list as text string, send this to PHP
+  var infoForPhp = { newChange: listAsTextString }
   fetch(`updateFile.php`, {
     method: 'POST',
     headers: { "Content-type": "application/x-www-form-urlencoded" },
     body: formEncode(infoForPhp)
   })
-  // setSaveButtonTextTo('&check; Lagret')
-  // vi vet ikke om fetch fungerer, (funker bare når browser developer tools er åpen)
-  // Gjør en sjekk om listen virkelig har blitt lagret.
-  determineSaveButtonText()
+  setSaveButtonTextTo('&check; Saved')
 }
 
+/**
+ * Make sure no list item is in editing mode
+ */
 function makeSureNoLiIsInEditingMode() {
-  // Finn ut om noen lis har editing-mode
   const lisWithEditingMode = document.getElementsByClassName('editing-mode')
 
   if (lisWithEditingMode.length != 0) {
-    // Vi har lis med editing mode
-    let lisId_WithEditingMode = []
+    // Lis with editing mode has been found
 
-    // Gå gjennom disse og registrer hvilke det gjelder
+    let lisId_WithEditingMode = []
+    // Loop through those lis and log their ID
     for (let i = 0; i < lisWithEditingMode.length; i++) {
       lisId_WithEditingMode.push(lisWithEditingMode[i].id)
     }
 
-    /* Bruke registrerte id'er og kjør editingMode på dem for å slå dem av
-    Dette kunne ikke ha blitt gjort i forrige loop, fordi det tuller til HTML-collectionen. */
+    /* With ID log of whichever lis are in editing mode, run toggleEditingMode to turn editing modes off
+    This could not have been done in the previous loop, as it would mess with the HTML-colleciton */
     lisId_WithEditingMode.forEach(element => {
       toggleEditingMode(element)
     })
@@ -304,32 +278,29 @@ function makeSureNoLiIsInEditingMode() {
 }
 
 /**
- * Sjekker om listen har noen ulagrede endringer,
- * for så å avgjøre hvilken tekst som skal være i saveList-knappen.
- * En lagret endring er når brukeren har endret listen, ikke lagret,
- * og så endret tilbake til startspunktet.
+ * Determines what text saveButton should have.
+ * Function first checks for unsaved changes in list and then
+ * changes saveButton's text so it either shows '&check; saved' or 'Unsaved changes: Save'.
  */
 function determineSaveButtonText() {
-  // Sammenlign tekstfil og gjeldende liste
   var listAsTextString = ''
   listAsTextString = convertListToTextstring(listAsTextString)
 
-  fetch('spill.txt')
+  fetch('music.txt')
     .then(res => res.text())
     .then(data => {
       var textFileAsTextString = data
 
       if (textFileAsTextString == listAsTextString) {
-        setSaveButtonTextTo('&check; Lagret')
+        setSaveButtonTextTo('&check; Saved')
       } else {
-        setSaveButtonTextTo('Lagre endringer')
+        setSaveButtonTextTo('Unsaved changes: Save')
       }
     })
 }
 
 /**
- * Definer teksten til save-knappen. Denne kalles gjerne
- * av determineSaveButtonText() og saveList()
+ * Define the saveButton's text
  */
 function setSaveButtonTextTo(text) {
   const saveButton = document.getElementById('saveButton')
@@ -337,20 +308,18 @@ function setSaveButtonTextTo(text) {
 }
 
 function convertListToTextstring(listAsTextString) {
-  // Hent gjeldende rangering som string
   let lis = document.querySelectorAll('li')
 
-  /* Finn de rette semantiske ordene i listepunktene, formater dem
-  og legg dem til tekststrenger som vi skal sende */
+  /* For each list item, find its different values,
+  and build the text string */
   for (let i = 0; i < lis.length; i++) {
     let imageSourcePath = lis[i].querySelector('img').src
     let imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
     let title = lis[i].querySelector('.title').innerHTML
     let artist = lis[i].querySelector('.artist').innerHTML
     let liAsTextString = title + ', ' + artist + ', ' + imageFilename
-    /* listAsTextString's første linje må ikke starte
-    med linjeskift, men de neste linjene må det */
     if (i == 0) {
+      // The first line in the text string, is the only one to not start with a new line
       listAsTextString += liAsTextString
     } else {
       listAsTextString += '\n' + liAsTextString
@@ -364,11 +333,8 @@ function refresh() {
 }
 
 /**
- * Kode for å pakke inn verdier som skal til PHP, inn i en form, slik at man slipper å måtte
- * ha brukerinput for å sende verdier til PHP.
- * formEncode() og enkelte deler
- * fra saveList() er lagd av
- * Anders_bondehagen på
+ * A Function for helping with sending values to PHP, without the user is providing any user input.
+ * Code's made by Anders_bondehagen on
  * https://forums.fusetools.com/t/how-do-i-receive-post-data-in-php-sent-from-fuse-javascript-by-fetch/5357/3
  */
 function formEncode(obj) {

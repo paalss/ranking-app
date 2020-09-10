@@ -1,5 +1,3 @@
 <?php
-// Lagre innkommende tekststreng i tekstfila, overskriv det originale
-file_put_contents('spill.txt', $_POST['newOrder']);
-
-
+// Save list (incoming text string) over existing file
+file_put_contents('music.txt', $_POST['newChange']);

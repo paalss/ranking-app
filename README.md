@@ -1,27 +1,29 @@
 # Rangeringsapp (work in progress)
-En liten app for å rangere forskjellige elementer, og lagre endringene permanent
+A little app for ranking your own defined elements, and saving the changes permanently.
 
-## Åpne løsningen i nettleser
-### 1. Last ned filene i server-mappe
-1.1 Åpne programmet XAMPP, MAMP eller lignende. «Live Server» plugin fra Visual Studio Code er ikke tilstrekkelig som server. Denne løsningen må kunne lese fra en tekstfil, og skrive over tekstfilen igjen med PHP.
-For XAMPP på Mac: Du får ikke den nødvendige filstrukturen i automatisk, du må mount'e i XAMPP for å få den tilgjengelig i Finder.
+## Open web page
+This app uses PHP, so the app has to run on a server which can run it.
 
-1.3 Last ned repository-filene under servermappen xampp/htdocs/ (xampp windows), lampp/htdocs (xampp mac) eller lignende. 
+You may download the source code in a XAMPP htdocs folder, start the Apache from the XAMPP's control panel, and open the page in browser.
 
-### 2. Åpne nettsiden i en localhost server:
-2.1 Start Apache i XAMPP e.l.
+### Localhost setup guide with XAMPP Windows/Mac
 
-2.2 Åpne nettsiden med URL: localhost/path/til/mappe (xampp windows), localhost:8080/path/til/mappe (xampp mac)
+#### 1. Download XAMPP
+NB: Make sure “Apache” is checked during the installation process.
 
-## Bruk
-Opprett listeelementer, arranger og lagre.
+#### 2. Download source code into a server-folder
+2.1 Open XAMPP, MAMP or similar.
+
+2.2 Download the source code into the server-folder xampp/htdocs/ (for xampp windows), lampp/htdocs (for xampp mac) or similar. 
+
+NB for XAMPP Mac users: The server folder isn't automatically available in Finder, you'll have to mount it first. Use mount button in the XAMPP app.
+
+#### 3. Start server and open:
+3.1 In XAMPP interface, start Apache
+
+3.2 Open the webpage by writing: localhost/path/to/sourceCodeFolder (xampp windows), localhost:8080/path/to/sourceCodeFolder (xampp mac) or similar.
 
 ### NB
-For en eller annen grunn må man åpne developer tools (inspiser element, console etc.) før man lagringsfunksjonen skal fungere.
+For some reason, the save list function isn't working unless you've opened the browser's developer tools (Inspect element, console etc.) (F12) at least once.
 
-Eller klikke mange ganger på lagringsknappen…
-
-## Manglende funksjonalitet som kommer etterhvert
-Opprette egne lister
-
-En angre «snackbar» for å trekke tilbake slettede elementer
+Or by clicking multiple times at the save button…

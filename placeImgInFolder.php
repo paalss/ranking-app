@@ -1,5 +1,5 @@
 <?php
-// Tilgjengelige data fra <form>:
+// Available data from <form>:
 // echo $_POST['artist'];
 // echo $_POST['title'];
 // echo $_FILES['upload-file']['tmp_name'];
@@ -9,12 +9,12 @@ if (is_uploaded_file($_FILES['upload-file']['tmp_name'])) {
   $tmp_name = $_FILES["upload-file"]['tmp_name'];
   $name = $_FILES['upload-file']['name'];
 
-  // Flytt filen inn i images/mappa, gi den riktig navn og echo resultatet
+  // attempt to download file and provide feedback
   if (move_uploaded_file($tmp_name, "images/$name")) {
-    echo 'bleLastetNed';
+    echo 'was_downloaded';
   } else {
-    echo 'bleIkkeLastetNed'; // nedlasting av bilde feilet
+    echo 'was_not_downloaded';
   }
 } else {
-  echo 'lastetIkkeOpp'; // brukeren lastet ikke opp noe bilde
+  echo 'did_not_upload';
 }
