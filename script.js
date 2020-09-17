@@ -146,6 +146,10 @@ function toggleEditingMode(liNo) {
       </div>
       <button class="round-button" onclick="toggleEditingMode(${liNo})">Edit element</button>
     `
+
+    const imageUploadInputs = item.querySelector('.image-upload-inputs')
+    item.removeChild(imageUploadInputs)
+
     determineSaveButtonText()
   } else {
     item.classList.add('editing-mode')
@@ -157,11 +161,7 @@ function toggleEditingMode(liNo) {
     const artist = item.querySelector('.artist').innerHTML
 
     divImage.innerHTML = `
-      <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
-        <img src="images/${imageFilename}" alt="${imageFilename}"><br>
-        <input type="file" class="upload-file" name="upload-file">
-        <input type="submit" value="Upload">
-      </form>
+      <img src="images/${imageFilename}" alt="${imageFilename}">
     `
 
     divEditLi.innerHTML = `
@@ -172,10 +172,21 @@ function toggleEditingMode(liNo) {
       <button class="round-button" onclick="toggleEditingMode(${liNo})">Close edit</button>
     `
 
+    const imageUploadInputs = document.createElement('div')
+    imageUploadInputs.classList.add('image-upload-inputs')
+    item.appendChild(imageUploadInputs)
+
+    imageUploadInputs.innerHTML = `
+      <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
+        <input type="file" class="upload-file" name="upload-file"><br>
+        <input type="submit" value="Upload">
+      </form>
+    `
+
     const inputTitle = item.querySelector('.title')
     inputTitle.focus()
 
-    // Form prevent default
+    // Ready image upload form
     const formImageUpload = item.querySelector('.image-upload')
     formImageUpload.addEventListener('submit', (event) => {
       event.preventDefault()
@@ -224,11 +235,7 @@ async function postData(formattedFormData, liNo) {
     const divImage = item.querySelector('.image')
 
     divImage.innerHTML = `
-      <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
-        <img src="images/${imageFilename}" alt="${imageFilename}"><br>
-        <input type="file" class="upload-file" name="upload-file">
-        <input type="submit" value="Upload">
-      </form>
+      <img src="images/${imageFilename}" alt="${imageFilename}">
     `
   }
 
