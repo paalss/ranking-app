@@ -6,8 +6,8 @@ window.onload = () => {
 
 function createList() {
   /* Make sure to receive the list from the file
-  and not from cache. The user may have made some changes to
-  the file since it was uploaded to cache. Therefore, ignore cache. */
+  and not from a cached file. The user may have made some changes to
+  the file after it was uploaded to cache. Therefore, ignore cache. */
   var myHeaders = new Headers()
   myHeaders.append('pragma', 'no-cache')
   myHeaders.append('cache-control', 'no-cache')
@@ -59,7 +59,7 @@ function createElement(image, title, artist, liNo) {
             <span id="title" class="title">${title}</span><br>
             <span id="artist" class="artist">${artist}</span>
           </div>
-          <button class="round-button" onclick="toggleEditingMode(${liNo})">Edit</button>
+          <button class="round-button" onclick="toggleEditingMode(${liNo})">Edit element</button>
         </form>
         <button class="round-button" onclick="deleteElement(${liNo})">Delete</button>
         <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
@@ -124,40 +124,37 @@ function deleteElement(liNo) {
 function toggleEditingMode(liNo) {
   const item = document.getElementById(liNo)
   const divImage = item.querySelector('.image')
-  const divTextwith = item.querySelector('.text-width')
+  const divEditLi = item.querySelector('.edit-li')
 
   if (item.classList.contains('editing-mode')) {
     item.classList.remove('editing-mode')
 
-    const inputTitle = item.querySelector('.title')
-    const inputArtist = item.querySelector('.artist')
-
     const imageSourcePath = item.querySelector('img').src
     const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
 
-    const title = inputTitle.value
-    const artist = inputArtist.value
+    const title = item.querySelector('.title').value
+    const artist = item.querySelector('.artist').value
 
     divImage.innerHTML = `
       <img src="images/${imageFilename}" alt="${imageFilename}">
     `
 
-    divTextwith.innerHTML = `
-      <span class="title">${title}</span><br>
-      <span class="artist">${artist}</span>
+    divEditLi.innerHTML = `
+      <div class="text-width">
+        <span id="title" class="title">${title}</span><br>
+        <span id="artist" class="artist">${artist}</span>
+      </div>
+      <button class="round-button" onclick="toggleEditingMode(${liNo})">Edit element</button>
     `
     determineSaveButtonText()
   } else {
     item.classList.add('editing-mode')
 
-    const spanTitle = item.querySelector('.title')
-    const spanArtist = item.querySelector('.artist')
-
     const imageSourcePath = item.querySelector('img').src
     const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
 
-    const title = spanTitle.innerHTML
-    const artist = spanArtist.innerHTML
+    const title = item.querySelector('.title').innerHTML
+    const artist = item.querySelector('.artist').innerHTML
 
     divImage.innerHTML = `
       <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
@@ -167,11 +164,18 @@ function toggleEditingMode(liNo) {
       </form>
     `
 
-    divTextwith.innerHTML = `
-      <input class="title" type="text" placeholder="title" oninput="determineSaveButtonText()" value="${title}"><br>
-      <input class="artist" type="text" placeholder="artist" oninput="determineSaveButtonText()" value="${artist}">
+    divEditLi.innerHTML = `
+      <div class="text-width">
+        <input class="title" type="text" placeholder="title" oninput="determineSaveButtonText()" value="${title}"><br>
+        <input class="artist" type="text" placeholder="artist" oninput="determineSaveButtonText()" value="${artist}">
+      </div>
+      <button class="round-button" onclick="toggleEditingMode(${liNo})">Close edit</button>
     `
 
+    const inputTitle = item.querySelector('.title')
+    inputTitle.focus()
+
+    // Form prevent default
     const formImageUpload = item.querySelector('.image-upload')
     formImageUpload.addEventListener('submit', (event) => {
       event.preventDefault()
@@ -191,7 +195,7 @@ function formEditLiPreventDefault(liNo) {
 
 /**
  * Ask PHP to download image into folder,
- * once it's done, place image in element
+ * once it's done, place image in list element
  */
 async function postData(formattedFormData, liNo) {
   // PHP attempts to download image
@@ -298,7 +302,7 @@ function makeSureNoLiIsInEditingMode() {
 /**
  * Determines what text saveButton should have.
  * Function first checks for unsaved changes in list and then
- * changes saveButton's text so it either shows '&check; saved' or 'Unsaved changes: Save'.
+ * changes saveButton's text so it either shows '&check; saved' or '● Save changes'.
  */
 function determineSaveButtonText() {
   var listAsTextString = ''
@@ -312,7 +316,7 @@ function determineSaveButtonText() {
       if (textFileAsTextString == listAsTextString) {
         setSaveButtonTextTo('&check; Saved')
       } else {
-        setSaveButtonTextTo('Unsaved changes: Save')
+        setSaveButtonTextTo('● Save changes')
       }
     })
 }
