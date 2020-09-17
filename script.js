@@ -5,11 +5,26 @@ window.onload = () => {
 }
 
 function createList() {
+  /* Make sure to receive the list from the file
+  and not from cache. The user may have made some changes to
+  the file since it was uploaded to cache. Therefore, ignore cache. */
+  var myHeaders = new Headers()
+  myHeaders.append('pragma', 'no-cache')
+  myHeaders.append('cache-control', 'no-cache')
+
+  var myInit = {
+    method: 'GET',
+    headers: myHeaders,
+  }
+
+  var myRequest = new Request('music.txt')
+
   // Generate GUI list from text file
-  fetch('music.txt')
+  fetch(myRequest, myInit)
     .then(res => res.text())
     .then(data => {
-      // The text file contains multiple lines where each shall be a <li>
+      // alert(data)
+      // The text file contains multiple lines where each shall be a list item
       let array = data.split('\n')
       var liNo = 0
       array.forEach(element => {
@@ -32,7 +47,7 @@ function createElement(image, title, artist, liNo) {
   const li = document.createElement('li')
   orderedList.appendChild(li)
 
-  // Create <li> and its contents
+  // Create list item and its contents
   li.outerHTML = `
     <li id="${liNo}">
       <div class="flex-li">
@@ -44,7 +59,7 @@ function createElement(image, title, artist, liNo) {
             <span id="title" class="title">${title}</span><br>
             <span id="artist" class="artist">${artist}</span>
           </div>
-          <button class="round-button" onclick="toggleEditingMode(${liNo})">Rename</button>
+          <button class="round-button" onclick="toggleEditingMode(${liNo})">Edit</button>
         </form>
         <button class="round-button" onclick="deleteElement(${liNo})">Delete</button>
         <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
@@ -191,7 +206,7 @@ async function postData(formattedFormData, liNo) {
     var imgUploaded = false
   }
   else if (data == 'was_not_downloaded') {
-    var imgUploaded = 'feil'
+    var imgUploaded = 'wrong'
     alert('Bilde ble ikke lastet ned')
   }
   else if (data == 'was_downloaded') {
@@ -250,7 +265,10 @@ function saveList() {
     method: 'POST',
     headers: { "Content-type": "application/x-www-form-urlencoded" },
     body: formEncode(infoForPhp)
-  })
+  }).then(res => res.text())
+    .then(data => {
+      // alert(data)
+    })
   setSaveButtonTextTo('&check; Saved')
 }
 

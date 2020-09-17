@@ -22,8 +22,3 @@ NB for XAMPP Mac users: The server folder isn't automatically available in Finde
 3.1 In XAMPP interface, start Apache
 
 3.2 Open the webpage by writing: localhost/path/to/sourceCodeFolder (xampp windows), localhost:8080/path/to/sourceCodeFolder (xampp mac) or similar.
-
-### NB
-For some reason, the save list function isn't working unless you've opened the browser's developer tools (Inspect element, console etc.) (F12) at least once.
-
-Or by clicking multiple times at the save button…
