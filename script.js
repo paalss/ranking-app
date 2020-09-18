@@ -17,7 +17,7 @@ function createList() {
     headers: myHeaders,
   }
 
-  var myRequest = new Request('music.txt')
+  var myRequest = new Request('lists/music.txt')
 
   // Generate GUI list from text file
   fetch(myRequest, myInit)
@@ -278,7 +278,9 @@ function saveList() {
     body: formEncode(infoForPhp)
   }).then(res => res.text())
     .then(data => {
-      // alert(data)
+      if (data!='') {
+        alert(data)
+      }
     })
   setSaveButtonTextTo('&check; Saved')
 }
@@ -315,7 +317,7 @@ function determineSaveButtonText() {
   var listAsTextString = ''
   listAsTextString = convertListToTextstring(listAsTextString)
 
-  fetch('music.txt')
+  fetch('lists/music.txt')
     .then(res => res.text())
     .then(data => {
       var textFileAsTextString = data
