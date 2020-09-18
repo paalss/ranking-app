@@ -50,7 +50,7 @@ function createElement(image, title, artist, liNo) {
   // Create list item and its contents
   li.outerHTML = `
     <li id="${liNo}">
-      <div class="flex-li">
+      <div class="flex-row">
         <div class="image">
           <img src="images/${image}" alt="${image}">
         </div>
