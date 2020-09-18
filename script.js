@@ -1,10 +1,19 @@
 'use strict'
 
 window.onload = () => {
-  createList()
+  const GETparameter = window.location.search.substr(1)
+  const listName = GETparameter.substring(GETparameter.indexOf('=') + 1)
+  determineTitle(listName)
+  createList(listName)
+  addButtonClickFunctionality(GETparameter, listName)
 }
 
-function createList() {
+function determineTitle(listName) {
+  const h2 = document.querySelector('h2')
+  h2.innerHTML = 'List: ' + listName
+}
+
+function createList(listName) {
   /* Make sure to receive the list from the file
   and not from a cached file. The user may have made some changes to
   the file after it was uploaded to cache. Therefore, ignore cache. */
@@ -17,13 +26,12 @@ function createList() {
     headers: myHeaders,
   }
 
-  var myRequest = new Request('lists/music.txt')
+  var myRequest = new Request(`lists/${listName}.txt`)
 
   // Generate GUI list from text file
   fetch(myRequest, myInit)
     .then(res => res.text())
     .then(data => {
-      // alert(data)
       // The text file contains multiple lines where each shall be a list item
       let array = data.split('\n')
       var liNo = 0
@@ -68,6 +76,28 @@ function createElement(image, title, artist, liNo) {
     </li>
   `
   formEditLiPreventDefault(liNo)
+}
+
+/**
+ * Add event listeners to buttons
+ * @param {string} GETparameter 'list=___'
+ */
+function addButtonClickFunctionality(GETparameter, listName) {
+  const goHomeButton = document.getElementById('return-home-button')
+  goHomeButton.addEventListener('click', () => {
+    window.location = 'index.html'
+  })
+
+  const userCreateElementButton = document.getElementById('user-create-element-button')
+  userCreateElementButton.addEventListener('click', () => userCreateElement('default.png', '', '', findFreeLiId()))
+
+  const saveButton = document.getElementById('save-button')
+  saveButton.addEventListener('click', () => saveList(listName))
+
+  const refreshButton = document.getElementById('refresh-button')
+  refreshButton.addEventListener('click', () => {
+    window.location = 'list.html?' + GETparameter
+  })
 }
 
 function userCreateElement(image, title, artist, liNo) {
@@ -260,25 +290,26 @@ function findFreeLiId() {
  * Save the list to text file:
  * Convert the list to a text string,
  * and ask PHP to overwrite the existing file
+ * @param {string} listName the name of the list-file. The file that holds the list.
  */
-function saveList() {
+function saveList(listName) {
   /* Make sure no list item is in editing mode
   the code below isn't built for any list items being
   in editing mode */
   makeSureNoLiIsInEditingMode()
 
-  var listAsTextString = ''
+  let listAsTextString = ''
   listAsTextString = convertListToTextstring(listAsTextString)
 
   // We have list as text string, send this to PHP
-  var infoForPhp = { newChange: listAsTextString }
+  var infoForPhp = { newChange: listAsTextString, saveFile: listName + '.txt' }
   fetch(`updateFile.php`, {
     method: 'POST',
     headers: { "Content-type": "application/x-www-form-urlencoded" },
     body: formEncode(infoForPhp)
   }).then(res => res.text())
     .then(data => {
-      if (data!='') {
+      if (data != '') {
         alert(data)
       }
     })
@@ -334,7 +365,7 @@ function determineSaveButtonText() {
  * Define the saveButton's text
  */
 function setSaveButtonTextTo(text) {
-  const saveButton = document.getElementById('saveButton')
+  const saveButton = document.getElementById('save-button')
   saveButton.innerHTML = text
 }
 
@@ -357,10 +388,6 @@ function convertListToTextstring(listAsTextString) {
     }
   }
   return listAsTextString
-}
-
-function refresh() {
-  window.location = 'index.html'
 }
 
 /**

@@ -9,6 +9,7 @@ Savior, Starsoft, savior.png
 A Hat in Time, Gears for Breakfast, ahatintime.png
 Kingdom Shell, Cup of Pixels, kingdomshell.png
 The Mummy Demastered, WayForward Technologies, themummydemastered.png
+Carrion, Phobia Game Studio, carrion.png
 Gato Roboto, Doinksoft, default.png
 The Crypt of the Nedrodancer, Brace Yourself Games; Blitworks, default.png
 Hyper Light Drifter, Heart Machine, default.png
