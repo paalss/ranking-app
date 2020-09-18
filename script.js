@@ -3,12 +3,12 @@
 window.onload = () => {
   const GETparameter = window.location.search.substr(1)
   const listName = GETparameter.substring(GETparameter.indexOf('=') + 1)
-  determineTitle(listName)
+  setTitle(listName)
   createList(listName)
-  addButtonClickFunctionality(GETparameter, listName)
+  addClickListenerToButtons(GETparameter, listName)
 }
 
-function determineTitle(listName) {
+function setTitle(listName) {
   const h2 = document.querySelector('h2')
   h2.innerHTML = 'List: ' + listName
 }
@@ -67,37 +67,39 @@ function createElement(image, title, artist, liNo) {
             <span id="title" class="title">${title}</span><br>
             <span id="artist" class="artist">${artist}</span>
           </div>
-          <button class="round-button" onclick="toggleEditingMode(${liNo})">Edit element</button>
+          <button class="round-button toggle-editing-mode-button">Edit element</button>
         </form>
-        <button class="round-button" onclick="deleteElement(${liNo})">Delete</button>
-        <button class="round-button" onclick="moveElement(${liNo}, 'up')"><div class="arrow-up"></div></button>
-        <button class="round-button" onclick="moveElement(${liNo}, 'down')"><div class="arrow-down"></div></button>
+        <button class="round-button delete-element-button">Delete</button>
+        <button class="round-button move-element-up-button"><div class="arrow-up"></div></button>
+        <button class="round-button move-element-down-button"><div class="arrow-down"></div></button>
       </div>
     </li>
   `
   formEditLiPreventDefault(liNo)
+  addClickListenerToListItemButtons(liNo)
 }
 
 /**
- * Add event listeners to buttons
+ * Add click event listeners to header buttons
  * @param {string} GETparameter 'list=___'
  */
-function addButtonClickFunctionality(GETparameter, listName) {
-  const goHomeButton = document.getElementById('return-home-button')
-  goHomeButton.addEventListener('click', () => {
-    window.location = 'index.html'
-  })
+function addClickListenerToButtons(GETparameter, listName) {
+  document.getElementById('return-home-button').addEventListener('click', () => window.location = 'index.html')
+  document.getElementById('create-element-button').addEventListener('click', () => userCreateElement('default.png', '', '', findFreeLiId()))
+  document.getElementById('save-button').addEventListener('click', () => saveList(listName))
+  document.getElementById('refresh-button').addEventListener('click', () => window.location = 'list.html?' + GETparameter)
+}
 
-  const userCreateElementButton = document.getElementById('user-create-element-button')
-  userCreateElementButton.addEventListener('click', () => userCreateElement('default.png', '', '', findFreeLiId()))
-
-  const saveButton = document.getElementById('save-button')
-  saveButton.addEventListener('click', () => saveList(listName))
-
-  const refreshButton = document.getElementById('refresh-button')
-  refreshButton.addEventListener('click', () => {
-    window.location = 'list.html?' + GETparameter
-  })
+/**
+ * Add click event listeners to list item buttons
+ * @param {number} liNo list item ID
+ */
+function addClickListenerToListItemButtons(liNo) {
+  const item = document.getElementById(liNo)
+  item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo))
+  item.querySelector('.delete-element-button').addEventListener('click', () => deleteElement(liNo))
+  item.querySelector('.move-element-up-button').addEventListener('click', () => moveElement(liNo, 'up'))
+  item.querySelector('.move-element-down-button').addEventListener('click', () => moveElement(liNo, 'down'))
 }
 
 function userCreateElement(image, title, artist, liNo) {
@@ -174,8 +176,10 @@ function toggleEditingMode(liNo) {
         <span id="title" class="title">${title}</span><br>
         <span id="artist" class="artist">${artist}</span>
       </div>
-      <button class="round-button" onclick="toggleEditingMode(${liNo})">Edit element</button>
+      <button class="round-button toggle-editing-mode-button">Edit element</button>
     `
+
+    item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo))
 
     const imageUploadInputs = item.querySelector('.image-upload-inputs')
     item.removeChild(imageUploadInputs)
@@ -199,8 +203,9 @@ function toggleEditingMode(liNo) {
         <input class="title" type="text" placeholder="title" oninput="determineSaveButtonText()" value="${title}"><br>
         <input class="artist" type="text" placeholder="artist" oninput="determineSaveButtonText()" value="${artist}">
       </div>
-      <button class="round-button" onclick="toggleEditingMode(${liNo})">Close edit</button>
+      <button class="round-button toggle-editing-mode-button">Close edit</button>
     `
+    item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo))
 
     const imageUploadInputs = document.createElement('div')
     imageUploadInputs.classList.add('image-upload-inputs')

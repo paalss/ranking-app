@@ -72,14 +72,6 @@ li img {
   width: 233px;
 }
 
-.flex-container {
-  display: flex;
-}
-
-.flex-container>div {
-  flex: 1;
-}
-
 .flex-row {
   display: flex;
   column-gap: 16px;
@@ -92,6 +84,16 @@ form.edit-li {
 
 .editing-mode form {
   max-width: 370px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button.transparent-bg-button {
+  color: #fff;
+  background: none;
+  border: none;
 }
 
 button.round-button, input[type=submit].round-button {
