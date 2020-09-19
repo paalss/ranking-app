@@ -314,9 +314,13 @@ function saveList(listName) {
     body: formEncode(infoForPhp)
   }).then(res => res.text())
     .then(data => {
-      if (data != '') {
-        alert(data)
+      if (data == 'Fail') {
+        alert('Could not save list')
       }
+      return data
+      /* data is 'Success' or 'Fail'.
+      Returning a value so that an unit test can expect this function to be a result.
+      Currently there's no working test for saveList though */
     })
   setSaveButtonTextTo('&check; Saved')
 }
@@ -407,3 +411,8 @@ function formEncode(obj) {
   }
   return str.join("&")
 }
+
+// Export functions we want to test
+exports.findFreeLiId = findFreeLiId
+// exports.convertListToTextstring = convertListToTextstring
+// exports.saveList = saveList
