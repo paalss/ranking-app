@@ -24,6 +24,6 @@ NB for XAMPP Mac users: The server folder isn't automatically available in Finde
 
 ## Automatic testing
 
-1. Download Jest by running "npm install" in terminal / command line
+1. Download Jest and puppeteer by running "npm install" in terminal / command line
 
 2. Run "npm test"

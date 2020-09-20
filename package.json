@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/paalss/Ranking-app#readme",
   "devDependencies": {
-    "jest": "^26.4.2"
+    "jest": "^26.4.2",
+    "puppeteer": "^5.3.0"
   }
 }
