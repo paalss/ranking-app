@@ -1,8 +1,8 @@
 'use strict'
 
 window.onload = () => {
-  const GETparameter = window.location.search.substr(1)
-  const listName = GETparameter.substring(GETparameter.indexOf('=') + 1)
+  const GETparameter = window.location.search.substr(1) // list=music, list=games
+  const listName = GETparameter.substring(GETparameter.indexOf('=') + 1) // music, games
   setTitle(listName)
   createList(listName)
   addClickListenerToButtons(GETparameter, listName)
@@ -413,6 +413,6 @@ function formEncode(obj) {
 }
 
 // Export functions we want to test
-exports.findFreeLiId = findFreeLiId
+// exports.findFreeLiId = findFreeLiId
 // exports.convertListToTextstring = convertListToTextstring
 // exports.saveList = saveList

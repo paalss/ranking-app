@@ -2,7 +2,9 @@
 A little app for ranking your own defined elements, and saving the changes permanently.
 
 ## Open web page
-This app isn't currently public on the web, so you'll have to fire it up in a localhost server. The server must be able to run PHP. You can use XAMPP for Windows/Mac to do this. See instructions below:
+This app isn't public on the web, so you'll have to fire it up in a localhost server, which can run PHP.
+
+You can use XAMPP for Windows/Mac to do this. See instructions below:
 
 ### Localhost setup guide with XAMPP Windows/Mac
 
@@ -19,11 +21,13 @@ NB for XAMPP Mac users: The server folder isn't automatically available in Finde
 #### 3. Start server and open:
 3.1 In XAMPP interface, start Apache
 
-3.2 Open the webpage by writing: localhost/path/to/sourceCodeFolder (xampp windows), localhost:8080/path/to/sourceCodeFolder (xampp mac) or similar.
+3.2 Open the webpage in browser with the path: localhost/path/to/sourceCodeFolder (xampp windows), localhost:8080/path/to/sourceCodeFolder (xampp mac) or similar.
 
 
 ## Automatic testing
 
 1. Download Jest and puppeteer by running "npm install" in terminal / command line
 
-2. Run "npm test"
+2. In script.test.js, replace the path in “await page.goto('___')” with the path your path to the source code folder. localhost/path/to/sourceCodeFolder (xampp windows), localhost:8080/path/to/sourceCodeFolder (xampp mac)
+
+3. Run "npm test"

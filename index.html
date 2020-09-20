@@ -12,10 +12,21 @@
   <h1>Ranking</h1>
   <h2>Choose list</h2>
   <ul id="file-list"></ul>
+  <script>
 
-  <!-- List ranked lists -->
-  <script src='findFilenamesInFolder.php'></script>
-  <script src="listFilenames.js"></script>
+      fetch('findListNames.php')
+        .then(res => res.json())
+        .then(data => {
+          const ul = document.getElementById('file-list')
+
+          data.forEach(element => {
+            let li = document.createElement('li')
+            li.innerHTML = `<a href="list.html?list=${element}">${element}</a>`
+            ul.appendChild(li)
+          });
+        })
+    
+  </script>
 </body>
 
 </html>
