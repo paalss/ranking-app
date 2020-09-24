@@ -1,7 +1,8 @@
 # Ranking app (work in progress)
 A little app for ranking your own defined elements, and saving the changes permanently.
 
-## Open web page
+
+## Open web app
 This app isn't public on the web, so you'll have to fire it up in a localhost server, which can run PHP.
 
 You can use XAMPP for Windows/Mac to do this. See instructions below:

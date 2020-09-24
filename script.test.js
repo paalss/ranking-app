@@ -2,16 +2,16 @@
 // Unit Test
 const { findFreeLiId } = require('./script')
 test('Able to find a free nubmer?', () => {
-  expect(findFreeLiId()).not.toBeNaN()
+expect(findFreeLiId()).not.toBeNaN()
 })
 */
 
 // End to end test
 const puppeteer = require('puppeteer')
 
-test('if h2 and a tag exists', async () => {
-  let browser = await puppeteer.launch()
-  let page = await browser.newPage()
+test('if h2 and a-tags exists', async () => {
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
 
   await page.goto('http://localhost/sider/annet/tingrang/')
 
@@ -24,3 +24,23 @@ test('if h2 and a tag exists', async () => {
 
   browser.close()
 })
+
+test('if lists exists', async () => {
+  const browser = await puppeteer.launch({
+    headless: false,
+    slowMo: 250 // slow down by 250ms
+  });
+  const page = await browser.newPage()
+
+  await page.goto('http://localhost/sider/annet/tingrang/')
+
+  // Click first link
+  await page.click('a')
+
+  const titles = await page.$$eval('.title', e => e.map(element => element.innerHTML))
+  expect(titles[0]).toBe('Hollow Knight: Silksong')
+  expect(titles[1]).toBe('Noita')
+
+  browser.close()
+}, 7000)
+
