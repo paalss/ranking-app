@@ -19,7 +19,7 @@ Download / clone the source code into the server-folder xampp/htdocs/ (for xampp
 
 NB for XAMPP Mac users: The server folder isn't automatically available in Finder, you'll have to mount it first. Use mount button in the XAMPP app user interface.
 
-#### 3. Start server and open:
+#### 3. Start server and open site
 Open XAMPP app if you haven't already.
 
 In XAMPP interface, start Apache. In Mac version this button is on the “Services” page.
