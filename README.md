@@ -1,4 +1,3 @@
-
 # Ranking app (work in progress)
 A little app for ranking your own defined elements, and saving the changes permanently.
 

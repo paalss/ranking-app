@@ -11,57 +11,28 @@ beforeAll(async () => {
   // await page.goto('http://localhost/sider/annet/tingrang/list.html?list=games')
 })
 
-test('if h2 and a-tags exists', async () => {
+
+test('if h2 and a-tag exists', async () => {
   const h2 = await page.$eval('h2', e => e.innerHTML)
   expect(h2).toBe('Choose list')
 
-  let aTags = await page.$$eval('a', e => e.map(e => e.innerHTML))
-
-  /* A-tags might not have been rendered yet. If undefined is returned, wait and check again
-  proceed after the a-tags has been rendered, or after 5 tries */
-  var counter = 0
-  while (aTags == undefined && counter <= 5) {
-    wait(1000)
-    aTags = await page.$$eval('a', e => e.map(e => e.innerHTML))
-    counter++
-  }
-  if (counter >= 1) {
-    console.log('had to wait and check ' + counter + ' times to get a-tags')
-  }
-  expect(aTags[0]).toBe('games')
-  expect(aTags[1]).toBe('music')
+  // Wait until JS has added this content to the page
+  await page.waitForSelector('a');
+  let aTag = await page.$eval('a', e => e.tagName)
+  expect(aTag).toBe('A')
 })
 
-test('if h2 and a list item exists', async () => {
+
+test('if a list item exists', async () => {
   await page.click('a')
 
-  let h2 = await page.$eval('h2', e => e.innerHTML)
-
-  /* h2 title might not have been added yet. If h2 still is an empty string, wait and check again
-  proceed after the h2 has been filled, or after 5 tries */
-  var counter = 0
-  while (h2 == "" && counter <= 5) {
-    wait(1000)
-    h2 = await page.$eval('h2', e => e.innerHTML)
-    counter++
-  }
-  if (counter >= 1) {
-    console.log('had to wait and check ' + counter + ' times to get h2')
-  }
-  expect(h2).toEqual(expect.stringContaining('List:'))
-
+  // Wait until JS has added this content to the page
+  await page.waitForSelector('#\\31  .title');
   // selector(#\\31 ) = selecting element by id "1".
   const titleById1 = await page.$eval('#\\31  .title', e => e.innerHTML)
   expect(titleById1).not.toBe(null)
 })
 
-function wait(ms) {
-  var start = new Date().getTime();
-  var end = start;
-  while (end < start + ms) {
-    end = new Date().getTime();
-  }
-}
 
 test('if first element can move down', async () => {
   // See how the list looks like pre to moving element
@@ -71,7 +42,7 @@ test('if first element can move down', async () => {
   await page.click('#\\31  .move-element-down-button')
   const postMovedLis = await page.$$eval('.title', e => e.map(e => e.innerHTML))
 
-  // If moved sucsessfully, the second element in post should be the same as the first element in pre list
+  // If moved sucsessfully, the second element in post list should be the same as the first element in pre list
   expect(postMovedLis[1]).toBe(preMovedlis[0])
   expect(postMovedLis[0]).toBe(preMovedlis[1])
 
@@ -82,6 +53,7 @@ test('if first element can move down', async () => {
   // Expect it to be like it was before moves
   expect(postMovedBackLis[0]).toBe(preMovedlis[0])
 })
+
 
 test('if first element can be edited', async () => {
   await page.click('#\\31  .toggle-editing-mode-button')
@@ -100,6 +72,7 @@ test('if first element can be edited', async () => {
   expect(changedTitle).toEqual(expect.stringContaining('Change'))
 })
 
+
 test('if user can create element', async () => {
   // See items pre to button click, and count items
   const preCreatedLis = await page.$$eval('li', e => e.map(e => e.tagName))
@@ -114,6 +87,7 @@ test('if user can create element', async () => {
   // If created sucsessfully, the amount of current items should be 1 more than before
   expect(postCreatedLisAmount).toBe(preCreatedLisAmount + 1)
 })
+
 
 test('if list can be saved', async () => {
   /* This test uses the saving function, we don't want to keep any of the
@@ -144,12 +118,12 @@ test('if list can be saved', async () => {
   // If saving worked, the current list should look like it was when saving
   const currentLis2 = await page.$$eval('li .title', e => e.map(e => e.innerHTML))
   expect(currentLis2).toEqual(preSavedLis)
-}, 7000)
+})
+
 
 afterAll(async () => {
   browser.close()
 })
-
 
 
 // page.screenshot
