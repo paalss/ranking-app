@@ -8,6 +8,7 @@ beforeAll(async () => {
   })
   page = await browser.newPage()
   await page.goto('http://localhost/sider/annet/tingrang/')
+  // await page.goto('http://localhost/sider/annet/tingrang/list.html?list=games')
 })
 
 test('if h2 and a-tags exists', async () => {
@@ -17,9 +18,9 @@ test('if h2 and a-tags exists', async () => {
   let aTags = await page.$$eval('a', e => e.map(element => element.innerHTML))
 
   /* A-tags might not have been rendered yet. If undefined is returned, wait and check again
-  proceed after the a-tags has been rendered, or after 10 tries */
+  proceed after the a-tags has been rendered, or after 5 tries */
   var counter = 0
-  while (aTags == undefined && counter <= 10) {
+  while (aTags == undefined && counter <= 5) {
     wait(1000)
     aTags = await page.$$eval('a', e => e.map(element => element.innerHTML))
     counter++
@@ -37,9 +38,9 @@ test('if a list item exists', async () => {
   let h2 = await page.$eval('h2', e => e.innerHTML)
 
   /* h2 title might not have been added yet. If h2 still is an empty string, wait and check again
-  proceed after the h2 has been filled, or after 10 tries */
+  proceed after the h2 has been filled, or after 5 tries */
   var counter = 0
-  while (h2 == "" && counter <= 10) {
+  while (h2 == "" && counter <= 5) {
     wait(1000)
     h2 = await page.$eval('h2', e => e.innerHTML)
     counter++
@@ -89,6 +90,21 @@ test('if first item can be edited', async () => {
   // Expect it to contain the string 'Change'
   const changedTitle = await page.$eval('#\\31  .title', e => e.innerHTML)
   expect(changedTitle).toEqual(expect.stringContaining('Change'))
+})
+
+test('if user can add element', async () => {
+  // List items pre to button click
+  const preLis = await page.$$eval('li', e => e.map(e => e.tagName))
+  const preLisAmount = preLis.length
+
+  await page.click('#create-element-button')
+
+  // List items post to button click
+  const postLis = await page.$$eval('li', e => e.map(e => e.tagName))
+  const postLisAmount = postLis.length
+
+  // Expect current amount of list items to be 1 more than before
+  expect(postLisAmount).toBe(preLisAmount+1)
 })
 
 afterAll(async () => {
