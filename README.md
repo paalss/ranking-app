@@ -4,6 +4,11 @@ A little app for ranking your own defined elements, and saving the changes perma
 
 ![App_interface](/images/app.png)
 
+
+## Possible functionality in finished product
+I'm thinking of making this app able to “copy list to clipboard”, so that you can create a list, paste it into a Google Doc and share it as a wishlist. Also possible functionality could be to make this into a list-sharing app where different users can share lists with oneanother.
+
+
 ## Open web app
 This app isn't public on the web, so you'll have to fire it up in a localhost server which can run PHP.
 
