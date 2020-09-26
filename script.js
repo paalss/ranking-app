@@ -317,10 +317,6 @@ function saveList(listName) {
       if (data == 'Fail') {
         alert('Could not save list')
       }
-      return data
-      /* data is 'Success' or 'Fail'.
-      Returning a value so that an unit test can expect this function to be a result.
-      Currently there's no working test for saveList though */
     })
   setSaveButtonTextTo('&check; Saved')
 }
