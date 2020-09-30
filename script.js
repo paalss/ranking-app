@@ -4,7 +4,7 @@ window.onload = () => {
   const GETparameter = window.location.search.substr(1) // list=music, list=games
   const listName = GETparameter.substring(GETparameter.indexOf('=') + 1) // music, games
   setTitle(listName)
-  createList(listName)
+  composeList(listName)
   addClickListenerToButtons(GETparameter, listName)
 }
 
@@ -13,7 +13,7 @@ function setTitle(listName) {
   h2.innerHTML = 'List: ' + listName
 }
 
-function createList(listName) {
+function composeList(listName) {
   /* Make sure to receive the list from the file
   and not from a cached file. The user may have made some changes to
   the file after it was uploaded to cache. Therefore, ignore cache. */
@@ -35,22 +35,22 @@ function createList(listName) {
       // The text file contains multiple lines where each shall be a list item
       let array = data.split('\n')
       var liNo = 0
-      array.forEach(element => {
+      array.forEach(item => {
         liNo++
         // The text lines contains comma separated values
-        let data = element.split(', ')
+        let data = item.split(', ')
 
         let image = data[2]
         let title = data[0]
         let artist = data[1]
 
-        createElement(image, title, artist, liNo)
+        composeItem(image, title, artist, liNo)
       });
     })
   setSaveButtonTextTo('&check; Saved')
 }
 
-function createElement(image, title, artist, liNo) {
+function composeItem(image, title, artist, liNo) {
   const orderedList = document.getElementById('ordered-list')
   const li = document.createElement('li')
   orderedList.appendChild(li)
@@ -69,9 +69,9 @@ function createElement(image, title, artist, liNo) {
           </div>
           <button class="round-button toggle-editing-mode-button">Edit element</button>
         </form>
-        <button class="round-button delete-element-button">Delete</button>
-        <button class="round-button move-element-up-button"><div class="arrow-up"></div></button>
-        <button class="round-button move-element-down-button"><div class="arrow-down"></div></button>
+        <button class="round-button delete-item-button">Delete</button>
+        <button class="round-button move-item-up-button"><div class="arrow-up"></div></button>
+        <button class="round-button move-item-down-button"><div class="arrow-down"></div></button>
       </div>
     </li>
   `
@@ -85,7 +85,7 @@ function createElement(image, title, artist, liNo) {
  */
 function addClickListenerToButtons(GETparameter, listName) {
   document.getElementById('return-home-button').addEventListener('click', () => window.location = 'index.html')
-  document.getElementById('create-element-button').addEventListener('click', () => userCreateElement('default.png', '', '', findFreeLiId()))
+  document.getElementById('create-item-button').addEventListener('click', () => createItem('default.png', '', '', findFreeLiId()))
   document.getElementById('save-button').addEventListener('click', () => saveList(listName))
   document.getElementById('refresh-button').addEventListener('click', () => window.location = 'list.html?' + GETparameter)
 }
@@ -97,14 +97,14 @@ function addClickListenerToButtons(GETparameter, listName) {
 function addClickListenerToListItemButtons(liNo) {
   const item = document.getElementById(liNo)
   item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo))
-  item.querySelector('.delete-element-button').addEventListener('click', () => deleteElement(liNo))
-  item.querySelector('.move-element-up-button').addEventListener('click', () => moveElement(liNo, 'up'))
-  item.querySelector('.move-element-down-button').addEventListener('click', () => moveElement(liNo, 'down'))
+  item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(liNo))
+  item.querySelector('.move-item-up-button').addEventListener('click', () => moveItem(liNo, 'up'))
+  item.querySelector('.move-item-down-button').addEventListener('click', () => moveItem(liNo, 'down'))
 }
 
-function userCreateElement(image, title, artist, liNo) {
-  createElement(image, title, artist, liNo)
-  toggleEditingMode(liNo)
+function createItem(image, title, artist, liNo) {
+  composeItem(image, title, artist, liNo)
+  toggleEditingMode(liNo) // turn on editing mode for this item
   determineSaveButtonText()
 }
 
@@ -118,15 +118,15 @@ function highlight(item) {
 }
 
 /**
- * Move chosen element in a direction
+ * Move list item in a direction
  * @param {number} liNo 
  * @param {string} direction 
  */
-function moveElement(liNo, direction) {
+function moveItem(liNo, direction) {
   const itemToMove = document.getElementById(liNo)
   const ol = document.getElementById('ordered-list')
   if (direction == 'up') {
-    /* Move chosen element up
+    /* Move chosen item up
     as long as it's not at the top of the list */
     const element = itemToMove
     const previousElement = itemToMove.previousElementSibling
@@ -134,7 +134,7 @@ function moveElement(liNo, direction) {
       ol.insertBefore(element, previousElement)
     }
   } else {
-    /* Move chosen element down
+    /* Move chosen item down
     as long as it's not at the bottom of the list  */
     const element = itemToMove
     const nextElement = itemToMove.nextElementSibling
@@ -146,7 +146,7 @@ function moveElement(liNo, direction) {
   determineSaveButtonText()
 }
 
-function deleteElement(liNo) {
+function deleteItem(liNo) {
   const itemToDelete = document.getElementById(liNo)
   const ol = document.getElementById('ordered-list')
   ol.removeChild(itemToDelete)
@@ -213,6 +213,7 @@ function toggleEditingMode(liNo) {
 
     imageUploadInputs.innerHTML = `
       <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
+        upload image
         <input type="file" class="upload-file" name="upload-file"><br>
         <input type="submit" value="Upload">
       </form>
@@ -241,7 +242,7 @@ function formEditLiPreventDefault(liNo) {
 
 /**
  * Ask PHP to download image into folder,
- * once it's done, place image in list element
+ * once it's done, place image in list item
  */
 async function postData(formattedFormData, liNo) {
   // PHP attempts to download image
@@ -278,7 +279,7 @@ async function postData(formattedFormData, liNo) {
 
 /**
  * Finds an ID in which isn't already in use.
- * Executed as a parameter in userCreateElement
+ * Function is called as a parameter in createItem()
  */
 function findFreeLiId() {
   let lis = document.querySelectorAll('li')
@@ -299,9 +300,8 @@ function findFreeLiId() {
  */
 function saveList(listName) {
   /* Make sure no list item is in editing mode
-  the code below isn't built for any list items being
-  in editing mode */
-  makeSureNoLiIsInEditingMode()
+  the code below isn't built for this */
+  ensureNoEditingModeIsOpen()
 
   let listAsTextString = ''
   listAsTextString = convertListToTextstring(listAsTextString)
@@ -324,7 +324,7 @@ function saveList(listName) {
 /**
  * Make sure no list item is in editing mode
  */
-function makeSureNoLiIsInEditingMode() {
+function ensureNoEditingModeIsOpen() {
   const lisWithEditingMode = document.getElementsByClassName('editing-mode')
 
   if (lisWithEditingMode.length != 0) {
@@ -338,8 +338,8 @@ function makeSureNoLiIsInEditingMode() {
 
     /* With ID log of whichever lis are in editing mode, run toggleEditingMode to turn editing modes off
     This could not have been done in the previous loop, as it would mess with the HTML-colleciton */
-    lisId_WithEditingMode.forEach(element => {
-      toggleEditingMode(element)
+    lisId_WithEditingMode.forEach(item => {
+      toggleEditingMode(item)
     })
   }
 }
@@ -408,7 +408,6 @@ function formEncode(obj) {
   return str.join("&")
 }
 
-// Export functions we want to test
 // exports.findFreeLiId = findFreeLiId
 // exports.convertListToTextstring = convertListToTextstring
 // exports.saveList = saveList

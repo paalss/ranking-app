@@ -28,26 +28,26 @@ test('if a list item exists', async () => {
 
   // Wait until JS has added this content to the page
   await page.waitForSelector('#\\31  .title');
-  // selector(#\\31 ) = selecting element by id "1".
+  // selector(#\\31 ) = selecting item by id "1".
   const titleById1 = await page.$eval('#\\31  .title', e => e.innerHTML)
   expect(titleById1).not.toBe(null)
 })
 
 
-test('if first element can move down', async () => {
-  // See how the list looks like pre to moving element
+test('if first item can move down', async () => {
+  // See how the list looks like pre to moving item
   const preMovedlis = await page.$$eval('.title', e => e.map(e => e.innerHTML))
 
-  // Attempt to move an element down and see how the list looks like post moving.
-  await page.click('#\\31  .move-element-down-button')
+  // Attempt to move an item down and see how the list looks like post moving.
+  await page.click('#\\31  .move-item-down-button')
   const postMovedLis = await page.$$eval('.title', e => e.map(e => e.innerHTML))
 
-  // If moved sucsessfully, the second element in post list should be the same as the first element in pre list
+  // If moved sucsessfully, the second item in post list should be the same as the first item in pre list
   expect(postMovedLis[1]).toBe(preMovedlis[0])
   expect(postMovedLis[0]).toBe(preMovedlis[1])
 
-  // Move element back up
-  await page.click('#\\31  .move-element-up-button')
+  // Move item back up
+  await page.click('#\\31  .move-item-up-button')
   const postMovedBackLis = await page.$$eval('.title', e => e.map(e => e.innerHTML))
 
   // Expect it to be like it was before moves
@@ -55,10 +55,10 @@ test('if first element can move down', async () => {
 })
 
 
-test('if first element can be edited', async () => {
+test('if first item can be edited', async () => {
   await page.click('#\\31  .toggle-editing-mode-button')
 
-  // Expect element by class title to be in editing mode, and not in normal mode
+  // Expect item by class title to be in editing mode, and not in normal mode
   const titlesInEditingMode = await page.$$eval('.title', e => e.map(e => e.tagName))
   expect(titlesInEditingMode[0]).toBe('INPUT')
   expect(titlesInEditingMode[0]).not.toBe('SPAN')
@@ -73,12 +73,12 @@ test('if first element can be edited', async () => {
 })
 
 
-test('if user can create element', async () => {
+test('if user can create item', async () => {
   // See items pre to button click, and count items
   const preCreatedLis = await page.$$eval('li', e => e.map(e => e.tagName))
   const preCreatedLisAmount = preCreatedLis.length
 
-  await page.click('#create-element-button')
+  await page.click('#create-item-button')
 
   // See items post to button click, and count items
   const postCreatedLis = await page.$$eval('li', e => e.map(e => e.tagName))
@@ -98,7 +98,7 @@ test('if list can be saved', async () => {
   const preSavedLis = await page.$$eval('li .title', e => e.map(e => e.innerHTML))
 
   // Make a change, hit save and see how the list looks like after saving
-  await page.click('#\\31  .move-element-down-button')
+  await page.click('#\\31  .move-item-down-button')
   await page.click('#save-button')
   const postSavedLis = await page.$$eval('li .title', e => e.map(e => e.innerHTML))
 
@@ -111,8 +111,8 @@ test('if list can be saved', async () => {
   expect(currentLis).toEqual(postSavedLis)
   expect(currentLis).not.toEqual(preSavedLis)
   
-  // Move the element by id 2 back up (since we ran page-reload, all items id was updated)
-  await page.click('#\\32  .move-element-up-button')
+  // Move the item by id 2 back up (since we ran page-reload, all items id was updated)
+  await page.click('#\\32  .move-item-up-button')
   await page.click('#save-button')
   
   // If saving worked, the current list should look like it was when saving
