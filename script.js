@@ -17,16 +17,9 @@ function composeList(listName) {
   /* Make sure to receive the list from the file
   and not from a cached file. The user may have made some changes to
   the file after it was uploaded to cache. Therefore, ignore cache. */
-  var myHeaders = new Headers()
-  myHeaders.append('pragma', 'no-cache')
-  myHeaders.append('cache-control', 'no-cache')
 
-  var myInit = {
-    method: 'GET',
-    headers: myHeaders,
-  }
-
-  var myRequest = new Request(`lists/${listName}.txt`)
+  const myInit = getlistNoCache()
+  const myRequest = new Request(`lists/${listName}.txt`)
 
   // Generate GUI list from text file
   fetch(myRequest, myInit)
@@ -44,13 +37,26 @@ function composeList(listName) {
         let title = data[0]
         let artist = data[1]
 
-        composeItem(image, title, artist, liNo)
+        composeItem(image, title, artist, liNo, listName)
       });
     })
   setSaveButtonTextTo('&check; Saved')
 }
 
-function composeItem(image, title, artist, liNo) {
+function getlistNoCache() {
+  var myHeaders = new Headers()
+  myHeaders.append('pragma', 'no-cache')
+  myHeaders.append('cache-control', 'no-cache')
+
+  var myInit = {
+    method: 'GET',
+    headers: myHeaders,
+  }
+
+  return myInit
+}
+
+function composeItem(image, title, artist, liNo, listName) {
   const orderedList = document.getElementById('ordered-list')
   const li = document.createElement('li')
   orderedList.appendChild(li)
@@ -76,7 +82,7 @@ function composeItem(image, title, artist, liNo) {
     </li>
   `
   formEditLiPreventDefault(liNo)
-  addClickListenerToListItemButtons(liNo)
+  addClickListenerToListItemButtons(liNo, listName)
 }
 
 /**
@@ -85,7 +91,7 @@ function composeItem(image, title, artist, liNo) {
  */
 function addClickListenerToButtons(GETparameter, listName) {
   document.getElementById('return-home-button').addEventListener('click', () => window.location = 'index.html')
-  document.getElementById('create-item-button').addEventListener('click', () => createItem('default.png', '', '', findFreeLiId()))
+  document.getElementById('create-item-button').addEventListener('click', () => createItem('default.png', '', '', findFreeLiId(), listName))
   document.getElementById('save-button').addEventListener('click', () => saveList(listName))
   document.getElementById('refresh-button').addEventListener('click', () => window.location = 'list.html?' + GETparameter)
 }
@@ -94,17 +100,17 @@ function addClickListenerToButtons(GETparameter, listName) {
  * Add click event listeners to list item buttons
  * @param {number} liNo list item ID
  */
-function addClickListenerToListItemButtons(liNo) {
+function addClickListenerToListItemButtons(liNo, listName) {
   const item = document.getElementById(liNo)
-  item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo))
-  item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(liNo))
-  item.querySelector('.move-item-up-button').addEventListener('click', () => moveItem(liNo, 'up'))
-  item.querySelector('.move-item-down-button').addEventListener('click', () => moveItem(liNo, 'down'))
+  item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo, listName))
+  item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(liNo, listName))
+  item.querySelector('.move-item-up-button').addEventListener('click', () => moveItem(liNo, 'up', listName))
+  item.querySelector('.move-item-down-button').addEventListener('click', () => moveItem(liNo, 'down', listName))
 }
 
-function createItem(image, title, artist, liNo) {
+function createItem(image, title, artist, liNo, listName) {
   composeItem(image, title, artist, liNo)
-  toggleEditingMode(liNo) // turn on editing mode for this item
+  toggleEditingMode(liNo, listName) // turn on editing mode for this item
   determineSaveButtonText()
 }
 
@@ -122,7 +128,7 @@ function highlight(item) {
  * @param {number} liNo 
  * @param {string} direction 
  */
-function moveItem(liNo, direction) {
+function moveItem(liNo, direction, listName) {
   const itemToMove = document.getElementById(liNo)
   const ol = document.getElementById('ordered-list')
   if (direction == 'up') {
@@ -143,17 +149,17 @@ function moveItem(liNo, direction) {
     }
   }
   highlight(itemToMove)
-  determineSaveButtonText()
+  determineSaveButtonText(listName)
 }
 
-function deleteItem(liNo) {
+function deleteItem(liNo, listName) {
   const itemToDelete = document.getElementById(liNo)
   const ol = document.getElementById('ordered-list')
   ol.removeChild(itemToDelete)
-  determineSaveButtonText()
+  determineSaveButtonText(listName)
 }
 
-function toggleEditingMode(liNo) {
+function toggleEditingMode(liNo, listName) {
   const item = document.getElementById(liNo)
   const divImage = item.querySelector('.image')
   const divEditLi = item.querySelector('.edit-li')
@@ -179,12 +185,12 @@ function toggleEditingMode(liNo) {
       <button class="round-button toggle-editing-mode-button">Edit element</button>
     `
 
-    item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo))
+    item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo, listName))
 
     const imageUploadInputs = item.querySelector('.image-upload-inputs')
     item.removeChild(imageUploadInputs)
 
-    determineSaveButtonText()
+    determineSaveButtonText(listName)
   } else {
     item.classList.add('editing-mode')
 
@@ -200,12 +206,12 @@ function toggleEditingMode(liNo) {
 
     divEditLi.innerHTML = `
       <div class="text-width">
-        <input class="title" type="text" placeholder="title" oninput="determineSaveButtonText()" value="${title}"><br>
-        <input class="artist" type="text" placeholder="artist" oninput="determineSaveButtonText()" value="${artist}">
+        <input class="title" type="text" placeholder="title" oninput="determineSaveButtonText(listName)" value="${title}"><br>
+        <input class="artist" type="text" placeholder="artist" oninput="determineSaveButtonText(listName)" value="${artist}">
       </div>
       <button class="round-button toggle-editing-mode-button">Close edit</button>
     `
-    item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo))
+    item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(liNo, listName))
 
     const imageUploadInputs = document.createElement('div')
     imageUploadInputs.classList.add('image-upload-inputs')
@@ -282,8 +288,8 @@ async function postData(formattedFormData, liNo) {
  * Function is called as a parameter in createItem()
  */
 function findFreeLiId() {
-  let lis = document.querySelectorAll('li')
-  for (let i = 1; i < lis.length + 2; i++) {
+  let listItems = document.querySelectorAll('li')
+  for (let i = 1; i < listItems.length + 2; i++) {
     let element = document.getElementById(i)
     if (element == null) {
       // No element has this as its ID, the ID's free to take
@@ -303,8 +309,7 @@ function saveList(listName) {
   the code below isn't built for this */
   ensureNoEditingModeIsOpen()
 
-  let listAsTextString = ''
-  listAsTextString = convertListToTextstring(listAsTextString)
+  const listAsTextString = convertListToTextstring()
 
   // We have list as text string, send this to PHP
   var infoForPhp = { newChange: listAsTextString, saveFile: listName + '.txt' }
@@ -325,22 +330,15 @@ function saveList(listName) {
  * Make sure no list item is in editing mode
  */
 function ensureNoEditingModeIsOpen() {
-  const lisWithEditingMode = document.getElementsByClassName('editing-mode')
+  const itemsWithEditingMode = document.getElementsByClassName('editing-mode')
+  if (itemsWithEditingMode.length > 0) {
+    /* itemsWithEditingMode (HTMLCollection) automatically updates when the underlying document is changed.
+    To avoid this, make a copy array we can loop through and change the DOM */
+    const itemsReference = [...itemsWithEditingMode]
 
-  if (lisWithEditingMode.length != 0) {
-    // Lis with editing mode has been found
-
-    let lisId_WithEditingMode = []
-    // Loop through those lis and log their ID
-    for (let i = 0; i < lisWithEditingMode.length; i++) {
-      lisId_WithEditingMode.push(lisWithEditingMode[i].id)
-    }
-
-    /* With ID log of whichever lis are in editing mode, run toggleEditingMode to turn editing modes off
-    This could not have been done in the previous loop, as it would mess with the HTML-colleciton */
-    lisId_WithEditingMode.forEach(item => {
-      toggleEditingMode(item)
-    })
+    itemsReference.forEach(item => {
+      toggleEditingMode(item.id)
+    });
   }
 }
 
@@ -349,11 +347,14 @@ function ensureNoEditingModeIsOpen() {
  * Function first checks for unsaved changes in list and then
  * changes saveButton's text so it either shows '&check; saved' or '● Save changes'.
  */
-function determineSaveButtonText() {
-  var listAsTextString = ''
-  listAsTextString = convertListToTextstring(listAsTextString)
+function determineSaveButtonText(listName) {
+  const listAsTextString = convertListToTextstring()
 
-  fetch('lists/music.txt')
+  const myInit = getlistNoCache()
+  const myRequest = new Request(`lists/${listName}.txt`)
+
+  // Receive text file and compare
+  fetch(myRequest, myInit)
     .then(res => res.text())
     .then(data => {
       var textFileAsTextString = data
@@ -374,16 +375,17 @@ function setSaveButtonTextTo(text) {
   saveButton.innerHTML = text
 }
 
-function convertListToTextstring(listAsTextString) {
-  let lis = document.querySelectorAll('li')
+function convertListToTextstring() {
+  let listAsTextString = ''
+  let listItems = document.querySelectorAll('li')
 
   /* For each list item, find its different values,
   and build the text string */
-  for (let i = 0; i < lis.length; i++) {
-    let imageSourcePath = lis[i].querySelector('img').src
+  for (let i = 0; i < listItems.length; i++) {
+    let imageSourcePath = listItems[i].querySelector('img').src
     let imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
-    let title = lis[i].querySelector('.title').innerHTML
-    let artist = lis[i].querySelector('.artist').innerHTML
+    let title = listItems[i].querySelector('.title').innerHTML
+    let artist = listItems[i].querySelector('.artist').innerHTML
     let liAsTextString = title + ', ' + artist + ', ' + imageFilename
     if (i == 0) {
       // The first line in the text string, is the only one to not start with a new line

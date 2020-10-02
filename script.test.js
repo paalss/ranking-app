@@ -28,6 +28,7 @@ test('if a list item exists', async () => {
 
   // Wait until JS has added this content to the page
   await page.waitForSelector('#\\31  .title');
+  
   // selector(#\\31 ) = selecting item by id "1".
   const titleById1 = await page.$eval('#\\31  .title', e => e.innerHTML)
   expect(titleById1).not.toBe(null)
