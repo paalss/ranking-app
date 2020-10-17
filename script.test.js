@@ -9,6 +9,7 @@ beforeAll(async () => {
   page = await browser.newPage()
   await page.goto('http://localhost/sider/annet/tingrang/')
   // await page.goto('http://localhost/sider/annet/tingrang/list.html?list=games')
+  // await page.goto('http://127.0.0.1:8000/')
 })
 
 

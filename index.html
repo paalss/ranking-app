@@ -13,7 +13,6 @@
   <h2>Choose list</h2>
   <ul id="file-list"></ul>
   <script>
-
       fetch('findListNames.php')
         .then(res => res.json())
         .then(data => {
@@ -24,8 +23,7 @@
             li.innerHTML = `<a href="list.html?list=${element}">${element}</a>`
             ul.appendChild(li)
           });
-        })
-    
+        })   
   </script>
 </body>
 
