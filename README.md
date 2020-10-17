@@ -7,34 +7,56 @@ A little app for ranking your own defined elements, and saving the changes perma
 ## Open web app
 This app isn't public on the web, it has to be run locally.
 
-Prerequisite: Have PHP on your computer. You can get it by installing XAMPP from https://www.apachefriends.org/index.html. NB: During the installation process, make sure to select the “Apache” and “PHP” components, so that they gets downloaded.
+You need PHP on your computer. You can get it by installing XAMPP from https://www.apachefriends.org/index.html.
 
-Terminal / command prompt:
+In terminal / command prompt, navigate to the project folder (probably named Ranking-app or Ranking-app-master).
 
-cd to path/to/projectFolder and run:
+Run:
+
 ```
 php -S 127.0.0.1:8000
 ```
 
-Open a browser and go to http://127.0.0.1:8000/
+Open a browser and enter http://127.0.0.1:8000/.
 
 ## Automatic testing
-Install XAMPP from https://www.apachefriends.org/index.html, if you haven't already.
+### Prerequisites
+1. Install XAMPP from https://www.apachefriends.org/index.html, if you haven't already.
 
-Ensure the project folder is placed somewhere inside the server-folder:
+2. Ensure the project folder is placed somewhere inside your server-folder:
 
-<b>windows server folder</b>
+<b>Windows server folder</b>
+
 xampp/htdocs/
 
-<b>mac server folder</b>
+<b>Mac server folder</b>
+
+The server folder isn't automatically available in Finder, you'll have to mount the volume first. Open the XAMPP app, navigate to volume page and click the mount button to enable it.
+
 lampp/htdocs/
 
-NB for XAMPP Mac users: The server folder isn't automatically available in Finder, you'll have to mount it first. Use mount button in the XAMPP app user interface.
+___
 
-1. Download Jest and puppeteer by running "npm install" in terminal / command prompt
+If done correctly, you should by now be able to open the web page in browser this way:
 
-2. In script.test.js, replace the path in “await page.goto('___')” with your path to this project folder. localhost/path/to/projectFolder (xampp windows), localhost:8080/path/to/projectFolder (xampp mac)
+<b>Windows</b>
 
-3. Make sure the localhost server is running, e.g. by starting Apache from the XAMPP user interface
+Open XAMPP app, then start “Apache”. Enter localhost/path/to/project-folder in browser.
 
-4. Run "npm test"
+(localhost is equivalent to the htdocs folder. The path to project folder should be the same in both.)
+
+<b>Mac</b>
+
+Open XAMPP app, click “start”. When XAMPP's ready, you can start “Apache” (Services page). Enable a localhost port. Enter something like localhost:8080/path/to/project-folder in browser.
+
+(localhost is equivalent to the htdocs folder. The path to project folder should be the same in both.)
+
+___
+
+3. Download Jest and puppeteer by running `npm install` in terminal / command prompt, in the project folder
+
+4. In script.test.js, replace the path in `await page.goto('___')` with your path to this project folder.
+
+5. Make sure the localhost server is running. It should be if you managed to open the web page as described between step 2 and 3.
+
+6. Run `npm test`
