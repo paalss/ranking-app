@@ -7,9 +7,9 @@ beforeAll(async () => {
     slowMo: 0
   })
   page = await browser.newPage()
-  await page.goto('http://localhost/sider/annet/Ranking-app/')
+  await page.goto('http://127.0.0.1:8000/')
+  // await page.goto('http://localhost/sider/annet/Ranking-app/')
   // await page.goto('http://localhost/sider/annet/Ranking-app/list.html?list=games')
-  // await page.goto('http://127.0.0.1:8000/')
 })
 
 
@@ -18,7 +18,7 @@ test('if h2 and a-tag exists', async () => {
   expect(h2).toBe('Choose list')
 
   // Wait until JS has added this content to the page
-  await page.waitForSelector('a');
+  await page.waitForSelector('a')
   let aTag = await page.$eval('a', e => e.tagName)
   expect(aTag).toBe('A')
 })
@@ -28,12 +28,12 @@ test('if a list item exists', async () => {
   await page.click('a')
 
   // Wait until JS has added this content to the page
-  await page.waitForSelector('#\\31  .title');
+  await page.waitForSelector('#\\31  .title')
   
   // selector(#\\31 ) = selecting item by id "1".
   const titleById1 = await page.$eval('#\\31  .title', e => e.innerHTML)
   expect(titleById1).not.toBe(null)
-})
+}, 8000)
 
 
 test('if first item can move down', async () => {
