@@ -11,19 +11,20 @@
 <body>
   <h1>Ranking</h1>
   <h2>Choose list</h2>
-  <ul id="file-list"></ul>
+  <ul id="list-list"></ul>
   <script>
-      fetch('findListNames.php')
-        .then(res => res.json())
-        .then(data => {
-          const ul = document.getElementById('file-list')
-
-          data.forEach(element => {
-            let li = document.createElement('li')
-            li.innerHTML = `<a href="list.html?list=${element}">${element}</a>`
-            ul.appendChild(li)
-          });
-        })   
+    fetch('findLists.php')
+      .then(res => res.json())
+      .then(data => {
+        const ul = document.getElementById('list-list')
+        data.forEach(element => {
+          // element[0] == id
+          // element[1] == title
+          let li = document.createElement('li')
+          li.innerHTML = `<a href="list.html?list=${element[0]}">${element[1]}</a>`
+          ul.appendChild(li)
+        });
+      })   
   </script>
 </body>
 
