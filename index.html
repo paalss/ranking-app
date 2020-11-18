@@ -9,23 +9,19 @@
 </head>
 
 <body>
-  <h1>Ranking</h1>
-  <h2>Choose list</h2>
-  <ul id="list-list"></ul>
-  <script>
-    fetch('findLists.php')
-      .then(res => res.json())
-      .then(data => {
-        const ul = document.getElementById('list-list')
-        data.forEach(element => {
-          // element[0] == id
-          // element[1] == title
-          let li = document.createElement('li')
-          li.innerHTML = `<a href="list.html?list=${element[0]}">${element[1]}</a>`
-          ul.appendChild(li)
-        });
-      })   
-  </script>
+  <header>
+    <div>
+      <h1>Ranking</h1>
+      <h2>Choose list</h2>
+    </div>
+    <button class="round-button" id="create-item-button">+ Create new list</button>
+    <button class="round-button" id="save-button"></button>
+  </header>
+
+  <ul id="active-list"></ul>
+  <ul id="trash-list"></ul>
+
+  <script src="script.js"></script>
 </body>
 
 </html>

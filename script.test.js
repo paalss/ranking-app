@@ -6,8 +6,8 @@ const appPath = 'http://localhost/sider/annet/Ranking-app/'
 
 beforeAll(async () => {
   browser = await puppeteer.launch({
-    headless: false,
-    slowMo: 80
+    headless: true,
+    slowMo: 0
   })
   page = await browser.newPage()
   await page.goto(appPath)
@@ -19,14 +19,14 @@ test('if h2 and a-tag exists', async () => {
   expect(h2).toBe('Choose list')
 
   // Wait until JS has added this content to the page
-  await page.waitForSelector('a')
-  let aTag = await page.$eval('a', e => e.tagName)
-  expect(aTag).toBe('A')
+  await page.waitForSelector('#active-list button')
+  let button = await page.$eval('#active-list button', e => e.tagName)
+  expect(button).toBe('BUTTON')
 })
 
 
 test('if a list item exists', async () => {
-  await page.click('a')
+  await page.click('#active-list button')
 
   // Wait until JS has added this content to the page
   await page.waitForSelector('.title')

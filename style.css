@@ -37,9 +37,15 @@ h3 {
 
 /* List */
 
-ol {
+ol, ul {
   padding-inline-start: 2%;
 }
+
+#trash-list {
+  display: none;
+}
+
+/* List item */
 
 li {
   padding: 13px 16px;
@@ -86,8 +92,15 @@ form.edit-item {
   max-width: 370px;
 }
 
+/* Buttons */
+
 button {
   cursor: pointer;
+  min-width: 60px;
+}
+
+button.wide {
+  min-width: 100px;
 }
 
 button.transparent-bg-button {
@@ -107,11 +120,11 @@ button.round-button:hover, button.round-button:focus, input[type=submit].round-b
   border-color: yellow;
 }
 
-.flex-settings {
+/* .flex-settings {
   display: flex;
   justify-content: space-around;
   padding: 20px 0;
-}
+} */
 
 /* 
 Arrow classes are based on
