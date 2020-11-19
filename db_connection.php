@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
-$user = 'root';
-$pass = '';
+$username = 'root';
+$password = '';
 $db = 'ranking_app';
 
-// connect to database
-$db_server = new mysqli($host, $user, $pass, $db) or die("Could not connect to db!");
+// connect to MySQL server
+$db_server = new mysqli($host, $username, $password, $db) or die("Could not connect to db!");
