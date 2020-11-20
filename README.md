@@ -1,7 +1,7 @@
 # Ranking app (work in progress)
 A little app for ranking your own defined elements, and saving the changes permanently.
 
-![App_interface](/images/app.png)
+![App_interface](/images/app/app.png)
 
 
 ## Open web app
@@ -14,15 +14,10 @@ This is a guide for setting up the app on localhost using XAMPP on Windows.
 ### 1. Install XAMPP
 Get the XAMPP installer from https://www.apachefriends.org/.
 
-During the installation you can select which compoents to download. Ensure you get these:
+During the installation you can select which compoents to download. Ensure you install MySQL. PhpMyAdmin might also come in handy, but is not necessary. (See image.)
 
-- [x] Apache
+![Xampp_components](/images/xampp/select-components.png)
 
-- [x] MySQL
-
-- [x] PHP
-
-- [x] PhpMyAdmin (not necessary, but might come in handy)
 
 ### 2. Clone/download repository
 Clone or download this repository and place it somewhere inside the _document root directory_, which on Windows is:
@@ -32,10 +27,21 @@ C:/XAMPP/htdocs
 ```
 
 ### 3. Import ranking_app.sql to your MySQL Server
-For this you can use command line interfaces or a graphical database management tool like PhpMyAdmin.
+You can use PhpMyAdmin or command line interfaces to deal with this.
+
+#### Using PhpMyAdmin
+##### Connect to MySQL Server
+In XAMPP control panel app, start the Apache and MySQL services.
+
+Click the “admin” button at the same row as “MySQL” (See image).
+
+![PhpMyAdmin_button](/images/xampp/phpmyadmin-button.png)
+
+Click import and import the ranking_app.sql (`/database/ranking_app.sql`) file (see image).
+
+![PhpMyAdmin_import](/images/xampp/phpmyadmin-import.png)
 
 #### Using Command prompt & MySQL Shell
-
 ##### Connect to MySQL Server
 In XAMPP control panel app, start the MySQL service.
 Run this command in the bin directory:
@@ -61,19 +67,16 @@ How do I import an SQL file using the command line in MySQL?
 
 https://stackoverflow.com/questions/17666249/how-do-i-import-an-sql-file-using-the-command-line-in-mysql
 
-#### Using PhpMyAdmin
-In XAMPP control panel app, start the Apache and MySQL services.
-
-Click the “admin” button at the same row as “MySQL”.
-
-You will automatically log in.
-
-Click import and import the ranking_app.sql (`/database/ranking_app.sql`) file.
-
-### 4. Ensure db_connection.php has the right login credentials
-The file db_connection.php (`/db_connection.php`) holds the login credentials that connects the app to your MySQL server. By defailt this is set to $username='root' and $password=''. If those details doesn't match yours, open this file in a text editor and edit the text so it does.
-
-### 5. Open the app
+### 4. Open the app
 Open a browser and enter `localhost*path/to/*Ranking-app`.
 
-I.e. If you downloaded/cloned the app in `htdocs/folderName/ranking-app`, you should be able to open the app by entering this: `localhost/folderName/ranking-app`
+I.e. If you downloaded/cloned the app in `htdocs/pages/Ranking-app`, you should be able to open the app by entering this: `localhost/pages/Ranking-app`
+
+You should see this (image):
+
+![the-words-choose-list-and-below-alist-named-wishlist](/images/app/first-look-at-app.png)
+
+## There's no list named 'wishlist'
+This most likely means the app isn't connected to the MySQL server database.
+
+If you have changed your MySQL username or password to something else than default (username='root', pawword=''), you will have to update the db_connection.php (`/db_connection.php`) file, so it uses your current login credentials.
