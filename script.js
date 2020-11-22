@@ -39,7 +39,7 @@ function setTitle(listName) {
   h2.innerHTML = 'List: ' + listName
 }
 
-function composeList(page, listId) {
+async function composeList(page, listId) {
   if (page == 'index') {
     fetch('findLists.php')
       .then(res => res.json())
@@ -52,23 +52,16 @@ function composeList(page, listId) {
       });
   } else {
     const infoForPhp = { POSTValue: listId }
-    fetch('findListItems.php', {
-      method: 'POST',
-      headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-      body: formEncode(infoForPhp)
-    })
-      .then(res => res.json())
-      .then(data => {
-        data.forEach(item => {
-          const id = item[0]
-          const listId = item[1]
-          const title = item[3]
-          const artist = item[4]
-          const image = item[5]
+    const data = await fetchFileAndPostData('findListItems.php', infoForPhp)
+    data.forEach(item => {
+      const id = item[0]
+      const listId = item[1]
+      const title = item[3]
+      const artist = item[4]
+      const image = item[5]
 
-          composeItem(page, id, listId, title, artist, image)
-        })
-      })
+      composeItem(page, id, listId, title, artist, image)
+    })
   }
   setSaveButtonTextTo('&check; Saved')
 }
@@ -300,7 +293,7 @@ function toggleEditingMode(page, id, listId) {
       formImageUpload.addEventListener('submit', (event) => {
         event.preventDefault()
         const formattedFormData = new FormData(formImageUpload)
-        postData(formattedFormData, id)
+        downloadImage(formattedFormData, id)
       })
 
     }
@@ -317,11 +310,22 @@ function formEditLiPreventDefault(liNo) {
   })
 }
 
+async function fetchFileAndPostData(fileToFetch, valuesToPost) {
+  const response = await fetch(fileToFetch, {
+    method: 'POST',
+    headers: { 'Content-type': 'application/x-www-form-urlencoded' },
+    body: formEncode(valuesToPost)
+  })
+  return await response.json()
+}
+
 /**
  * Ask PHP to download image into folder,
  * once it's done, place image in list item
  */
-async function postData(formattedFormData, liNo) {
+async function downloadImage(formattedFormData, liNo) {
+  console.log('formattedFormData: ', formattedFormData)
+  console.log('typeof formattedFormData: ', typeof formattedFormData)
   // PHP attempts to download image
   const response = await fetch('placeImgInFolder.php', {
     method: 'POST',
@@ -408,7 +412,7 @@ async function findFreeLiId(page) {
   }
 }
 
-function saveList(page, listId) {
+async function saveList(page, listId) {
   /* Make sure no list item is in editing mode
   saveList function isn't built for list items being in this mode */
   ensureNoEditingModeIsOpen(page, listId)
@@ -420,36 +424,20 @@ function saveList(page, listId) {
     listAsArray.forEach(itemAsArray => {
       itemNo++
       let infoForPhp = { updatedItem: itemAsArray }
-      fetch('updateList.php', {
-        method: 'POST',
-        headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-        body: formEncode(infoForPhp)
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (!data) {
-            console.warn('saveList updating: ', data)
-          }
-        })
-
+      const data = fetchFileAndPostData('updateList.php', infoForPhp)
+      if (!data) {
+        console.warn('saveList updating: ', data)
+      }
     })
   } else { // page == 'list'
     var itemNo = 0
     listAsArray.forEach(itemAsArray => {
       itemNo++
       let infoForPhp = { updatedItem: itemAsArray, place: itemNo, listId: listId }
-      fetch('updateListItem.php', {
-        method: 'POST',
-        headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-        body: formEncode(infoForPhp)
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (!data) {
-            console.warn('saveList updating: ', data)
-          }
-        })
-        .catch(err => console.error('Caught error: ', err))
+      const data = fetchFileAndPostData('updateListItem.php', infoForPhp)
+      if (!data) {
+        console.warn('saveList updating: ', data)
+      }
     })
   }
 
@@ -458,28 +446,12 @@ function saveList(page, listId) {
   if (page == 'index') {
     trashListAsArray.forEach(deletedItemAsArray => {
       let infoForPhp = { deletedItem: deletedItemAsArray }
-      fetch('deleteList.php', {
-        method: 'POST',
-        headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-        body: formEncode(infoForPhp)
-      })
-        .then(res => res.json())
-        .then(data => {
-          console.log(data)
-        })
+      const data = fetchFileAndPostData('deleteList.php', infoForPhp)
     })
   } else {
     trashListAsArray.forEach(deletedItemAsArray => {
       let infoForPhp = { deletedItem: deletedItemAsArray }
-      fetch('deleteListItem.php', {
-        method: 'POST',
-        headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-        body: formEncode(infoForPhp)
-      })
-        .then(res => res.json())
-        .then(data => {
-          console.log(data)
-        })
+      const data = fetchFileAndPostData('deleteListItem.php', infoForPhp)
     })
   }
 
@@ -506,52 +478,38 @@ function ensureNoEditingModeIsOpen(page, listId) {
  * Determines what text saveButton should have.
  * Checks for unsaved changes and gives appropriate feedback
  */
-function determineSaveButtonText(page, listId) {
+async function determineSaveButtonText(page, listId) {
   const currentListAsArray = convertListToArray(page, 'active-list') // eg. Array(3) [ (4) […], (4) […], (4) […] ] -> 0: Array(4) [ "37", "fear is the key", "alistair maclean", … ]
 
   if (page == 'index') {
     const infoForPhp = { POSTValue: listId }
-    fetch('findLists.php', {
-      method: 'POST',
-      headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-      body: formEncode(infoForPhp)
+    const data = await fetchFileAndPostData('findLists.php', infoForPhp)
+    data.forEach(element => {
+      element.splice(1, 2)
     })
-      .then(res => res.json())
-      .then(data => {
-        data.forEach(element => {
-          element.splice(1, 2)
-        })
 
-        const lastSavedListAsArray = data
+    const lastSavedListAsArray = data
 
-        if (JSON.stringify(currentListAsArray) == JSON.stringify(lastSavedListAsArray)) {
-          setSaveButtonTextTo('&check; Saved')
-        } else {
-          setSaveButtonTextTo('● Save lists')
-        }
-      })
+    if (JSON.stringify(currentListAsArray) == JSON.stringify(lastSavedListAsArray)) {
+      setSaveButtonTextTo('&check; Saved')
+    } else {
+      setSaveButtonTextTo('● Save lists')
+    }
   } else {
     const infoForPhp = { POSTValue: listId }
-    fetch('findListItems.php', {
-      method: 'POST',
-      headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-      body: formEncode(infoForPhp)
+    const data = await fetchFileAndPostData('findListItems.php', infoForPhp)
+    // data eg.: Array(3) [ (6) […], (6) […], (6) […] ] -> 0: Array(6) [ "37", "1", "1", … ]
+    data.forEach(element => {
+      element.splice(1, 2)
     })
-      .then(res => res.json())
-      .then(data => {
-        // data eg.: Array(3) [ (6) […], (6) […], (6) […] ] -> 0: Array(6) [ "37", "1", "1", … ]
-        data.forEach(element => {
-          element.splice(1, 2)
-        })
-        // data eg.: Array(3) [ (4) […], (4) […], (4) […] ] -> 0: Array(4) [ "37", "fear is the key", "alistair maclean", … ]
-        const lastSavedListAsArray = data
+    // data eg.: Array(3) [ (4) […], (4) […], (4) […] ] -> 0: Array(4) [ "37", "fear is the key", "alistair maclean", … ]
+    const lastSavedListAsArray = data
 
-        if (JSON.stringify(currentListAsArray) == JSON.stringify(lastSavedListAsArray)) {
-          setSaveButtonTextTo('&check; Saved')
-        } else {
-          setSaveButtonTextTo('● Save changes')
-        }
-      })
+    if (JSON.stringify(currentListAsArray) == JSON.stringify(lastSavedListAsArray)) {
+      setSaveButtonTextTo('&check; Saved')
+    } else {
+      setSaveButtonTextTo('● Save changes')
+    }
   }
 }
 
@@ -605,16 +563,15 @@ function goToList(page, listId) {
 }
 
 function returnHome(page) {
-  window.location = 'index.html'
-  // const isSaved = document.getElementById('save-button').innerHTML
-  // if (isSaved != '✓ Saved') {
-  //   const willRemoveChanges = confirm('Leaving this page will remove unsaved changes, continue?')
-  //   if (willRemoveChanges == true) {
-  //     window.location = 'index.html'
-  //   }
-  // } else {
-  //   window.location = 'index.html'
-  // }
+  const isSaved = document.getElementById('save-button').innerHTML
+  if (isSaved != '✓ Saved') {
+    const willRemoveChanges = confirm('Leaving this page will remove unsaved changes, continue?')
+    if (willRemoveChanges == true) {
+      window.location = 'index.html'
+    }
+  } else {
+    window.location = 'index.html'
+  }
 }
 
 /**

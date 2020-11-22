@@ -23,7 +23,7 @@ During the installation you can select which compoents to download. Ensure you i
 Clone or download this repository and place it somewhere inside the _document root directory_, which on Windows is:
 
 ```
-C:/XAMPP/htdocs
+C:/XAMPP/htdocs/
 ```
 
 ### 3. Import ranking_app.sql to your MySQL Server
@@ -33,7 +33,7 @@ You can use PhpMyAdmin or command line interfaces to deal with this.
 ##### Connect to MySQL Server
 In XAMPP control panel app, start the Apache and MySQL services.
 
-Click the “admin” button at the same row as “MySQL” (See image).
+Click the “admin” button at the same row as “MySQL” (see image).
 
 ![PhpMyAdmin_button](/images/xampp/phpmyadmin-button.png)
 
