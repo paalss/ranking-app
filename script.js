@@ -74,10 +74,13 @@ function composeItem(page, id, listId, title, artist, image) {
   if (page == 'index') {
     li.outerHTML = `
       <li id="${id}">
-        <form class="edit-item">
-          <button class="wide round-button title" id="${id}">${title}</button>
-          <button class="transparent-bg-button toggle-editing-mode-button">Edit title</button>
-        </form>
+        <div class="flex-row">
+          <form class="edit-item">
+            <button class="link title" id="${id}">${title}</button>
+            <button class="round-button toggle-editing-mode-button">Rename</button>
+          </form>
+          <button class="round-button delete-item-button">Delete list</button>
+        </div>
       </li>
     `
     addClickListenerToListItemButtons(page, id)
@@ -132,6 +135,7 @@ function addClickListenerToListItemButtons(page, id, listId) {
   if (page == 'index') {
     item.querySelector('.title').addEventListener('click', () => goToList(page, id))
     item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id))
+    item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(page, id))
   } else {
     item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id, listId))
     item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(page, id, listId))
@@ -196,8 +200,8 @@ function moveItem(page, liNo, direction, listId) {
  * for telling the database which records it should delete
  * when it syncs to your GUI list.
  */
-function deleteItem(page, liNo, listId) {
-  const itemToTrash = document.getElementById(liNo)
+function deleteItem(page, id, listId) {
+  const itemToTrash = document.getElementById(id)
   const trashedItems = document.getElementById('trash-list')
   trashedItems.appendChild(itemToTrash)
 
@@ -216,8 +220,8 @@ function toggleEditingMode(page, id, listId) {
 
     if (page == 'index') {
       divEditItem.innerHTML = `
-          <button class="wide round-button title" id="${id}">${title}</button>
-          <button class="transparent-bg-button toggle-editing-mode-button">Edit title</button>
+          <button class="link title" id="${id}">${title}</button>
+          <button class="round-button toggle-editing-mode-button">Edit title</button>
       `
       divEditItem.querySelector('.title').addEventListener('click', () => goToList(page, id))
       divEditItem.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id))

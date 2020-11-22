@@ -99,9 +99,17 @@ button {
   min-width: 60px;
 }
 
-button.wide {
-  min-width: 100px;
+button.link {
+  color: yellow;
+  text-decoration: underline;
+  font-size: 1.5rem;
+  border: none;
+  background: none;
 }
+
+/* button.wide {
+  min-width: 150px;
+} */
 
 button.transparent-bg-button {
   color: #fff;
