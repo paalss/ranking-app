@@ -15,7 +15,7 @@ window.onload = () => {
   } else {
     const GETparameter = window.location.search.substr(1) // eg. list=1, list=2
     const listId = GETparameter.substring(GETparameter.indexOf('=') + 1) // eg. 1, 2
-    fetch('findLists.php')
+    fetch('php/findLists.php')
       .then(res => res.json())
       .then(lists => { // eg. Array [ (2) […], (2) […] ] -> 0: Array [ "1", "books" ]
         var arrayIndex = 0
@@ -41,7 +41,7 @@ function setTitle(listName) {
 
 async function composeList(page, listId) {
   if (page == 'index') {
-    fetch('findLists.php')
+    fetch('php/findLists.php')
       .then(res => res.json())
       .then(data => {
         data.forEach(item => {
@@ -52,7 +52,7 @@ async function composeList(page, listId) {
       });
   } else {
     const infoForPhp = { POSTValue: listId }
-    const data = await fetchFileAndPostData('findListItems.php', infoForPhp)
+    const data = await fetchFileAndPostData('php/findListItems.php', infoForPhp)
     data.forEach(item => {
       const id = item[0]
       const listId = item[1]
@@ -327,7 +327,7 @@ async function downloadImage(formattedFormData, liNo) {
   console.log('formattedFormData: ', formattedFormData)
   console.log('typeof formattedFormData: ', typeof formattedFormData)
   // PHP attempts to download image
-  const response = await fetch('placeImgInFolder.php', {
+  const response = await fetch('php/placeImgInFolder.php', {
     method: 'POST',
     body: formattedFormData
   })
@@ -366,9 +366,9 @@ async function downloadImage(formattedFormData, liNo) {
 async function findFreeLiId(page) {
   // Fetch item Ids from the database
   if (page == 'index') {
-    var response = await fetch('findAllListsId.php')
+    var response = await fetch('php/findAllListsId.php')
   } else {
-    var response = await fetch('findAllListItemsId.php')
+    var response = await fetch('php/findAllListItemsId.php')
   }
   if (!response.ok) {
     const message = `An error has occured: ${response.status}`;
@@ -424,7 +424,7 @@ async function saveList(page, listId) {
     listAsArray.forEach(itemAsArray => {
       itemNo++
       let infoForPhp = { updatedItem: itemAsArray }
-      const data = fetchFileAndPostData('updateList.php', infoForPhp)
+      const data = fetchFileAndPostData('php/updateList.php', infoForPhp)
       if (!data) {
         console.warn('saveList updating: ', data)
       }
@@ -434,7 +434,7 @@ async function saveList(page, listId) {
     listAsArray.forEach(itemAsArray => {
       itemNo++
       let infoForPhp = { updatedItem: itemAsArray, place: itemNo, listId: listId }
-      const data = fetchFileAndPostData('updateListItem.php', infoForPhp)
+      const data = fetchFileAndPostData('php/updateListItem.php', infoForPhp)
       if (!data) {
         console.warn('saveList updating: ', data)
       }
@@ -446,12 +446,12 @@ async function saveList(page, listId) {
   if (page == 'index') {
     trashListAsArray.forEach(deletedItemAsArray => {
       let infoForPhp = { deletedItem: deletedItemAsArray }
-      const data = fetchFileAndPostData('deleteList.php', infoForPhp)
+      const data = fetchFileAndPostData('php/deleteList.php', infoForPhp)
     })
   } else {
     trashListAsArray.forEach(deletedItemAsArray => {
       let infoForPhp = { deletedItem: deletedItemAsArray }
-      const data = fetchFileAndPostData('deleteListItem.php', infoForPhp)
+      const data = fetchFileAndPostData('php/deleteListItem.php', infoForPhp)
     })
   }
 
@@ -483,7 +483,7 @@ async function determineSaveButtonText(page, listId) {
 
   if (page == 'index') {
     const infoForPhp = { POSTValue: listId }
-    const data = await fetchFileAndPostData('findLists.php', infoForPhp)
+    const data = await fetchFileAndPostData('php/findLists.php', infoForPhp)
     data.forEach(element => {
       element.splice(1, 2)
     })
@@ -497,7 +497,7 @@ async function determineSaveButtonText(page, listId) {
     }
   } else {
     const infoForPhp = { POSTValue: listId }
-    const data = await fetchFileAndPostData('findListItems.php', infoForPhp)
+    const data = await fetchFileAndPostData('php/findListItems.php', infoForPhp)
     // data eg.: Array(3) [ (6) […], (6) […], (6) […] ] -> 0: Array(6) [ "37", "1", "1", … ]
     data.forEach(element => {
       element.splice(1, 2)

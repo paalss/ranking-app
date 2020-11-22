@@ -14,7 +14,7 @@ This is a guide for setting up the app on localhost using XAMPP on Windows.
 ### 1. Install XAMPP
 Get the XAMPP installer from https://www.apachefriends.org/.
 
-During the installation you can select which compoents to download. Ensure you install MySQL. PhpMyAdmin might also come in handy, but is not necessary. (See image.)
+During the installation you can select which compoents to download. Ensure you install MySQL. PhpMyAdmin might also come in handy, but is not necessary (See image).
 
 ![Xampp_components](/images/xampp/select-components.png)
 
