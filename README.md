@@ -5,8 +5,6 @@ A little app for ranking your own defined elements, and saving the changes perma
 
 
 ## Open web app
-To use this app, you'll have to fire it up on your localhost. 
-
 This app isn't public on the web, so you'll have to fire it up on localhost to use it.
 
 This is a guide for setting up the app on localhost using XAMPP on Windows.
@@ -59,11 +57,10 @@ While connected, you can import the ranking_app.sql by running:
 MariaDB [(none)]> source C:/xampp/htdocs/*path/to*/Ranking-app/database/ranking_app.sql;
 ```
 
-There's no need to first create an empty database, the ranking_app.sql will take care of creating it. 
+There's no need to create an empty database and use it before importing the sql file. The ranking_app.sql will create the database by itself. 
 
-Useful resource:
-
-How do I import an SQL file using the command line in MySQL?
+###### Potentially useful resource:
+**How do I import an SQL file using the command line in MySQL?**
 
 https://stackoverflow.com/questions/17666249/how-do-i-import-an-sql-file-using-the-command-line-in-mysql
 
