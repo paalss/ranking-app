@@ -35,6 +35,8 @@ Click the “admin” button at the same row as “MySQL” (see image).
 
 ![PhpMyAdmin_button](/images/xampp/phpmyadmin-button.png)
 
+This will connect you to the MySQL server automatically (using the login credentials provided in `C:/xampp/phpMyAdmin/config.inc.php`)
+
 Click import and import the ranking_app.sql (`/database/ranking_app.sql`) file (see image).
 
 ![PhpMyAdmin_import](/images/xampp/phpmyadmin-import.png)

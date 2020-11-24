@@ -328,8 +328,6 @@ async function fetchFileAndPostData(fileToFetch, valuesToPost) {
  * once it's done, place image in list item
  */
 async function downloadImage(formattedFormData, liNo) {
-  console.log('formattedFormData: ', formattedFormData)
-  console.log('typeof formattedFormData: ', typeof formattedFormData)
   // PHP attempts to download image
   const response = await fetch('php/placeImgInFolder.php', {
     method: 'POST',
