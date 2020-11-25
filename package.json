@@ -1,0 +1,25 @@
+{
+  "name": "tingrang",
+  "version": "1.0.0",
+  "description": "A little app for ranking your own defined elements, and saving the changes permanently.",
+  "main": "listFilenames.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paalss/Ranking-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/paalss/Ranking-app/issues"
+  },
+  "homepage": "https://github.com/paalss/Ranking-app#readme",
+  "devDependencies": {
+    "jest": "^26.4.2",
+    "puppeteer": "^5.3.0"
+  },
+  "dependencies": {}
+}
