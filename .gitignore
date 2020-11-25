@@ -1,3 +1,7 @@
-work-in-progress-files
-node_modules
-# images
+/.env
+/.vscode
+/config/*
+/data/*
+/logs/*
+# /www/**
+.DS_Store
