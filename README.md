@@ -6,11 +6,6 @@ This app can now be served using Docker, thanks to sprintcube/docker-compose-lam
 ![App_interface](www/app/images/app/app.png)
 
 ## Open web app
-I've layed up for using Docker to serve this AMP-stack app, but if you'd rather use XAMPP, you can visit an earlier version. See this commit:
-
-https://github.com/paalss/Ranking-app/tree/e153adf208a48f6bcaf386fe152b34e114b68b43
-
-If you want to use Docker, continue reading.
 
 **Prerequisites**
 
@@ -22,7 +17,7 @@ If you want to use Docker, continue reading.
 
 Start Docker Desktop
 
-**Run in a Bash**
+**Run in Bash**
 
 ```
 git clone https://github.com/paalss/Ranking-app.git
@@ -51,6 +46,9 @@ docker-compose up -d
 [localhost/app/](http://localhost/app/)
 
 If everything worked correctly, you should see a premade list (named “wishlist”) on the page.
+
+## Open with XAMPP (use earlier version)
+I've layed up for using Docker to serve this AMP-stack app, but if you'd rather use XAMPP, you can do that too. See this older commit: [Ranking-app-XAMPP](https://github.com/paalss/Ranking-app/tree/e153adf208a48f6bcaf386fe152b34e114b68b43). As of now the latest commit and the Ranking-app-XAMPP is on par with each other in terms of app functionality.
 
 ## Run automatic tests
 
