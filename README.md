@@ -1,22 +1,25 @@
 # Ranking app (work in progress)
-A little app for ranking your own defined elements, and saving the changes permanently.
+A little app for ranking your own defined elements, and saving the changes permanently. This app can now be served using Docker, thanks to sprintcube/docker-compose-lamp. See more here: https://github.com/sprintcube/docker-compose-lamp
 
 ![App_interface](www/app/images/app/app.png)
 
 ## Open web app
-I've layed up for using Docker to serve this AMP-stack app, but if you'd rather use XAMPP, you can visit an earlier version of this app. Just go to this commit:
+I've layed up for using Docker to serve this AMP-stack app, but if you'd rather use XAMPP, you can visit an earlier version of this app. See this commit:
 
 https://github.com/paalss/Ranking-app/tree/e153adf208a48f6bcaf386fe152b34e114b68b43
 
-The Docker serving was made possible by mixing this app with the repository  sprintcube/docker-compose-lamp. See more here: https://github.com/sprintcube/docker-compose-lamp 
+**Prerequisites**
 
-**Docker**
-You need Docker and Docker-compose on your computer.
+* Git
+
+* Docker
+
+* Docker-compose
 
 ```
 git clone https://github.com/paalss/Ranking-app.git
 
-cd docker-compose-lamp
+cd Ranking-app
 
 cp sample.env .env
 
