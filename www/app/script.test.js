@@ -7,8 +7,8 @@ const appPath = 'http://localhost/app/'
 
 beforeAll(async () => {
   browser = await puppeteer.launch({
-    headless: true,
-    slowMo: 0
+    headless: false,
+    slowMo: 120
   })
   page = await browser.newPage()
   await page.goto(appPath)
@@ -20,14 +20,14 @@ test('if h2 and a-tag exists', async () => {
   expect(h2).toBe('Choose list')
 
   // Wait until JS has added this content to the page
-  await page.waitForSelector('#active-list button')
-  let button = await page.$eval('#active-list button', e => e.tagName)
+  await page.waitForSelector('#activeList button')
+  let button = await page.$eval('#activeList button', e => e.tagName)
   expect(button).toBe('BUTTON')
-})
+}, 8000)
 
 
 test('if a list item exists', async () => {
-  await page.click('#active-list button')
+  await page.click('#activeList button')
 
   // Wait until JS has added this content to the page
   await page.waitForSelector('.title')
@@ -80,7 +80,7 @@ test('if user can create item', async () => {
   // See items pre to button click, and count items
   const preCreatedLis = await page.$$eval('li', e => e.map(e => e.tagName))
   console.log('preCreatedLis.length (expected): ', preCreatedLis.length)
-  await page.click('#create-item-button')
+  await page.click('#createItemButton')
   await page.waitFor(1000)
 
   // See items post to button click, and count items
@@ -101,7 +101,7 @@ test('if list can be saved', async () => {
 
   // Make a change, hit save and see how the list looks like after saving
   await page.click('.move-item-down-button')
-  await page.click('#save-button')
+  await page.click('#saveButton')
   const postSavedLis = await page.$$eval('li .title', e => e.map(e => e.innerHTML))
 
   // Page refresh. Resets any unsaved changes
@@ -115,7 +115,7 @@ test('if list can be saved', async () => {
 
   // Move the item by id 2 back up
   await page.click('li:nth-child(2) .move-item-up-button')
-  await page.click('#save-button')
+  await page.click('#saveButton')
 
   // If saving worked, the current list should look like it was when saving
   const currentLis2 = await page.$$eval('li .title', e => e.map(e => e.innerHTML))

@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ranking</title>
   <link rel="stylesheet" href="style.css">
+  <!-- <script src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js"></script> -->
+  <!-- jsDelivr :: Sortable :: Latest (https://www.jsdelivr.com/package/npm/sortablejs) -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 
 <body>
@@ -14,12 +17,12 @@
       <h1>Ranking</h1>
       <h2>Choose list</h2>
     </div>
-    <button class="round-button" id="create-item-button">+ Create new list</button>
-    <button class="round-button" id="save-button"></button>
+    <button class="round-button" id="createItemButton">+ Create new list</button>
+    <button class="round-button" id="saveButton"></button>
   </header>
 
-  <ul id="active-list"></ul>
-  <ul id="trash-list"></ul>
+  <ul id="activeList"></ul>
+  <ul id="trashList"></ul>
 
   <script src="script.js"></script>
 </body>

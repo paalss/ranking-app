@@ -1,4 +1,5 @@
 'use strict'
+var selected = null
 
 window.onload = () => {
   // Determine which is open
@@ -10,7 +11,7 @@ window.onload = () => {
   }
 
   if (page == 'index') {
-    composeList(page)
+    renderList(page)
     addClickListenerToHeaderButtons(page, '', '')
   } else {
     const GETparameter = window.location.search.substr(1) // eg. list=1, list=2
@@ -28,7 +29,7 @@ window.onload = () => {
           }
         })
       })
-    composeList(page, listId)
+    renderList(page, listId)
     addClickListenerToHeaderButtons(page, GETparameter, listId)
   }
 
@@ -39,7 +40,7 @@ function setTitle(listName) {
   h2.innerHTML = 'List: ' + listName
 }
 
-async function composeList(page, listId) {
+async function renderList(page, listId) {
   if (page == 'index') {
     fetch('php/findLists.php')
       .then(res => res.json())
@@ -47,7 +48,7 @@ async function composeList(page, listId) {
         data.forEach(item => {
           const id = item[0]
           const title = item[1]
-          composeItem(page, id, '', title)
+          renderItem(page, id, '', title)
         })
       });
   } else {
@@ -60,15 +61,15 @@ async function composeList(page, listId) {
       const artist = item[4]
       const image = item[5]
 
-      composeItem(page, id, listId, title, artist, image)
+      renderItem(page, id, listId, title, artist, image)
     })
   }
   setSaveButtonTextTo('&check; Saved')
 }
 
-function composeItem(page, id, listId, title, artist, image) {
+function renderItem(page, id, listId, title, artist, image) {
   const li = document.createElement('li')
-  const list = document.getElementById('active-list')
+  const list = document.getElementById('activeList')
   list.appendChild(li)
 
   if (page == 'index') {
@@ -116,13 +117,13 @@ function composeItem(page, id, listId, title, artist, image) {
  */
 function addClickListenerToHeaderButtons(page, GETparameter, listId) {
   if (page == 'index') {
-    document.getElementById('create-item-button').addEventListener('click', () => createItem(page, '', '', '', ''))
-    document.getElementById('save-button').addEventListener('click', () => saveList(page))
+    document.getElementById('createItemButton').addEventListener('click', () => createItem(page, '', '', '', ''))
+    document.getElementById('saveButton').addEventListener('click', () => saveList(page))
   } else {
-    document.getElementById('create-item-button').addEventListener('click', () => createItem(page, listId, 'default.png', '', ''))
-    document.getElementById('return-home-button').addEventListener('click', () => returnHome(page))
-    document.getElementById('save-button').addEventListener('click', () => saveList(page, listId))
-    document.getElementById('refresh-button').addEventListener('click', () => window.location = 'list.html?' + GETparameter)
+    document.getElementById('createItemButton').addEventListener('click', () => createItem(page, listId, 'default.png', '', ''))
+    document.getElementById('returnHomeButton').addEventListener('click', () => returnHome(page))
+    document.getElementById('saveButton').addEventListener('click', () => saveList(page, listId))
+    document.getElementById('refreshButton').addEventListener('click', () => window.location = 'list.html?' + GETparameter)
   }
 }
 
@@ -137,6 +138,7 @@ function addClickListenerToListItemButtons(page, id, listId) {
     item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id))
     item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(page, id))
   } else {
+    item.addEventListener('drop', () => determineSaveButtonText(page, listId))
     item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id, listId))
     item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(page, id, listId))
     item.querySelector('.move-item-up-button').addEventListener('click', () => moveItem(page, id, 'up', listId))
@@ -144,13 +146,18 @@ function addClickListenerToListItemButtons(page, id, listId) {
   }
 }
 
+new Sortable(activeList, {
+  animation: 150,
+  ghostClass: 'blue-background-class'
+});
+
 async function createItem(page, listId, image, title, artist) {
   const id = await findFreeLiId(page)
   if (page == 'index') {
-    composeItem(page, id, '', title)
+    renderItem(page, id, '', title)
     toggleEditingMode(page, id) // turn on editing mode for this item
   } else {
-    composeItem(page, id, listId, title, artist, image)
+    renderItem(page, id, listId, title, artist, image)
     toggleEditingMode(page, id, listId) // turn on editing mode for this item
     determineSaveButtonText(page, listId)
   }
@@ -172,7 +179,7 @@ function highlight(item) {
  */
 function moveItem(page, liNo, direction, listId) {
   const itemToMove = document.getElementById(liNo)
-  const ol = document.getElementById('active-list')
+  const ol = document.getElementById('activeList')
   if (direction == 'up') {
     /* Move chosen item up
     as long as it's not at the top of the list */
@@ -202,7 +209,7 @@ function moveItem(page, liNo, direction, listId) {
  */
 function deleteItem(page, id, listId) {
   const itemToTrash = document.getElementById(id)
-  const trashedItems = document.getElementById('trash-list')
+  const trashedItems = document.getElementById('trashList')
   trashedItems.appendChild(itemToTrash)
 
   determineSaveButtonText(page, listId)
@@ -420,7 +427,7 @@ async function saveList(page, listId) {
   ensureNoEditingModeIsOpen(page, listId)
 
   // Update database with any new data
-  const listAsArray = convertListToArray(page, 'active-list')
+  const listAsArray = convertListToArray(page, 'activeList')
   if (page == 'index') {
     var itemNo = 0
     listAsArray.forEach(itemAsArray => {
@@ -444,7 +451,7 @@ async function saveList(page, listId) {
   }
 
   // Delete database records that corresponds to our trash list
-  const trashListAsArray = convertListToArray(page, 'trash-list')
+  const trashListAsArray = convertListToArray(page, 'trashList')
   if (page == 'index') {
     trashListAsArray.forEach(deletedItemAsArray => {
       let infoForPhp = { deletedItem: deletedItemAsArray }
@@ -481,7 +488,7 @@ function ensureNoEditingModeIsOpen(page, listId) {
  * Checks for unsaved changes and gives appropriate feedback
  */
 async function determineSaveButtonText(page, listId) {
-  const currentListAsArray = convertListToArray(page, 'active-list') // eg. Array(3) [ (4) […], (4) […], (4) […] ] -> 0: Array(4) [ "37", "fear is the key", "alistair maclean", … ]
+  const currentListAsArray = convertListToArray(page, 'activeList') // eg. Array(3) [ (4) […], (4) […], (4) […] ] -> 0: Array(4) [ "37", "fear is the key", "alistair maclean", … ]
 
   if (page == 'index') {
     const infoForPhp = { POSTValue: listId }
@@ -519,14 +526,14 @@ async function determineSaveButtonText(page, listId) {
  * Define the saveButton's text
  */
 function setSaveButtonTextTo(text) {
-  const saveButton = document.getElementById('save-button')
+  const saveButton = document.getElementById('saveButton')
   saveButton.innerHTML = text
 }
 
 /**
  * Convert chosen list to array
  * @param {string} activeListOrTrashList list type. Either
- * the list main list 'active-list', or the list with all
+ * the list main list 'activeList', or the list with all
  * the trashed list items
  */
 function convertListToArray(page, activeListOrTrashList) {
@@ -553,7 +560,7 @@ function convertListToArray(page, activeListOrTrashList) {
 }
 
 function goToList(page, listId) {
-  const isSaved = document.getElementById('save-button').innerHTML
+  const isSaved = document.getElementById('saveButton').innerHTML
   if (isSaved != '✓ Saved') {
     const willRemoveChanges = confirm('Leaving this page will remove unsaved changes, continue?')
     if (willRemoveChanges == true) {
@@ -565,7 +572,7 @@ function goToList(page, listId) {
 }
 
 function returnHome(page) {
-  const isSaved = document.getElementById('save-button').innerHTML
+  const isSaved = document.getElementById('saveButton').innerHTML
   if (isSaved != '✓ Saved') {
     const willRemoveChanges = confirm('Leaving this page will remove unsaved changes, continue?')
     if (willRemoveChanges == true) {
