@@ -1,13 +1,15 @@
-<!-- # Ranking app (work in progress)
+# Ranking app (This is an old readme, from when the project was supposed to be served with XAMPP)
+I switched to using Docker because it made serving locally easier
+
 A little app for ranking your own defined elements, and saving the changes permanently.
 
 ![App_interface](/images/app/app.png)
 
 
 ## Open web app
-This app isn't public on the web, so you'll have to fire it up on localhost to use it. -->
+This app isn't public on the web, so you'll have to fire it up on localhost to use it.
 
-<!-- This is a guide for setting up the app on localhost using XAMPP on Windows.
+This is a guide for setting up the app on localhost using XAMPP on Windows.
 
 ### 1. Install XAMPP
 Get the XAMPP installer from https://www.apachefriends.org/.
@@ -78,4 +80,4 @@ You should see this (image):
 ## There's no list named 'wishlist'
 This most likely means the app isn't connected to the MySQL server database.
 
-If you have changed your MySQL username or password to something else than default (username='root', pawword=''), you will have to update the db_connection.php (`/db_connection.php`) file, so it uses your current login credentials. -->
+If you have changed your MySQL username or password to something else than default (username='root', pawword=''), you will have to update the db_connection.php (`/db_connection.php`) file, so it uses your current login credentials.

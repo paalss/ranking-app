@@ -1,11 +1,11 @@
 # Ranking app (work in progress)
 A little app for ranking your own defined elements, and saving the changes permanently.
 
-This app can now be served using Docker, thanks to sprintcube/docker-compose-lamp. See more here: https://github.com/sprintcube/docker-compose-lamp
+![App_interaction](www/app/images/app/app-recording1.gif)
 
 ![App_interface](www/app/images/app/app.png)
 
-## Open web app
+## Open web app (serve locally)
 **Prerequisites**
 
 * Git
@@ -49,7 +49,7 @@ docker-compose build --no-cache
 If everything worked correctly, you should see a premade list (named “wishlist”) on the page.
 
 ## Open with XAMPP (use earlier version)
-I've layed up for using Docker to serve this AMP-stack app, but if you'd rather use XAMPP, you can do that too. See this older commit: [Ranking-app-XAMPP](https://github.com/paalss/Ranking-app/tree/e153adf208a48f6bcaf386fe152b34e114b68b43). As of now the latest commit and the Ranking-app-XAMPP is on par with each other in terms of app functionality.
+I've layed up for using Docker to serve this AMP-stack app, but if you'd rather use XAMPP, you can do that too. See this older commit: [Ranking-app-XAMPP](https://github.com/paalss/Ranking-app/tree/e153adf208a48f6bcaf386fe152b34e114b68b43). Be aware that this version doesn't have drag and drop, and has a longer and tedious local serving process.
 
 ## Run automatic tests
 **Navigate to app folder and install the dependencies**
@@ -64,3 +64,8 @@ npm install
 ```
 npm test
 ```
+
+## Other's code I've used
+* sprintcube/docker-compose-lamp. For serving app with Docker. See more: https://github.com/sprintcube/docker-compose-lamp
+
+* SortableJS/sortablejs. For drag and drop functionality. See more: https://github.com/SortableJS/sortablejs
