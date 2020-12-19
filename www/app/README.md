@@ -1,4 +1,4 @@
-# Ranking app (This is an old readme, from when the project was supposed to be served with XAMPP)
+# Ranking app
 I switched to using Docker because it made serving locally easier
 
 A little app for ranking your own defined elements, and saving the changes permanently.
@@ -6,11 +6,7 @@ A little app for ranking your own defined elements, and saving the changes perma
 ![App_interface](/images/app/app.png)
 
 
-## Open web app
-This app isn't public on the web, so you'll have to fire it up on localhost to use it.
-
-This is a guide for setting up the app on localhost using XAMPP on Windows.
-
+## Open web app (XAMPP guide)
 ### 1. Install XAMPP
 Get the XAMPP installer from https://www.apachefriends.org/.
 
@@ -52,7 +48,7 @@ Run this command in the bin directory:
 C:\xampp\mysql\bin>mysql -u root -p
 ```
 
-Then type your password if any and hit enter.
+Then type your password if you have any and hit enter.
 
 ##### import the database dump
 While connected, you can import the ranking_app.sql by running:
@@ -68,10 +64,17 @@ There's no need to create an empty database and use it before importing the sql 
 
 https://stackoverflow.com/questions/17666249/how-do-i-import-an-sql-file-using-the-command-line-in-mysql
 
-### 4. Open the app
-Open a browser and enter `localhost*path/to/*Ranking-app`.
+### 4. Enable the right MySQL server sign-in
+Since you're not using Docker, you have to disable the sign-in written for Docker and enable the one for XAMPP:
 
-I.e. If you downloaded/cloned the app in `htdocs/pages/Ranking-app`, you should be able to open the app by entering this: `localhost/pages/Ranking-app`
+* Open this file in a text editor `Ranking-app/www/app/php/db_connection.php`
+
+* As its comments suggests, disable the MySQL server sign-in code for Docker, and enable the one for XAMPP. If you have set your MySQL password to something else than '' empty (default), write your password inside the apostrophes: $password = 'yourpassord'. If you haven't touched your password, just leave it be.
+
+### 4. Open the app
+Open a browser and enter `localhost*path/to/*Ranking-app/www/app`.
+
+I.e. If you downloaded/cloned the app in `htdocs/pages/Ranking-app/www/app`, you should be able to open the app by entering this: `localhost/pages/Ranking-app/www/app`
 
 You should see this (image):
 
@@ -80,4 +83,4 @@ You should see this (image):
 ## There's no list named 'wishlist'
 This most likely means the app isn't connected to the MySQL server database.
 
-If you have changed your MySQL username or password to something else than default (username='root', pawword=''), you will have to update the db_connection.php (`/db_connection.php`) file, so it uses your current login credentials.
+If you have changed your MySQL username or password to something else than default (username='root', pawword=''), you will have to update the db_connection.php (`Ranking-app/www/app/php/db_connection.php`) file, so it uses your current login credentials.

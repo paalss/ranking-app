@@ -4,19 +4,21 @@ A little app for ranking your own defined elements, and saving the changes perma
 ![App_interaction](www/app/images/app/app-recording1.gif)
 
 ## Open web app (serve locally)
+This app isn't on a public server, it has to be served locally.
+
+You can choose to either serve this app using Docker or XAMPP. I've written guides for both. For a Docker guide, read further, for a XAMPP guide, go to [this README](https://github.com/paalss/Ranking-app/www/app) instead.
+
 **Prerequisites**
 
 * Git
 
 * Docker
 
-* Docker-compose
-
 **Start Docker Desktop**
 
 **Download source code and run containers**
 
-Open commmand line. Eg. Git Bash, navigate to where you want to download the project and run these commands:
+Open your commmand line, eg. Git Bash, navigate to where you want to download the project and run these commands:
 
 ```
 git clone https://github.com/paalss/Ranking-app.git
@@ -45,9 +47,6 @@ docker-compose build --no-cache
 [localhost/app/](http://localhost/app/)
 
 If everything worked correctly, you should see a premade list (named “wishlist”) on the page.
-
-## Open with XAMPP (use earlier version)
-I've layed up for using Docker to serve this AMP-stack app, but if you'd rather use XAMPP, you can do that too. See this older commit: [Ranking-app-XAMPP](https://github.com/paalss/Ranking-app/tree/e153adf208a48f6bcaf386fe152b34e114b68b43). Be aware that this version doesn't have drag and drop, and has a longer and tedious local serving process.
 
 ## Run automatic tests
 **Navigate to the app folder and install the dependencies**
