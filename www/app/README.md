@@ -1,4 +1,4 @@
-# Ranking app
+# Ranking app (XAMPP guide)
 I switched to using Docker because it made serving locally easier
 
 A little app for ranking your own defined elements, and saving the changes permanently.
@@ -6,7 +6,7 @@ A little app for ranking your own defined elements, and saving the changes perma
 ![App_interface](/images/app/app.png)
 
 
-## Open web app (XAMPP guide)
+## Open web app
 ### 1. Install XAMPP
 Get the XAMPP installer from https://www.apachefriends.org/.
 

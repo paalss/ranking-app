@@ -6,7 +6,7 @@ A little app for ranking your own defined elements, and saving the changes perma
 ## Open web app (serve locally)
 This app isn't on a public server, it has to be served locally.
 
-You can choose to either serve this app using Docker or XAMPP. I've written guides for both. For a Docker guide, read further, for a XAMPP guide, go to [this README](https://github.com/paalss/Ranking-app/www/app) instead.
+You can choose to either serve this app using Docker or XAMPP. I've written guides for both. For a Docker guide, read further, for a XAMPP guide, go to [this README](https://github.com/paalss/Ranking-app/blob/master/www/app/README.md).
 
 **Prerequisites**
 
