@@ -48,7 +48,8 @@ docker-compose build --no-cache
 
 If everything worked correctly, you should see a premade list (named “wishlist”) on the page.
 
-## Run automatic tests
+<!-- ## Run automatic tests (jest&puppeteer)
+
 **Navigate to the app folder and install the dependencies**
 
 ```
@@ -60,7 +61,7 @@ npm install
 
 ```
 npm test
-```
+``` -->
 
 ## I've used code from 
 * sprintcube/docker-compose-lamp for making this app serve-able with Docker. See more: https://github.com/sprintcube/docker-compose-lamp

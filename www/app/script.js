@@ -32,7 +32,6 @@ window.onload = () => {
     renderList(page, listId)
     addClickListenerToHeaderButtons(page, GETparameter, listId)
   }
-
 }
 
 function setTitle(listName) {
@@ -60,18 +59,39 @@ async function renderList(page, listId) {
       const title = item[3]
       const artist = item[4]
       const image = item[5]
-
-      renderItem(page, id, listId, title, artist, image)
+      const isTrashed = item[6]
+      const place = item[2]
+      renderItem(page, id, listId, title, artist, image, isTrashed, place)
     })
   }
   setSaveButtonTextTo('&check; Saved')
 }
 
-function renderItem(page, id, listId, title, artist, image) {
+/**
+ * Render list item
+ * @param {string} page Index or list
+ * @param {number} id Item id
+ * @param {number} listId 
+ * @param {string} title 
+ * @param {string} artist 
+ * @param {string} image 
+ * @param {boolean} isTrashed True or false
+ * @param {number} originalPlace Two use cases: ● Used for trashing an item in such a way it remembers which place it left (Storing original place) ● Also used for restoring items to their original place
+ * @param {boolean} insertAtOriginalPlace True or false. True if item needs to be rendered at a specific place in the list. Eg. when restoring an item.
+ */
+function renderItem(page, id, listId, title, artist, image, isTrashed, originalPlace, insertAtOriginalPlace) {
   const li = document.createElement('li')
-  const list = document.getElementById('activeList')
-  list.appendChild(li)
-
+  if (isTrashed == true) {
+    var list = document.getElementById('trashList')
+  } else {
+    var list = document.getElementById('activeList')
+  }
+  if (!insertAtOriginalPlace) {
+    list.appendChild(li)
+  } else {
+    const itemAtOriginalPlace = document.querySelector(`#activeList li:nth-child(${originalPlace})`)
+    list.insertBefore(li, itemAtOriginalPlace)
+  }
   if (page == 'index') {
     li.outerHTML = `
       <li id="${id}">
@@ -80,35 +100,55 @@ function renderItem(page, id, listId, title, artist, image) {
             <button class="link title" id="${id}">${title}</button>
             <button class="round-button toggle-editing-mode-button">Rename</button>
           </form>
-          <button class="round-button delete-item-button">Delete list</button>
+          <!--<button class="round-button trash-item-button">Delete list</button>-->
         </div>
       </li>
     `
     addClickListenerToListItemButtons(page, id)
   } else {
-    li.outerHTML = `
-      <li id="${id}">
-        <div class="flex-row">
-          <div class="image">
-            <img src="images/${image}" alt="${image}">
-          </div>
-          <form class="edit-item">
-            <div class="text-width">
-              <span id="title" class="title">${title}</span><br>
-              <span id="artist" class="artist">${artist}</span>
+    if (isTrashed == true) {
+      li.outerHTML = `
+        <li id="${id}" class="its-activelist-place-was-${originalPlace}">
+          <div class="flex-row">
+            <div class="image">
+              <img src="images/${image}" alt="${image}">
             </div>
-            <button class="round-button toggle-editing-mode-button">Edit</button>
-          </form>
-          <button class="round-button delete-item-button">Delete</button>
-          <button class="round-button move-item-up-button"><div class="arrow-up"></div></button>
-          <button class="round-button move-item-down-button"><div class="arrow-down"></div></button>
-        </div>
-      </li>
-    `
-    addClickListenerToListItemButtons(page, id, listId)
+            <form class="edit-item">
+              <div class="text-width">
+                <span id="title" class="title">${title}</span><br>
+                <span id="artist" class="artist">${artist}</span>
+              </div>
+              <button class="round-button toggle-editing-mode-button">Edit</button>
+            </form>
+            <button class="round-button restore-item-button">Restore</button>
+            <button class="round-button delete-item-button">Delete</button>
+          </div>
+        </li>`
+      addClickListenerToListItemButtons(page, id, listId, isTrashed, title, artist, image)
+    } else {
+      li.outerHTML = `
+        <li id="${id}">
+          <div class="flex-row">
+            <div class="image">
+              <img src="images/${image}" alt="${image}">
+            </div>
+            <form class="edit-item">
+              <div class="text-width">
+                <span id="title" class="title">${title}</span><br>
+                <span id="artist" class="artist">${artist}</span>
+              </div>
+              <button class="round-button toggle-editing-mode-button">Edit</button>
+            </form>
+            <button class="round-button trash-item-button">Trash</button>
+            <button class="round-button move-item-up-button"><div class="arrow-up"></div></button>
+            <button class="round-button move-item-down-button"><div class="arrow-down"></div></button>
+          </div>
+        </li>
+      `
+      addClickListenerToListItemButtons(page, id, listId, isTrashed, title, artist, image)
+    }
   }
   formEditLiPreventDefault(id)
-
 }
 
 /**
@@ -131,18 +171,24 @@ function addClickListenerToHeaderButtons(page, GETparameter, listId) {
  * Add click event listeners to list item buttons
  * @param {number} id list item ID
  */
-function addClickListenerToListItemButtons(page, id, listId) {
+function addClickListenerToListItemButtons(page, id, listId, isTrashed) {
   const item = document.getElementById(id)
   if (page == 'index') {
     item.querySelector('.title').addEventListener('click', () => goToList(page, id))
     item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id))
-    item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(page, id))
+    // item.querySelector('.trash-item-button').addEventListener('click', () => trashItem(page, id))
   } else {
     item.addEventListener('drop', () => determineSaveButtonText(page, listId))
     item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id, listId))
-    item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(page, id, listId))
-    item.querySelector('.move-item-up-button').addEventListener('click', () => moveItem(page, id, 'up', listId))
-    item.querySelector('.move-item-down-button').addEventListener('click', () => moveItem(page, id, 'down', listId))
+    if (isTrashed == true) {
+      item.querySelector('.restore-item-button').addEventListener('click', () => restoreItem(page, id, listId))
+      item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(page, id, listId))
+    } else {
+      item.querySelector('.trash-item-button').addEventListener('click', () => trashItem(page, id, listId))
+      item.querySelector('.move-item-up-button').addEventListener('click', () => moveItem(page, id, 'up', listId))
+      item.querySelector('.move-item-down-button').addEventListener('click', () => moveItem(page, id, 'down', listId))
+
+    }
   }
 }
 
@@ -190,7 +236,7 @@ function moveItem(page, liNo, direction, listId) {
     }
   } else {
     /* Move chosen item down
-    as long as it's not at the bottom of the list  */
+    as long as it's not at the bottom of the list */
     const element = itemToMove
     const nextElement = itemToMove.nextElementSibling
     if (nextElement != null) {
@@ -201,18 +247,52 @@ function moveItem(page, liNo, direction, listId) {
   determineSaveButtonText(page, listId)
 }
 
-/**
- * Items will have to move to a different list
- * before it can be removed completely. This list is
- * for telling the database which records it should delete
- * when it syncs to your GUI list.
- */
-function deleteItem(page, id, listId) {
+function trashItem(page, id, listId) {
   const itemToTrash = document.getElementById(id)
-  const trashedItems = document.getElementById('trashList')
-  trashedItems.appendChild(itemToTrash)
+  const activeList = document.getElementById('activeList')
+  const originalPlace = findItemPlace(page, id)
+  const isTrashed = true
 
+  const itemAsArray = convertItemToArray(page, 'activeList', itemToTrash)
+  const title = itemAsArray[1]
+  const artist = itemAsArray[2]
+  const image = itemAsArray[3]
+
+  /* Remove item from active list, and add a similar item to trash list.
+  It will look like the item has moved to trash and changed its structure */
+  activeList.removeChild(itemToTrash)
+  /* The “originalPlace” parameter below is for letting
+  the trashed item remember its place in the active list. */
+  renderItem(page, id, listId, title, artist, image, isTrashed, originalPlace)
   determineSaveButtonText(page, listId)
+}
+
+function restoreItem(page, id, listId) {
+  const itemToRestore = document.getElementById(id)
+  const trashList = document.getElementById('trashList')
+  const originalPlace = findItemPlaceBeforeItWasTrashed(document.getElementById(id))
+  const isTrashed = false
+  const insertAtOriginalPlace = true
+
+  const itemAsArray = convertItemToArray(page, 'activeList', itemToRestore)
+  const title = itemAsArray[1]
+  const artist = itemAsArray[2]
+  const image = itemAsArray[3]
+
+  /* Remove item from trash list, and add a similar item to active list.
+  It will look like the item has moved to active list and changed its structure */
+  trashList.removeChild(itemToRestore)
+  /* The “originalPlace” and “insertAtOriginalPlace” lets the item know it has to be
+  inserted to its original place */
+  renderItem(page, id, listId, title, artist, image, isTrashed, originalPlace, insertAtOriginalPlace)
+  determineSaveButtonText(page, listId)
+}
+
+function findItemPlace(page, id) {
+  const listAsArray = convertListToArray(page, 'activeList')
+  const index = listAsArray.findIndex(itemAsArray => itemAsArray[0] == id)
+  const place = index + 1
+  return place
 }
 
 function toggleEditingMode(page, id, listId) {
@@ -313,6 +393,18 @@ function toggleEditingMode(page, id, listId) {
   }
 }
 
+function deleteItem(page, id, listId) {
+  const itemToDelete = document.getElementById(id)
+  if (page == 'index') {
+    window.alert('You\'re about to delete an entire list, proceed?')
+  } else {
+
+  }
+  itemToDelete.classList.add('delete-this-item')
+  // const listType = itemToDelete.parentNode
+  // listType.removeChild(itemToDelete)
+}
+
 function formEditLiPreventDefault(liNo) {
   const item = document.getElementById(liNo)
   const form = item.querySelector('.edit-item')
@@ -321,6 +413,11 @@ function formEditLiPreventDefault(liNo) {
   })
 }
 
+/**
+ * 
+ * @param {string} fileToFetch eg. php/updateListItem.php
+ * @param {*} valuesToPost 
+ */
 async function fetchFileAndPostData(fileToFetch, valuesToPost) {
   const response = await fetch(fileToFetch, {
     method: 'POST',
@@ -421,6 +518,11 @@ async function findFreeLiId(page) {
   }
 }
 
+/**
+ * The only function that makes changes to the database
+ * @param {string} page 'index' or 'list'
+ * @param {number} listId 
+ */
 async function saveList(page, listId) {
   /* Make sure no list item is in editing mode
   saveList function isn't built for list items being in this mode */
@@ -428,11 +530,12 @@ async function saveList(page, listId) {
 
   // Update database with any new data
   const listAsArray = convertListToArray(page, 'activeList')
+  const trashListAsArray = convertListToArray(page, 'trashList')
   if (page == 'index') {
     var itemNo = 0
     listAsArray.forEach(itemAsArray => {
       itemNo++
-      let infoForPhp = { updatedItem: itemAsArray }
+      let infoForPhp = { updatedItem: itemAsArray, isTrashed: false }
       const data = fetchFileAndPostData('php/updateList.php', infoForPhp)
       if (!data) {
         console.warn('saveList updating: ', data)
@@ -442,29 +545,37 @@ async function saveList(page, listId) {
     var itemNo = 0
     listAsArray.forEach(itemAsArray => {
       itemNo++
-      let infoForPhp = { updatedItem: itemAsArray, place: itemNo, listId: listId }
+      let infoForPhp = { updatedItem: itemAsArray, place: itemNo, listId: listId, isTrashed: false }
       const data = fetchFileAndPostData('php/updateListItem.php', infoForPhp)
       if (!data) {
         console.warn('saveList updating: ', data)
       }
     })
+    trashListAsArray.forEach(itemAsArray => {
+      let infoForPhp = { updatedItem: itemAsArray, listId: listId, isTrashed: true }
+      const data = fetchFileAndPostData('php/updateListItem.php', infoForPhp)
+    })
   }
 
-  // Delete database records that corresponds to our trash list
-  const trashListAsArray = convertListToArray(page, 'trashList')
-  if (page == 'index') {
-    trashListAsArray.forEach(deletedItemAsArray => {
-      let infoForPhp = { deletedItem: deletedItemAsArray }
-      const data = fetchFileAndPostData('php/deleteList.php', infoForPhp)
-    })
-  } else {
-    trashListAsArray.forEach(deletedItemAsArray => {
-      let infoForPhp = { deletedItem: deletedItemAsArray }
+  const deletedItemsIdAsArray = getIdOfDeletedItemsAsArray()
+  if (deletedItemsIdAsArray != 0) {
+    deletedItemsIdAsArray.forEach(deletedItemId => {
+      // Some items are deleted from GUI. Update database
+      const infoForPhp = { deletedItem: deletedItemId }
       const data = fetchFileAndPostData('php/deleteListItem.php', infoForPhp)
-    })
+    });
   }
 
   setSaveButtonTextTo('&check; Saved')
+}
+
+function getIdOfDeletedItemsAsArray() {
+  const itemsToDelete = document.querySelectorAll('#trashList li.delete-this-item')
+  const ids = []
+  for (let i = 0; i < itemsToDelete.length; i++) {
+    ids.push(itemsToDelete[i].id)
+  }
+  return ids
 }
 
 /**
@@ -531,32 +642,56 @@ function setSaveButtonTextTo(text) {
 }
 
 /**
- * Convert chosen list to array
- * @param {string} activeListOrTrashList list type. Either
- * the list main list 'activeList', or the list with all
- * the trashed list items
+ * Convert chosen list to array with one array per item
+ * Item arrays in trashed lists will include the item's place
+ * before it were trashed
+ * @param {string} activeListOrTrashList
  */
 function convertListToArray(page, activeListOrTrashList) {
   const listAsArray = []
   const listType = document.getElementById(activeListOrTrashList)
-  const listItems = listType.querySelectorAll('li')
+  // const listItems = listType.querySelectorAll('li')
+  const listItems = listType.querySelectorAll(`#${activeListOrTrashList} li`) // Dette må da være riktigere? enn den over. Funksjonen kjøres jo to ganger, én for activelist og én for trashlist
 
   /* For each list item, find its different values,
   and build the text string */
   for (let i = 0; i < listItems.length; i++) {
-    let id = listItems[i].id
-    let title = listItems[i].querySelector('.title').innerHTML
-    if (page == 'index') {
-      var itemAsArray = [id, title]
-    } else {
-      let artist = listItems[i].querySelector('.artist').innerHTML
-      let imageSourcePath = listItems[i].querySelector('img').src
-      let imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
-      var itemAsArray = [id, title, artist, imageFilename]
-    }
+    let itemAsArray = convertItemToArray(page, activeListOrTrashList, listItems[i])
     listAsArray.push(itemAsArray)
   }
   return listAsArray
+}
+
+function convertItemToArray(page, activeListOrTrashList, listItem) {
+  let id = listItem.id
+  let title = listItem.querySelector('.title').innerHTML
+  if (page == 'index') {
+    var itemAsArray = [id, title]
+  } else {
+    let artist = listItem.querySelector('.artist').innerHTML
+    let imageSourcePath = listItem.querySelector('img').src
+    let imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7)
+    if (activeListOrTrashList == 'trashList') {
+      let place = findItemPlaceBeforeItWasTrashed(listItem)
+      var itemAsArray = [id, title, artist, imageFilename, place]
+      return itemAsArray
+    } else {
+      var itemAsArray = [id, title, artist, imageFilename]
+      return itemAsArray
+    }
+  }
+}
+
+/**
+ * Just as the item was trashed from active list,
+ * its place in that list was saved in a class name in <li>.
+ * Class name example: "its-activelist-place-was-4"
+ */
+function findItemPlaceBeforeItWasTrashed(item) {
+  if (item.className.slice(0, 25) != 'its-activelist-place-was-') {
+    console.error('Items className is changed from its-activelist-place-was-[number]. findItemPlaceBeforeItWasTrashed() expects the item className to be 26 chars long')
+  }
+  return item.className.slice(25, 26) // eg. 4
 }
 
 function goToList(page, listId) {

@@ -1,3 +1,4 @@
+// Test isn't working. Hasn't been since commit 'minor README fixes'
 // Run `npm install` in this directory to install jest
 
 const puppeteer = require('puppeteer')
@@ -15,7 +16,7 @@ beforeAll(async () => {
 })
 
 
-test('if h2 and a-tag exists', async () => {
+test('if h2 and buttons exists', async () => {
   const h2 = await page.$eval('h2', e => e.innerHTML)
   expect(h2).toBe('Choose list')
 
@@ -27,6 +28,7 @@ test('if h2 and a-tag exists', async () => {
 
 
 test('if a list item exists', async () => {
+  // Navigate to the list page (not working)
   await page.click('#activeList button')
 
   // Wait until JS has added this content to the page
@@ -81,7 +83,7 @@ test('if user can create item', async () => {
   const preCreatedLis = await page.$$eval('li', e => e.map(e => e.tagName))
   console.log('preCreatedLis.length (expected): ', preCreatedLis.length)
   await page.click('#createItemButton')
-  await page.waitFor(1000)
+  await page.waitForTimeout(1000)
 
   // See items post to button click, and count items
   const postCreatedLis = await page.$$eval('li', e => e.map(e => e.tagName))
