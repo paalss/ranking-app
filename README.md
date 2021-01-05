@@ -1,12 +1,12 @@
 # Ranking app (work in progress)
-A little app for ranking your own defined elements, and saving the changes permanently.
+A little web app for ranking your own defined elements, particularly products like books, movies and games. I will *possibly* implement options to export or share your list in the future. The app does support permanent saving, so your list is always accessible here.
 
 ![App_interaction](www/app/images/app/app-recording1.gif)
 
 ## Open web app (serve locally)
-This app isn't on a public server, it has to be served locally.
+This app isn't puclic on the web, it has to be served locally.
 
-You can choose to either serve this app using Docker or XAMPP. I've written guides for both. For a Docker guide, read further, for a XAMPP guide, go to [this README](https://github.com/paalss/Ranking-app/blob/master/www/app/README.md).
+You can choose to either serve this app using Docker or XAMPP. I've written guides for both. For a Docker guide, just read this README, for a XAMPP guide, go to [this sub-directory's README](https://github.com/paalss/Ranking-app/blob/master/www/app/README.md) (www/app/).
 
 **Prerequisites**
 
@@ -47,6 +47,12 @@ docker-compose build --no-cache
 [localhost/app/](http://localhost/app/)
 
 If everything worked correctly, you should see a premade list (named “wishlist”) on the page.
+
+**Known bugs**
+
+When deleting items and saving changes, the database doesn't always remove those records.
+
+When an item is trashed, it can be deleted from GUI. Upon next saving, the app will tell the database which records to delete. Sometimes the database ignores it, even when the request data is all correct and the queries returns true.
 
 <!-- ## Run automatic tests (jest&puppeteer)
 

@@ -397,8 +397,6 @@ function deleteItem(page, id, listId) {
   const itemToDelete = document.getElementById(id)
   if (page == 'index') {
     window.alert('You\'re about to delete an entire list, proceed?')
-  } else {
-
   }
   itemToDelete.classList.add('delete-this-item')
   // const listType = itemToDelete.parentNode

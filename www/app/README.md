@@ -1,4 +1,5 @@
 # Ranking app (XAMPP guide)
+If you're going to use XAMPP, you only need the source code files from the app folder (the folder this README resides in)
 
 ## Open web app
 ### 1. Install XAMPP
