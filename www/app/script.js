@@ -1,8 +1,7 @@
 'use strict'
-var selected = null
 
 window.onload = () => {
-  // Determine which is open
+  // Determine which html-page is open
   const pageAddress = window.location.search
   if (pageAddress == '') {
     var page = 'index'
@@ -47,7 +46,7 @@ async function renderList(page, listId) {
         data.forEach(item => {
           const id = item[0]
           const title = item[1]
-          renderItem(page, id, '', title)
+          renderItem(page, '', id, title)
         })
       });
   } else {
@@ -55,13 +54,12 @@ async function renderList(page, listId) {
     const data = await fetchFileAndPostData('php/findListItems.php', infoForPhp)
     data.forEach(item => {
       const id = item[0]
-      const listId = item[1]
       const title = item[3]
       const artist = item[4]
       const image = item[5]
       const isTrashed = item[6]
       const place = item[2]
-      renderItem(page, id, listId, title, artist, image, isTrashed, place)
+      renderItem(page, listId, id, title, artist, image, isTrashed, place)
     })
   }
   setSaveButtonTextTo('&check; Saved')
@@ -70,8 +68,8 @@ async function renderList(page, listId) {
 /**
  * Render list item
  * @param {string} page Index or list
- * @param {number} id Item id
  * @param {number} listId 
+ * @param {number} id Item id
  * @param {string} title 
  * @param {string} artist 
  * @param {string} image 
@@ -79,7 +77,7 @@ async function renderList(page, listId) {
  * @param {number} originalPlace Two use cases: ● Used for trashing an item in such a way it remembers which place it left (Storing original place) ● Also used for restoring items to their original place
  * @param {boolean} insertAtOriginalPlace True or false. True if item needs to be rendered at a specific place in the list. Eg. when restoring an item.
  */
-function renderItem(page, id, listId, title, artist, image, isTrashed, originalPlace, insertAtOriginalPlace) {
+function renderItem(page, listId, id, title, artist, image, isTrashed, originalPlace, insertAtOriginalPlace) {
   const li = document.createElement('li')
   if (isTrashed == true) {
     var list = document.getElementById('trashList')
@@ -124,7 +122,6 @@ function renderItem(page, id, listId, title, artist, image, isTrashed, originalP
             <button class="round-button delete-item-button">Delete</button>
           </div>
         </li>`
-      addClickListenerToListItemButtons(page, id, listId, isTrashed, title, artist, image)
     } else {
       li.outerHTML = `
         <li id="${id}">
@@ -145,8 +142,8 @@ function renderItem(page, id, listId, title, artist, image, isTrashed, originalP
           </div>
         </li>
       `
-      addClickListenerToListItemButtons(page, id, listId, isTrashed, title, artist, image)
     }
+    addClickListenerToListItemButtons(page, id, listId, isTrashed, title, artist, image)
   }
   formEditLiPreventDefault(id)
 }
@@ -161,7 +158,7 @@ function addClickListenerToHeaderButtons(page, GETparameter, listId) {
     document.getElementById('saveButton').addEventListener('click', () => saveList(page))
   } else {
     document.getElementById('createItemButton').addEventListener('click', () => createItem(page, listId, 'default.png', '', ''))
-    document.getElementById('returnHomeButton').addEventListener('click', () => returnHome(page))
+    document.getElementById('returnHomeButton').addEventListener('click', () => returnHome())
     document.getElementById('saveButton').addEventListener('click', () => saveList(page, listId))
     document.getElementById('refreshButton').addEventListener('click', () => window.location = 'list.html?' + GETparameter)
   }
@@ -174,7 +171,7 @@ function addClickListenerToHeaderButtons(page, GETparameter, listId) {
 function addClickListenerToListItemButtons(page, id, listId, isTrashed) {
   const item = document.getElementById(id)
   if (page == 'index') {
-    item.querySelector('.title').addEventListener('click', () => goToList(page, id))
+    item.querySelector('.title').addEventListener('click', () => goToList(id))
     item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id))
     // item.querySelector('.trash-item-button').addEventListener('click', () => trashItem(page, id))
   } else {
@@ -203,7 +200,7 @@ async function createItem(page, listId, image, title, artist) {
     renderItem(page, id, '', title)
     toggleEditingMode(page, id) // turn on editing mode for this item
   } else {
-    renderItem(page, id, listId, title, artist, image)
+    renderItem(page, listId, id, title, artist, image)
     toggleEditingMode(page, id, listId) // turn on editing mode for this item
     determineSaveButtonText(page, listId)
   }
@@ -248,6 +245,10 @@ function moveItem(page, liNo, direction, listId) {
 }
 
 function trashItem(page, id, listId) {
+  /* Make sure no list item is in editing mode
+convertItemToArray function isn't built for list items being in this mode */
+  ensureNoEditingModeIsOpen(page, listId)
+
   const itemToTrash = document.getElementById(id)
   const activeList = document.getElementById('activeList')
   const originalPlace = findItemPlace(page, id)
@@ -263,7 +264,7 @@ function trashItem(page, id, listId) {
   activeList.removeChild(itemToTrash)
   /* The “originalPlace” parameter below is for letting
   the trashed item remember its place in the active list. */
-  renderItem(page, id, listId, title, artist, image, isTrashed, originalPlace)
+  renderItem(page, listId, id, title, artist, image, isTrashed, originalPlace)
   determineSaveButtonText(page, listId)
 }
 
@@ -284,7 +285,7 @@ function restoreItem(page, id, listId) {
   trashList.removeChild(itemToRestore)
   /* The “originalPlace” and “insertAtOriginalPlace” lets the item know it has to be
   inserted to its original place */
-  renderItem(page, id, listId, title, artist, image, isTrashed, originalPlace, insertAtOriginalPlace)
+  renderItem(page, listId, id, title, artist, image, isTrashed, originalPlace, insertAtOriginalPlace)
   determineSaveButtonText(page, listId)
 }
 
@@ -310,7 +311,7 @@ function toggleEditingMode(page, id, listId) {
           <button class="link title" id="${id}">${title}</button>
           <button class="round-button toggle-editing-mode-button">Edit title</button>
       `
-      divEditItem.querySelector('.title').addEventListener('click', () => goToList(page, id))
+      divEditItem.querySelector('.title').addEventListener('click', () => goToList(id))
       divEditItem.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id))
       determineSaveButtonText(page)
     } else {
@@ -523,7 +524,7 @@ async function findFreeLiId(page) {
  */
 async function saveList(page, listId) {
   /* Make sure no list item is in editing mode
-  saveList function isn't built for list items being in this mode */
+  convertListToArray() function isn't built for list items being in this mode */
   ensureNoEditingModeIsOpen(page, listId)
 
   // Update database with any new data
@@ -563,7 +564,6 @@ async function saveList(page, listId) {
       const data = fetchFileAndPostData('php/deleteListItem.php', infoForPhp)
     });
   }
-
   setSaveButtonTextTo('&check; Saved')
 }
 
@@ -647,9 +647,7 @@ function setSaveButtonTextTo(text) {
  */
 function convertListToArray(page, activeListOrTrashList) {
   const listAsArray = []
-  const listType = document.getElementById(activeListOrTrashList)
-  // const listItems = listType.querySelectorAll('li')
-  const listItems = listType.querySelectorAll(`#${activeListOrTrashList} li`) // Dette må da være riktigere? enn den over. Funksjonen kjøres jo to ganger, én for activelist og én for trashlist
+  const listItems = document.querySelectorAll(`#${activeListOrTrashList} li`)
 
   /* For each list item, find its different values,
   and build the text string */
@@ -672,12 +670,11 @@ function convertItemToArray(page, activeListOrTrashList, listItem) {
     if (activeListOrTrashList == 'trashList') {
       let place = findItemPlaceBeforeItWasTrashed(listItem)
       var itemAsArray = [id, title, artist, imageFilename, place]
-      return itemAsArray
     } else {
       var itemAsArray = [id, title, artist, imageFilename]
-      return itemAsArray
     }
   }
+  return itemAsArray
 }
 
 /**
@@ -692,7 +689,7 @@ function findItemPlaceBeforeItWasTrashed(item) {
   return item.className.slice(25, 26) // eg. 4
 }
 
-function goToList(page, listId) {
+function goToList(listId) {
   const isSaved = document.getElementById('saveButton').innerHTML
   if (isSaved != '✓ Saved') {
     const willRemoveChanges = confirm('Leaving this page will remove unsaved changes, continue?')
@@ -704,7 +701,7 @@ function goToList(page, listId) {
   }
 }
 
-function returnHome(page) {
+function returnHome() {
   const isSaved = document.getElementById('saveButton').innerHTML
   if (isSaved != '✓ Saved') {
     const willRemoveChanges = confirm('Leaving this page will remove unsaved changes, continue?')
