@@ -1,6 +1,6 @@
 <?php
 // Docker sign-in
-$db_server = mysqli_connect("database", "root", "tiger", "ranking_app");
+$db_server = mysqli_connect("db", "root", "tiger", "ranking_app");
 
 if (!$db_server) {
   echo "Error: Unable to connect to MySQL." . PHP_EOL;
