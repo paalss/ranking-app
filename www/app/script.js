@@ -197,7 +197,7 @@ new Sortable(activeList, {
 async function createItem(page, listId, image, title, artist) {
   const id = await findFreeLiId(page)
   if (page == 'index') {
-    renderItem(page, id, '', title)
+    renderItem(page, '', id, title)
     toggleEditingMode(page, id) // turn on editing mode for this item
   } else {
     renderItem(page, listId, id, title, artist, image)
