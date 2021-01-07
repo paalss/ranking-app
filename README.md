@@ -6,7 +6,7 @@ A little web app for ranking your own defined elements, particularly products li
 ## Open web app (serve locally)
 This app isn't puclic on the web, it has to be served locally.
 
-You can choose to either serve this app using Docker or XAMPP. I've written guides for both. For a Docker guide, just read this README, for a XAMPP guide, go to [this sub-directory's README](https://github.com/paalss/Ranking-app/blob/master/www/app/README.md) (www/app/).
+You can choose to either serve this app using Docker or XAMPP. For a Docker guide, just continue this README. For a XAMPP guide, go to [this sub-directory's README](https://github.com/paalss/Ranking-app/blob/master/www/app/README.md) (Ranking-app/www/app/).
 
 **Prerequisites**
 
