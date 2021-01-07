@@ -51,6 +51,11 @@ services:
     volumes: 
       - /sessions
       - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '8081:8080'
   redis:
     container_name: '${COMPOSE_PROJECT_NAME}-redis'
     image: redis:latest
