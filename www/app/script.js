@@ -245,9 +245,9 @@ function moveItem(page, liNo, direction, listId) {
 }
 
 function trashItem(page, id, listId) {
-  /* Make sure no list item is in editing mode
-convertItemToArray function isn't built for list items being in this mode */
-  ensureNoEditingModeIsOpen(page, listId)
+  /* function convertItemToArray (also invoked by findItemPlace)
+  doesn't work if list items are in editing mode */
+  ensureItemEditingModeIsClosed(page, listId, id)
 
   const itemToTrash = document.getElementById(id)
   const activeList = document.getElementById('activeList')
@@ -269,6 +269,10 @@ convertItemToArray function isn't built for list items being in this mode */
 }
 
 function restoreItem(page, id, listId) {
+  /* function convertItemToArray
+  doesn't work if list items are in editing mode */
+  ensureItemEditingModeIsClosed(page, listId, id)
+
   const itemToRestore = document.getElementById(id)
   const trashList = document.getElementById('trashList')
   const originalPlace = findItemPlaceBeforeItWasTrashed(document.getElementById(id))
@@ -298,7 +302,6 @@ function findItemPlace(page, id) {
 
 function toggleEditingMode(page, id, listId) {
   const item = document.getElementById(id)
-
   // if editing mode is open, close it
   if (item.classList.contains('editing-mode')) {
     item.classList.remove('editing-mode')
@@ -347,7 +350,8 @@ function toggleEditingMode(page, id, listId) {
         <button class="round-button toggle-editing-mode-button">Close edit</button>
       `
       divEditItem.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id))
-      divEditItem.querySelector('.title').addEventListener('input', () => determineSaveButtonText(page))
+      // divEditItem.querySelector('.title').addEventListener('input', () => determineSaveButtonText(page))
+      determineSaveButtonText(page)
     } else {
       const artist = item.querySelector('.artist').innerHTML
       const divImage = item.querySelector('.image')
@@ -365,9 +369,9 @@ function toggleEditingMode(page, id, listId) {
         <button class="round-button toggle-editing-mode-button">Close edit</button>
       `
       divEditItem.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id, listId))
-      divEditItem.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', () => determineSaveButtonText(page, listId))
-      })
+      // divEditItem.querySelectorAll('input').forEach(input => {
+      //   input.addEventListener('input', () => determineSaveButtonText(page, listId))
+      // })
 
       const imageUploadInputs = document.createElement('div')
       imageUploadInputs.classList.add('image-upload-inputs')
@@ -387,7 +391,7 @@ function toggleEditingMode(page, id, listId) {
         const formattedFormData = new FormData(formImageUpload)
         downloadImage(formattedFormData, id)
       })
-
+      determineSaveButtonText(page, listId)
     }
     const inputTitle = item.querySelector('.title')
     inputTitle.focus()
@@ -523,9 +527,9 @@ async function findFreeLiId(page) {
  * @param {number} listId 
  */
 async function saveList(page, listId) {
-  /* Make sure no list item is in editing mode
-  convertListToArray() function isn't built for list items being in this mode */
-  ensureNoEditingModeIsOpen(page, listId)
+  /* functions convertListToArray & convertItemToArray
+  doesn't work if list items are in editing mode */
+  ensureAllEditingModesAreClosed(page, listId)
 
   // Update database with any new data
   const listAsArray = convertListToArray(page, 'activeList')
@@ -579,7 +583,7 @@ function getIdOfDeletedItemsAsArray() {
 /**
  * Make sure no list item is in editing mode
  */
-function ensureNoEditingModeIsOpen(page, listId) {
+function ensureAllEditingModesAreClosed(page, listId) {
   const itemsWithEditingMode = document.getElementsByClassName('editing-mode')
   if (itemsWithEditingMode.length > 0) {
     /* itemsWithEditingMode (HTMLCollection) automatically updates when the underlying document is changed.
@@ -589,6 +593,13 @@ function ensureNoEditingModeIsOpen(page, listId) {
     itemsReference.forEach(item => {
       toggleEditingMode(page, item.id, listId)
     });
+  }
+}
+
+function ensureItemEditingModeIsClosed(page, listId, id) {
+  const item = document.getElementById(id)
+  if (item.classList.contains('editing-mode')) {
+    toggleEditingMode(page, id, listId)
   }
 }
 

@@ -38,9 +38,21 @@ docker-compose build --no-cache
 
 **Import database to your MySQL server**
 
-1. Open PhpMyAdmin by going to [localhost:8080](http://localhost:8080) in a browser
+You can import the database using PhpMyAdmin or Adminer.
+
+Using PhpMyAdmin (fastest):
+
+1. Go to [localhost:8080](http://localhost:8080) in a browser
 
 2. In the interface, click the “import” tab. On this page, click “browse”, find and choose ranking_app.sql (`database/ranking_app.sql`), then click “Go” at the bottom of the page.
+
+Using Adminer:
+
+1. Go to [localhost:8081](http://localhost:8081)
+
+2. log in with Server: database, Username: root and Password: tiger
+
+3. In the interface, click the “import” tab. On this page, click “browse”, find and choose ranking_app.sql (`database/ranking_app.sql`), then click “Execute”.
 
 **Open the site in a browser**
 
