@@ -1,12 +1,12 @@
 # Ranking app (work in progress)
-A little web app for ranking your own defined elements, particularly products like books, movies and games. I will *possibly* implement options to export or share your list in the future. The app does support permanent saving, so your list is always accessible here.
+A little web app for ranking your own defined elements, particularly products like books, movies and games. I will possibly implement options to import music from Spotify into list items.
 
 ![App_interaction](www/app/images/app/app-recording1.gif)
 
 ## Open web app (serve locally)
 This app isn't puclic on the web, it has to be served locally.
 
-You can choose to either serve this app using Docker or XAMPP. For a Docker guide, just continue this README. For a XAMPP guide, go to [this sub-directory's README](https://github.com/paalss/Ranking-app/blob/master/www/app/README.md) (Ranking-app/www/app/).
+You can choose to either serve this app using Docker or XAMPP. For a Docker guide, read further. For a XAMPP guide, go to [this sub-directory's README](https://github.com/paalss/Ranking-app/blob/master/www/app/) (Ranking-app/www/app/).
 
 **Prerequisites**
 
