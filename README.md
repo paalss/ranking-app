@@ -60,14 +60,13 @@ Using Adminer:
 
 If everything worked correctly, you should see a premade list (named “wishlist”) on the page.
 
-**Known bugs**
+**Known bug**
 
 When deleting items and saving changes, the database doesn't always remove those records.
 
 When an item is trashed, it can be deleted from GUI. Upon next saving, the app will tell the database which records to delete. Sometimes the database ignores it, even when the request data is all correct and the queries returns true.
 
-<!-- ## Run automatic tests (jest&puppeteer)
-
+## Run e2e tests (jest&puppeteer)
 **Navigate to the app folder and install the dependencies**
 
 ```
@@ -79,7 +78,7 @@ npm install
 
 ```
 npm test
-``` -->
+```
 
 ## I've used code from 
 * sprintcube/docker-compose-lamp for making this app serve-able with Docker. See more: https://github.com/sprintcube/docker-compose-lamp
