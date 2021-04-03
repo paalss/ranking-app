@@ -5,7 +5,7 @@ If you're going to use XAMPP, you only need the source code files from the app f
 ### 1. Install XAMPP
 Get the XAMPP installer from https://www.apachefriends.org/.
 
-During the installation you can select which compoents to download. Ensure you install MySQL. PhpMyAdmin might also come in handy, but is not necessary (See image).
+During the installation you can select which components to download. Ensure you install MySQL. PhpMyAdmin might also come in handy, but is not necessary (See image).
 
 ![Xampp_components](/images/xampp/select-components.png)
 
@@ -78,4 +78,4 @@ You should see this (image):
 ## There's no list named 'wishlist'
 This most likely means the app isn't connected to the MySQL server database.
 
-If you have changed your MySQL username or password to something else than default (username='root', pawword=''), you will have to update the db_connection.php (`Ranking-app/www/app/php/db_connection.php`) file, so it uses your current login credentials.
+If you have changed your MySQL username or password to something else than default (username='root', password=''), you will have to update the db_connection.php (`Ranking-app/www/app/php/db_connection.php`) file, so it uses your current login credentials.

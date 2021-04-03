@@ -1,10 +1,10 @@
 # Ranking app (work in progress)
-A little web app for ranking your own defined elements, particularly products like books, movies and games. I will possibly implement options to import music from Spotify into list items.
+A little web app for ranking your own defined elements, particularly products like books, movies and games. I will possibly implement options to import elements from web API (eg. music from Spotify).
 
 ![App_interaction](www/app/images/app/app-recording1.gif)
 
 ## Open web app (serve locally)
-This app isn't puclic on the web, it has to be served locally.
+This app isn't public on the web, it has to be served locally.
 
 You can choose to either serve this app using Docker or XAMPP. For a Docker guide, read further. For a XAMPP guide, go to [this sub-directory's README](https://github.com/paalss/Ranking-app/blob/master/www/app/) (Ranking-app/www/app/).
 
@@ -29,6 +29,8 @@ cp sample.env .env
 
 docker-compose up -d
 ```
+
+Be sure to close any other MySQL servers when you run `docker-compose up -d`. Otherwise you won't be able to connect to the database.
 
 If docker-compose up -d returns `ERROR: Service 'webserver' failed to build: The command '/bin/sh -c apt-get -y`, you might want to rebuild the container, using:
 

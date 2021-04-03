@@ -81,13 +81,13 @@ test('if first item can be edited', async () => {
 test('if user can create item', async () => {
   // See items pre to button click, and count items
   const preCreatedLis = await page.$$eval('li', e => e.map(e => e.tagName))
-  console.log('preCreatedLis.length (expected): ', preCreatedLis.length)
+  // console.log('preCreatedLis.length (expected): ', preCreatedLis.length)
   await page.click('#createItemButton')
   await page.waitForTimeout(1000)
 
   // See items post to button click, and count items
   const postCreatedLis = await page.$$eval('li', e => e.map(e => e.tagName))
-  console.log('postCreatedLis.length (received): ', postCreatedLis.length)
+  // console.log('postCreatedLis.length (received): ', postCreatedLis.length)
   // If created sucsessfully, the amount of current items should be 1 more than before
   expect(postCreatedLis.length).toBe(preCreatedLis.length + 1)
 }, 7000)
