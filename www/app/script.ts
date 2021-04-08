@@ -1,13 +1,13 @@
 'use strict'
+type PageAlternatives = 'index' | 'list';
 
 window.onload = () => {
   // Determine which html-page is open
   const pageAddress = window.location.search
-  type Page = string; // *- nødvendig semikolon? ser ut sånn
   if (pageAddress == '') {
-    var page: Page = 'index'
+    var page: PageAlternatives = 'index'
   } else { // pageAddress == " ?list=x"
-    var page: Page = 'list'
+    var page: PageAlternatives = 'list'
   }
 
   const GETparameter = window.location.search.substr(1) // eg. 'list=1', 'list=2'
@@ -40,7 +40,7 @@ function setTitle(listName: string) {
   h2.innerHTML = 'List: ' + listName
 }
 
-async function renderList(page: string, listId?: string) {
+async function renderList(page: PageAlternatives, listId?: string) {
   if (page == 'index') {
     fetch('php/findLists.php')
       .then(res => res.json())
@@ -67,6 +67,12 @@ async function renderList(page: string, listId?: string) {
   setSaveButtonTextTo('&check; Saved')
 }
 
+interface ItemContentObject {
+  title: string
+  artist?: string
+  image?: string
+}
+
 /**
  * Render list item
  * @param {string} page Index or list
@@ -77,7 +83,7 @@ async function renderList(page: string, listId?: string) {
  * @param {string} originalPlace Two use cases: ● Used for trashing an item in such a way it remembers which place it left (Storing original place) ● Also used for restoring items to their original place
  * @param {boolean} insertAtOriginalPlace True or false. True if item needs to be rendered at a specific place in the list. Eg. when restoring an item.
  */
-function renderItem(page: string, listId: string, id: string, itemContent: { title: string, artist?: string, image?: string }, isTrashed?: boolean, originalPlace?: string, insertAtOriginalPlace?: boolean) {
+function renderItem(page: PageAlternatives, listId: string, id: string, itemContent: ItemContentObject, isTrashed?: boolean, originalPlace?: string, insertAtOriginalPlace?: boolean) {
   const li = document.createElement('li')
   if (isTrashed == true) {
     var list = document.getElementById('trashList')!
@@ -152,7 +158,7 @@ function renderItem(page: string, listId: string, id: string, itemContent: { tit
  * Add click event listeners to header buttons
  * @param {string} GETparameter 'list=___'
  */
-function addClickListenerToHeaderButtons(page: string, listId: string, GETparameter?: string) {
+function addClickListenerToHeaderButtons(page: PageAlternatives, listId: string, GETparameter?: string) {
   if (page == 'index') {
     document.getElementById('createItemButton')!.addEventListener('click', () => createItem(page))
     document.getElementById('saveButton')!.addEventListener('click', () => saveList(page, listId))
@@ -168,7 +174,7 @@ function addClickListenerToHeaderButtons(page: string, listId: string, GETparame
  * Add click event listeners to list item buttons
  * @param {number} id list item ID
  */
-function addClickListenerToListItemButtons(page: string, id: string, listId?: string, isTrashed?: boolean) {
+function addClickListenerToListItemButtons(page: PageAlternatives, id: string, listId?: string, isTrashed?: boolean) {
   const item = document.getElementById(id)!
   if (page == 'index') {
     item.querySelector('.title')!.addEventListener('click', () => goToList(id))
@@ -198,7 +204,7 @@ new Sortable(activeList, {
   ghostClass: 'blue-background-class'
 });
 
-async function createItem(page: string, listId?: string, itemContent?: { title: string, artist?: string, image?: string }) {
+async function createItem(page: PageAlternatives, listId?: string, itemContent?: ItemContentObject) {
   const id = await findFreeLiId(page)
   if (id != undefined && itemContent != undefined && listId != undefined) {
     if (page == 'index') {
@@ -231,7 +237,7 @@ function highlight(item: HTMLElement) {
  * @param {number} liNo 
  * @param {string} direction up or down
  */
-function moveItem(page: string, liNo: string, direction: 'up' | 'down', listId: string) {
+function moveItem(page: PageAlternatives, liNo: string, direction: 'up' | 'down', listId: string) {
   const itemToMove = document.getElementById(liNo)!
   const ol = document.getElementById('activeList')!
   if (direction == 'up') {
@@ -255,7 +261,7 @@ function moveItem(page: string, liNo: string, direction: 'up' | 'down', listId: 
   determineSaveButtonText(page, listId)
 }
 
-function trashItem(page: string, id: string, listId: string) {
+function trashItem(page: PageAlternatives, id: string, listId: string) {
   /* function convertItemToArray (also invoked by findItemPlace)
   doesn't work if list items are in editing mode */
   ensureItemEditingModeIsClosed(page, listId, id)
@@ -279,7 +285,7 @@ function trashItem(page: string, id: string, listId: string) {
   determineSaveButtonText(page, listId)
 }
 
-function restoreItem(page: string, id: string, listId: string) {
+function restoreItem(page: PageAlternatives, id: string, listId: string) {
   /* function convertItemToArray
   doesn't work if list items are in editing mode */
   ensureItemEditingModeIsClosed(page, listId, id)
@@ -304,14 +310,14 @@ function restoreItem(page: string, id: string, listId: string) {
   determineSaveButtonText(page, listId)
 }
 
-function findItemPlace(page: string, id: string): string {
+function findItemPlace(page: PageAlternatives, id: string): string {
   const listAsArray = convertListToArray(page, 'activeList')
   const index = listAsArray.findIndex(itemAsArray => itemAsArray[0] == id)
   const place = index + 1
   return place.toString()
 }
 
-function toggleEditingMode(page: string, id: string, listId?: string) {
+function toggleEditingMode(page: PageAlternatives, id: string, listId?: string) {
   const item = document.getElementById(id)!
   // if editing mode is open, close it
   if (item.classList.contains('editing-mode')) {
@@ -406,7 +412,7 @@ function toggleEditingMode(page: string, id: string, listId?: string) {
   }
 }
 
-function deleteItem(page: string, id: string) {
+function deleteItem(page: PageAlternatives, id: string) {
   const itemToDelete = document.getElementById(id)!
   if (page == 'index') {
     window.alert('You\'re about to delete an entire list, proceed?')
@@ -465,7 +471,7 @@ async function downloadImage(formattedFormData: FormData, liNo: string) {
  * Neither by any item in the database, nor on any unsaved local item
  * Function is called as a parameter in createItem()
  */
-async function findFreeLiId(page: string) {
+async function findFreeLiId(page: PageAlternatives) {
   // Fetch item Ids from the database
   if (page == 'index') {
     var response = await fetch('php/findAllListsId.php')
@@ -518,7 +524,7 @@ async function findFreeLiId(page: string) {
  * @param {string} page 'index' or 'list'
  * @param {number} listId 
  */
-async function saveList(page: string, listId: string) {
+async function saveList(page: PageAlternatives, listId: string) {
   /* functions convertListToArray & convertItemToArray
   doesn't work if list items are in editing mode */
   ensureAllEditingModesAreClosed(page, listId)
@@ -576,7 +582,7 @@ function getIdOfDeletedItemsAsArray(): string[] {
 /**
  * Make sure no list item is in editing mode
  */
-function ensureAllEditingModesAreClosed(page: string, listId: string) {
+function ensureAllEditingModesAreClosed(page: PageAlternatives, listId: string) {
   const itemsWithEditingMode = document.getElementsByClassName('editing-mode')
   if (itemsWithEditingMode.length > 0) {
     /* itemsWithEditingMode (HTMLCollection) automatically updates when the underlying document is changed.
@@ -589,7 +595,7 @@ function ensureAllEditingModesAreClosed(page: string, listId: string) {
   }
 }
 
-function ensureItemEditingModeIsClosed(page: string, listId: string, id: string) {
+function ensureItemEditingModeIsClosed(page: PageAlternatives, listId: string, id: string) {
   const item = document.getElementById(id)!
   if (item.classList.contains('editing-mode')) {
     toggleEditingMode(page, id, listId)
@@ -600,7 +606,7 @@ function ensureItemEditingModeIsClosed(page: string, listId: string, id: string)
  * Determines what text saveButton should have.
  * Checks for unsaved changes and gives appropriate feedback
  */
-async function determineSaveButtonText(page: string, listId?: string) {
+async function determineSaveButtonText(page: PageAlternatives, listId?: string) {
   const currentListAsArray = convertListToArray(page, 'activeList') // eg. Array(3) [ (4) […], (4) […], (4) […] ] -> 0: Array(4) [ "37", "fear is the key", "alistair maclean", … ]
 
   if (page == 'index') {
@@ -645,7 +651,7 @@ function setSaveButtonTextTo(text: string) {
  * before it were trashed
  * @param {string} activeListOrTrashList
  */
-function convertListToArray(page: string, activeListOrTrashList: 'activeList' | 'trashList') {
+function convertListToArray(page: PageAlternatives, activeListOrTrashList: 'activeList' | 'trashList') {
   const listAsArray = []
   const listItems = document.querySelectorAll(`#${activeListOrTrashList} li`)
 
@@ -658,7 +664,7 @@ function convertListToArray(page: string, activeListOrTrashList: 'activeList' | 
   return listAsArray
 }
 
-function convertItemToArray(page: string, activeListOrTrashList: 'activeList' | 'trashList', listItem: Element) {
+function convertItemToArray(page: PageAlternatives, activeListOrTrashList: 'activeList' | 'trashList', listItem: Element) {
   const id = listItem.id
   const title = listItem.querySelector('.title')!.innerHTML
   if (page == 'index') {

@@ -8,8 +8,8 @@ const appPath = 'http://localhost/app/'
 
 beforeAll(async () => {
   browser = await puppeteer.launch({
-    headless: false,
-    slowMo: 120
+    headless: true,
+    slowMo: 0
   })
   page = await browser.newPage()
   await page.goto(appPath)

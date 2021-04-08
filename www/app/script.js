@@ -80,7 +80,7 @@ function renderList(page, listId) {
  * @param {string} page Index or list
  * @param {string} listId
  * @param {string} id Item id
- * @param {object} itemContent
+ * @param {ItemContentObject} itemContent
  * @param {boolean} isTrashed True or false
  * @param {string} originalPlace Two use cases: ● Used for trashing an item in such a way it remembers which place it left (Storing original place) ● Also used for restoring items to their original place
  * @param {boolean} insertAtOriginalPlace True or false. True if item needs to be rendered at a specific place in the list. Eg. when restoring an item.

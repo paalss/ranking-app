@@ -64,12 +64,14 @@ If everything worked correctly, you should see a premade list (named “wishlist
 
 **Known bug**
 
-When deleting items and saving changes, the database doesn't always remove those records.
+When deleting items and saving changes, the database doesn't always remove the corresponding records.
 
 When an item is trashed, it can be deleted from GUI. Upon next saving, the app will tell the database which records to delete. Sometimes the database ignores it, even when the request data is all correct and the queries returns true.
 
 ## Run e2e tests (jest&puppeteer)
 **Navigate to the app folder and install the dependencies**
+
+If none of the tests work, consider opening the site manually and navigate to a list. Then try running the tests again.
 
 ```
 cd www/app/
