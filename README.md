@@ -3,14 +3,14 @@ A little web app for ranking your own defined elements, particularly products li
 
 ![App_interaction](www/app/images/app/app-recording1.gif)
 
-## Open web app (serve locally)
-This app isn't public on the web, it has to be served locally.
+## How to serve locally
 
-You can choose to either serve this app using Docker or XAMPP. For a Docker guide, read further. For a XAMPP guide, go to [this sub-directory's README](https://github.com/paalss/Ranking-app/blob/master/www/app/) (Ranking-app/www/app/).
+### Serve with XAMPP
+[XAMPP README](https://github.com/paalss/Ranking-app/blob/master/www/app/)
+
+### Serve with Docker
 
 **Prerequisites**
-
-* Git
 
 * Docker
 
@@ -18,13 +18,9 @@ You can choose to either serve this app using Docker or XAMPP. For a Docker guid
 
 **Download source code and run containers**
 
-Open your commmand line, eg. Git Bash, navigate to where you want to download the project and run these commands:
+Clone repository, navigate to Ranking-app/ and run:
 
 ```
-git clone https://github.com/paalss/Ranking-app.git
-
-cd Ranking-app/
-
 cp sample.env .env
 
 docker-compose up -d
@@ -71,7 +67,7 @@ When an item is trashed, it can be deleted from GUI. Upon next saving, the app w
 ## Run e2e tests (jest&puppeteer)
 **Navigate to the app folder and install the dependencies**
 
-If none of the tests work, consider opening the site manually and navigate to a list. Then try running the tests again.
+If none of the tests work, try opening the site manually and navigate to a list. Then run the tests again.
 
 ```
 cd www/app/
