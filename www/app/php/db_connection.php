@@ -9,8 +9,8 @@ if (!$db_server) {
   exit;
 }
 
-// XAMPP sign-in
-// If you want to use XAMPP, un-comment the code below and comment-out the Docker one above ^^
+// // XAMPP sign-in
+// // If you want to use XAMPP, un-comment the code below and comment-out the Docker one above ^^
 // $host = 'localhost';
 // $username = 'root';
 // $password = '';

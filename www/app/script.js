@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -11,22 +11,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 window.onload = () => {
     // Determine which html-page is open
     const pageAddress = window.location.search;
-    if (pageAddress == '') {
-        var page = 'index';
+    if (pageAddress == "") {
+        var page = "index";
     }
-    else { // pageAddress == " ?list=x"
-        var page = 'list';
+    else {
+        // pageAddress == " ?list=x"
+        var page = "list";
     }
     const GETparameter = window.location.search.substr(1); // eg. 'list=1', 'list=2'
-    const listId = GETparameter.substring(GETparameter.indexOf('=') + 1); // eg. '1', '2'
-    if (page == 'index') {
+    const listId = GETparameter.substring(GETparameter.indexOf("=") + 1); // eg. '1', '2'
+    if (page == "index") {
         renderList(page);
         addClickListenerToHeaderButtons(page, listId);
     }
     else {
-        fetch('php/findLists.php')
-            .then(res => res.json())
-            .then(lists => {
+        fetch("php/findLists.php")
+            .then((res) => res.json())
+            .then((lists) => {
+            // eg. Array [ (2) […], (2) […] ] -> 0: Array [ "1", "books" ]
             var arrayIndex = 0;
             lists.forEach((listInfo) => {
                 if (listInfo[0] == listId) {
@@ -43,25 +45,25 @@ window.onload = () => {
     }
 };
 function setTitle(listName) {
-    const h2 = document.querySelector('h2');
-    h2.innerHTML = 'List: ' + listName;
+    const h2 = document.querySelector("h2");
+    h2.innerHTML = "List: " + listName;
 }
 function renderList(page, listId) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (page == 'index') {
-            fetch('php/findLists.php')
-                .then(res => res.json())
-                .then(data => {
+        if (page == "index") {
+            fetch("php/findLists.php")
+                .then((res) => res.json())
+                .then((data) => {
                 data.forEach((item) => {
                     const id = item[0];
                     const itemContent = { title: item[1] };
-                    renderItem(page, '', id, itemContent);
+                    renderItem(page, "", id, itemContent);
                 });
             });
         }
         else {
             const infoForPhp = { POSTValue: listId };
-            const data = yield fetchFileAndPostData('php/findListItems.php', infoForPhp);
+            const data = yield fetchFileAndPostData("php/findListItems.php", infoForPhp);
             data.forEach((item) => {
                 const id = item[0];
                 const itemContent = { title: item[3], artist: item[4], image: item[5] };
@@ -72,7 +74,7 @@ function renderList(page, listId) {
                 }
             });
         }
-        setSaveButtonTextTo('&check; Saved');
+        setSaveButtonTextTo("&check; Saved");
     });
 }
 /**
@@ -80,18 +82,18 @@ function renderList(page, listId) {
  * @param {string} page Index or list
  * @param {string} listId
  * @param {string} id Item id
- * @param {ItemContentObject} itemContent
+ * @param {object} itemContent
  * @param {boolean} isTrashed True or false
  * @param {string} originalPlace Two use cases: ● Used for trashing an item in such a way it remembers which place it left (Storing original place) ● Also used for restoring items to their original place
  * @param {boolean} insertAtOriginalPlace True or false. True if item needs to be rendered at a specific place in the list. Eg. when restoring an item.
  */
 function renderItem(page, listId, id, itemContent, isTrashed, originalPlace, insertAtOriginalPlace) {
-    const li = document.createElement('li');
+    const li = document.createElement("li");
     if (isTrashed == true) {
-        var list = document.getElementById('trashList');
+        var list = document.getElementById("trashList");
     }
     else {
-        var list = document.getElementById('activeList');
+        var list = document.getElementById("activeList");
     }
     if (!insertAtOriginalPlace) {
         list.appendChild(li);
@@ -100,7 +102,7 @@ function renderItem(page, listId, id, itemContent, isTrashed, originalPlace, ins
         const itemAtOriginalPlace = document.querySelector(`#activeList li:nth-child(${originalPlace})`);
         list.insertBefore(li, itemAtOriginalPlace);
     }
-    if (page == 'index') {
+    if (page == "index") {
         li.outerHTML = `
       <li id="${id}">
         <div class="flex-row">
@@ -164,15 +166,27 @@ function renderItem(page, listId, id, itemContent, isTrashed, originalPlace, ins
  * @param {string} GETparameter 'list=___'
  */
 function addClickListenerToHeaderButtons(page, listId, GETparameter) {
-    if (page == 'index') {
-        document.getElementById('createItemButton').addEventListener('click', () => createItem(page));
-        document.getElementById('saveButton').addEventListener('click', () => saveList(page, listId));
+    if (page == "index") {
+        document
+            .getElementById("createItemButton")
+            .addEventListener("click", () => createItem(page));
+        document
+            .getElementById("saveButton")
+            .addEventListener("click", () => saveList(page, listId));
     }
     else {
-        document.getElementById('createItemButton').addEventListener('click', () => createItem(page, listId, { title: '', artist: '', image: 'default.png' }));
-        document.getElementById('returnHomeButton').addEventListener('click', () => returnHome());
-        document.getElementById('saveButton').addEventListener('click', () => saveList(page, listId));
-        document.getElementById('refreshButton').addEventListener('click', () => location.assign('list.html?' + GETparameter));
+        document
+            .getElementById("createItemButton")
+            .addEventListener("click", () => createItem(page, listId));
+        document
+            .getElementById("returnHomeButton")
+            .addEventListener("click", () => returnHome());
+        document
+            .getElementById("saveButton")
+            .addEventListener("click", () => saveList(page, listId));
+        document
+            .getElementById("refreshButton")
+            .addEventListener("click", () => location.assign("list.html?" + GETparameter));
     }
 }
 /**
@@ -181,63 +195,84 @@ function addClickListenerToHeaderButtons(page, listId, GETparameter) {
  */
 function addClickListenerToListItemButtons(page, id, listId, isTrashed) {
     const item = document.getElementById(id);
-    if (page == 'index') {
-        item.querySelector('.title').addEventListener('click', () => goToList(id));
-        item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id));
+    if (page == "index") {
+        item.querySelector(".title").addEventListener("click", () => goToList(id));
+        item
+            .querySelector(".toggle-editing-mode-button")
+            .addEventListener("click", () => toggleEditingMode(page, id));
         // item.querySelector('.trash-item-button')!.addEventListener('click', () => trashItem(page, id))
     }
     else {
         if (listId != undefined) {
-            item.addEventListener('drop', () => determineSaveButtonText(page, listId));
-            item.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id, listId));
+            item.addEventListener("drop", () => determineSaveButtonText(page, listId));
+            item
+                .querySelector(".toggle-editing-mode-button")
+                .addEventListener("click", () => toggleEditingMode(page, id, listId));
             if (isTrashed == true) {
-                item.querySelector('.restore-item-button').addEventListener('click', () => restoreItem(page, id, listId));
-                item.querySelector('.delete-item-button').addEventListener('click', () => deleteItem(page, id));
+                item
+                    .querySelector(".restore-item-button")
+                    .addEventListener("click", () => restoreItem(page, id, listId));
+                item
+                    .querySelector(".delete-item-button")
+                    .addEventListener("click", () => deleteItem(page, id));
             }
             else {
-                item.querySelector('.trash-item-button').addEventListener('click', () => trashItem(page, id, listId));
-                item.querySelector('.move-item-up-button').addEventListener('click', () => moveItem(page, id, 'up', listId));
-                item.querySelector('.move-item-down-button').addEventListener('click', () => moveItem(page, id, 'down', listId));
+                item
+                    .querySelector(".trash-item-button")
+                    .addEventListener("click", () => trashItem(page, id, listId));
+                item
+                    .querySelector(".move-item-up-button")
+                    .addEventListener("click", () => moveItem(page, id, "up", listId));
+                item
+                    .querySelector(".move-item-down-button")
+                    .addEventListener("click", () => moveItem(page, id, "down", listId));
             }
         }
         else {
-            console.error('listId: ', listId);
+            console.error("listId: ", listId);
         }
     }
 }
 // Make list sortable with drag and drop
 new Sortable(activeList, {
     animation: 150,
-    ghostClass: 'blue-background-class'
+    ghostClass: "blue-background-class",
 });
-function createItem(page, listId, itemContent) {
+function createItem(page, listId) {
     return __awaiter(this, void 0, void 0, function* () {
         const id = yield findFreeLiId(page);
-        if (id != undefined && itemContent != undefined && listId != undefined) {
-            if (page == 'index') {
-                renderItem(page, '', id, itemContent);
+        if (id != undefined) {
+            if (page == "index") {
+                const itemContent = { title: "" };
+                renderItem(page, "", id, itemContent);
                 toggleEditingMode(page, id); // turn on editing mode for this item
             }
             else {
-                renderItem(page, listId, id, itemContent);
+                const itemContent = { title: "", artist: "", image: "default.png" };
+                if (listId != undefined) {
+                    renderItem(page, listId, id, itemContent);
+                }
+                else {
+                    console.error("undefined value:");
+                    console.log("listId:", listId);
+                }
                 toggleEditingMode(page, id, listId); // turn on editing mode for this item
                 determineSaveButtonText(page, listId);
             }
         }
         else {
-            console.error('undefined value:');
-            console.log('id: ', id);
-            console.log('itemContent: ', itemContent);
-            console.log('listId: ', listId);
+            console.error("undefined value:");
+            console.log("id: ", id);
+            console.log("listId: ", listId);
         }
     });
 }
 function highlight(item) {
-    item.style.transition = 'background-color 0ms linear';
-    item.style.backgroundColor = 'rgb(34, 34, 34)';
+    item.style.transition = "background-color 0ms linear";
+    item.style.backgroundColor = "rgb(34, 34, 34)";
     setTimeout(() => {
-        item.style.transition = 'background-color 500ms linear';
-        item.style.backgroundColor = '';
+        item.style.transition = "background-color 500ms linear";
+        item.style.backgroundColor = "";
     }, 500);
 }
 /**
@@ -247,8 +282,8 @@ function highlight(item) {
  */
 function moveItem(page, liNo, direction, listId) {
     const itemToMove = document.getElementById(liNo);
-    const ol = document.getElementById('activeList');
-    if (direction == 'up') {
+    const ol = document.getElementById("activeList");
+    if (direction == "up") {
         /* Move chosen item up
         as long as it's not at the top of the list */
         const element = itemToMove;
@@ -274,10 +309,10 @@ function trashItem(page, id, listId) {
     doesn't work if list items are in editing mode */
     ensureItemEditingModeIsClosed(page, listId, id);
     const itemToTrash = document.getElementById(id);
-    const activeList = document.getElementById('activeList');
+    const activeList = document.getElementById("activeList");
     const originalPlace = findItemPlace(page, id);
     const isTrashed = true;
-    const itemAsArray = convertItemToArray(page, 'activeList', itemToTrash);
+    const itemAsArray = convertItemToArray(page, "activeList", itemToTrash);
     const title = itemAsArray[1];
     const artist = itemAsArray[2];
     const image = itemAsArray[3];
@@ -294,11 +329,11 @@ function restoreItem(page, id, listId) {
     doesn't work if list items are in editing mode */
     ensureItemEditingModeIsClosed(page, listId, id);
     const itemToRestore = document.getElementById(id);
-    const trashList = document.getElementById('trashList');
+    const trashList = document.getElementById("trashList");
     const originalPlace = findItemPlaceBeforeItWasTrashed(document.getElementById(id));
     const isTrashed = false;
     const insertAtOriginalPlace = true;
-    const itemAsArray = convertItemToArray(page, 'activeList', itemToRestore);
+    const itemAsArray = convertItemToArray(page, "activeList", itemToRestore);
     const title = itemAsArray[1];
     const artist = itemAsArray[2];
     const image = itemAsArray[3];
@@ -311,32 +346,36 @@ function restoreItem(page, id, listId) {
     determineSaveButtonText(page, listId);
 }
 function findItemPlace(page, id) {
-    const listAsArray = convertListToArray(page, 'activeList');
-    const index = listAsArray.findIndex(itemAsArray => itemAsArray[0] == id);
+    const listAsArray = convertListToArray(page, "activeList");
+    const index = listAsArray.findIndex((itemAsArray) => itemAsArray[0] == id);
     const place = index + 1;
     return place.toString();
 }
 function toggleEditingMode(page, id, listId) {
     const item = document.getElementById(id);
     // if editing mode is open, close it
-    if (item.classList.contains('editing-mode')) {
-        item.classList.remove('editing-mode');
-        const divEditItem = item.querySelector('.edit-item');
-        const title = item.querySelector('.title').value; // (<HTMLInputElement>…) is necessary for receiving the “.value” according to TypeScript
-        if (page == 'index') {
+    if (item.classList.contains("editing-mode")) {
+        item.classList.remove("editing-mode");
+        const divEditItem = item.querySelector(".edit-item");
+        const title = item.querySelector(".title").value; // (<HTMLInputElement>…) is necessary for receiving the “.value” according to TypeScript
+        if (page == "index") {
             divEditItem.innerHTML = `
         <button class="link title" id="${id}">${title}</button>
         <button class="round-button toggle-editing-mode-button">Edit title</button>
       `;
-            divEditItem.querySelector('.title').addEventListener('click', () => goToList(id));
-            divEditItem.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id));
+            divEditItem
+                .querySelector(".title")
+                .addEventListener("click", () => goToList(id));
+            divEditItem
+                .querySelector(".toggle-editing-mode-button")
+                .addEventListener("click", () => toggleEditingMode(page, id));
             determineSaveButtonText(page);
         }
         else {
-            const artist = item.querySelector('.artist').value;
-            const divImage = item.querySelector('.image');
-            const imageSourcePath = item.querySelector('img').src;
-            const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7);
+            const artist = item.querySelector(".artist").value;
+            const divImage = item.querySelector(".image");
+            const imageSourcePath = item.querySelector("img").src;
+            const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf("images/") + 7);
             divImage.innerHTML = `
         <img src="images/${imageFilename}" alt="${imageFilename}">
       `;
@@ -347,29 +386,34 @@ function toggleEditingMode(page, id, listId) {
         </div>
         <button class="round-button toggle-editing-mode-button">Edit</button>
       `;
-            divEditItem.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id, listId));
-            const imageUploadInputs = item.querySelector('.image-upload-inputs');
+            divEditItem
+                .querySelector(".toggle-editing-mode-button")
+                .addEventListener("click", () => toggleEditingMode(page, id, listId));
+            const imageUploadInputs = item.querySelector(".image-upload-inputs");
             item.removeChild(imageUploadInputs);
             determineSaveButtonText(page, listId);
         }
     }
-    else { // If editing mode is closed, open it
-        item.classList.add('editing-mode');
-        const divEditItem = item.querySelector('.edit-item');
-        const title = item.querySelector('.title').innerHTML;
-        if (page == 'index') {
+    else {
+        // If editing mode is closed, open it
+        item.classList.add("editing-mode");
+        const divEditItem = item.querySelector(".edit-item");
+        const title = item.querySelector(".title").innerHTML;
+        if (page == "index") {
             divEditItem.innerHTML = `
         <input class="title" type="text" placeholder="title" value="${title}">
         <button class="round-button toggle-editing-mode-button">Close edit</button>
       `;
-            divEditItem.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id));
+            divEditItem
+                .querySelector(".toggle-editing-mode-button")
+                .addEventListener("click", () => toggleEditingMode(page, id));
             determineSaveButtonText(page);
         }
         else {
-            const artist = item.querySelector('.artist').innerHTML;
-            const divImage = item.querySelector('.image');
-            const imageSourcePath = item.querySelector('img').src;
-            const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7);
+            const artist = item.querySelector(".artist").innerHTML;
+            const divImage = item.querySelector(".image");
+            const imageSourcePath = item.querySelector("img").src;
+            const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf("images/") + 7);
             divImage.innerHTML = `
         <img src="images/${imageFilename}" alt="${imageFilename}">
       `;
@@ -380,9 +424,11 @@ function toggleEditingMode(page, id, listId) {
         </div>
         <button class="round-button toggle-editing-mode-button">Close edit</button>
       `;
-            divEditItem.querySelector('.toggle-editing-mode-button').addEventListener('click', () => toggleEditingMode(page, id, listId));
-            const imageUploadInputs = document.createElement('div');
-            imageUploadInputs.classList.add('image-upload-inputs');
+            divEditItem
+                .querySelector(".toggle-editing-mode-button")
+                .addEventListener("click", () => toggleEditingMode(page, id, listId));
+            const imageUploadInputs = document.createElement("div");
+            imageUploadInputs.classList.add("image-upload-inputs");
             item.appendChild(imageUploadInputs);
             imageUploadInputs.innerHTML = `
         <form class="image-upload" name="image-upload" method="post" enctype="multipart/form-data">
@@ -392,38 +438,38 @@ function toggleEditingMode(page, id, listId) {
         </form>
       `;
             // Ready image upload form
-            const form = item.querySelector('.image-upload');
-            form.addEventListener('submit', (event) => {
+            const form = item.querySelector(".image-upload");
+            form.addEventListener("submit", (event) => {
                 event.preventDefault();
                 const formattedFormData = new FormData(form);
                 downloadImage(formattedFormData, id);
             });
             determineSaveButtonText(page, listId);
         }
-        const inputTitle = item.querySelector('.title');
+        const inputTitle = item.querySelector(".title");
         inputTitle.focus();
     }
 }
 function deleteItem(page, id) {
     const itemToDelete = document.getElementById(id);
-    if (page == 'index') {
-        window.alert('You\'re about to delete an entire list, proceed?');
+    if (page == "index") {
+        window.alert("You're about to delete an entire list, proceed?");
     }
-    itemToDelete.classList.add('deleted-item');
+    itemToDelete.classList.add("deleted-item");
 }
 function formEditLiPreventDefault(liNo) {
     const item = document.getElementById(liNo);
-    const form = item.querySelector('.edit-item');
-    form.addEventListener('submit', (event) => {
+    const form = item.querySelector(".edit-item");
+    form.addEventListener("submit", (event) => {
         event.preventDefault();
     });
 }
 function fetchFileAndPostData(fileToFetch, valuesToPost) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(fileToFetch, {
-            method: 'POST',
-            headers: { 'Content-type': 'application/x-www-form-urlencoded' },
-            body: formEncode(valuesToPost)
+            method: "POST",
+            headers: { "Content-type": "application/x-www-form-urlencoded" },
+            body: formEncode(valuesToPost),
         });
         return yield response.json();
     });
@@ -435,21 +481,21 @@ function fetchFileAndPostData(fileToFetch, valuesToPost) {
 function downloadImage(formattedFormData, liNo) {
     return __awaiter(this, void 0, void 0, function* () {
         // PHP attempts to download image
-        const response = yield fetch('php/placeImgInFolder.php', {
-            method: 'POST',
-            body: formattedFormData
+        const response = yield fetch("php/placeImgInFolder.php", {
+            method: "POST",
+            body: formattedFormData,
         });
         // PHP provides feedback about image download attempt
         // Eg. 'did_not_upload' | 'was_not_downloaded' | 'was_downloaded'
         const data = yield response.text();
-        if (data == 'was_not_downloaded') {
-            alert('Bilde ble ikke lastet ned');
+        if (data == "was_not_downloaded") {
+            alert("Bilde ble ikke lastet ned");
         }
-        else if (data == 'was_downloaded') {
+        else if (data == "was_downloaded") {
             // Insert image
-            const imageFilename = document.forms['image-upload']['upload-file'].files[0].name;
+            const imageFilename = document.forms["image-upload"]["upload-file"].files[0].name;
             const item = document.getElementById(liNo);
-            const divImage = item.querySelector('.image');
+            const divImage = item.querySelector(".image");
             divImage.innerHTML = `
       <img src="images/${imageFilename}" alt="${imageFilename}">
     `;
@@ -464,11 +510,11 @@ function downloadImage(formattedFormData, liNo) {
 function findFreeLiId(page) {
     return __awaiter(this, void 0, void 0, function* () {
         // Fetch item Ids from the database
-        if (page == 'index') {
-            var response = yield fetch('php/findAllListsId.php');
+        if (page == "index") {
+            var response = yield fetch("php/findAllListsId.php");
         }
         else {
-            var response = yield fetch('php/findAllListItemsId.php');
+            var response = yield fetch("php/findAllListItemsId.php");
         }
         if (!response.ok) {
             const message = `An error has occured: ${response.status}`;
@@ -477,9 +523,9 @@ function findFreeLiId(page) {
         const data = yield response.json(); // eg. Array(6) [ (1) […], (1) […], (1) […], (1) […], (1) […], (1) […] ] -> 0: Array [ "1" ]
         const flatData = data.flat(1); // eg. Array(6) [ "1", "2", "11", "3", "4", "5", "9" ]
         // Fetch items from GUI, and add their id to the flatData list
-        const unsavedItemIdsNodeList = document.querySelectorAll('li');
+        const unsavedItemIdsNodeList = document.querySelectorAll("li");
         const unsavedItemIds = [...unsavedItemIdsNodeList];
-        unsavedItemIds.forEach(element => {
+        unsavedItemIds.forEach((element) => {
             flatData.push(element.id);
         }); // Array(10) [ "1", "2", "11", "3", "4", "5", "9", "4", "2", "3", "5" ]
         // Prepare array for looping
@@ -517,47 +563,57 @@ function saveList(page, listId) {
         doesn't work if list items are in editing mode */
         ensureAllEditingModesAreClosed(page, listId);
         // Update database with any new data
-        const listAsArray = convertListToArray(page, 'activeList');
-        const trashListAsArray = convertListToArray(page, 'trashList');
-        if (page == 'index') {
+        const listAsArray = convertListToArray(page, "activeList");
+        const trashListAsArray = convertListToArray(page, "trashList");
+        if (page == "index") {
             var itemNo = 0;
-            listAsArray.forEach(itemAsArray => {
+            listAsArray.forEach((itemAsArray) => {
                 itemNo++;
                 const infoForPhp = { updatedItem: itemAsArray, isTrashed: false };
-                const data = fetchFileAndPostData('php/updateList.php', infoForPhp);
+                const data = fetchFileAndPostData("php/updateList.php", infoForPhp);
                 if (!data) {
-                    console.warn('saveList updating: ', data);
+                    console.warn("saveList updating: ", data);
                 }
             });
         }
-        else { // page == 'list'
+        else {
+            // page == 'list'
             var itemNo = 0;
-            listAsArray.forEach(itemAsArray => {
+            listAsArray.forEach((itemAsArray) => {
                 itemNo++;
-                const infoForPhp = { updatedItem: itemAsArray, place: itemNo, listId: listId, isTrashed: false };
-                const data = fetchFileAndPostData('php/updateListItem.php', infoForPhp);
+                const infoForPhp = {
+                    updatedItem: itemAsArray,
+                    place: itemNo,
+                    listId: listId,
+                    isTrashed: false,
+                };
+                const data = fetchFileAndPostData("php/updateListItem.php", infoForPhp);
                 if (!data) {
-                    console.warn('saveList updating: ', data);
+                    console.warn("saveList updating: ", data);
                 }
             });
-            trashListAsArray.forEach(itemAsArray => {
-                const infoForPhp = { updatedItem: itemAsArray, listId: listId, isTrashed: true };
-                const data = fetchFileAndPostData('php/updateListItem.php', infoForPhp);
+            trashListAsArray.forEach((itemAsArray) => {
+                const infoForPhp = {
+                    updatedItem: itemAsArray,
+                    listId: listId,
+                    isTrashed: true,
+                };
+                const data = fetchFileAndPostData("php/updateListItem.php", infoForPhp);
             });
         }
         // Some items are 'deleted from GUI'. Remove those entries from database:
         const deletedItemsIdAsArray = getIdOfDeletedItemsAsArray();
         if (deletedItemsIdAsArray != []) {
-            deletedItemsIdAsArray.forEach(deletedItemId => {
+            deletedItemsIdAsArray.forEach((deletedItemId) => {
                 const infoForPhp = { deletedItem: deletedItemId };
-                const data = fetchFileAndPostData('php/deleteListItem.php', infoForPhp);
+                const data = fetchFileAndPostData("php/deleteListItem.php", infoForPhp);
             });
         }
-        setSaveButtonTextTo('&check; Saved');
+        setSaveButtonTextTo("&check; Saved");
     });
 }
 function getIdOfDeletedItemsAsArray() {
-    const deletedItems = document.querySelectorAll('#trashList li.deleted-item');
+    const deletedItems = document.querySelectorAll("#trashList li.deleted-item");
     const ids = [];
     for (let i = 0; i < deletedItems.length; i++) {
         ids.push(deletedItems[i].id);
@@ -568,19 +624,19 @@ function getIdOfDeletedItemsAsArray() {
  * Make sure no list item is in editing mode
  */
 function ensureAllEditingModesAreClosed(page, listId) {
-    const itemsWithEditingMode = document.getElementsByClassName('editing-mode');
+    const itemsWithEditingMode = document.getElementsByClassName("editing-mode");
     if (itemsWithEditingMode.length > 0) {
         /* itemsWithEditingMode (HTMLCollection) automatically updates when the underlying document is changed.
         To avoid this, make a copy array we can loop through and change the DOM */
         const itemsReference = [...itemsWithEditingMode];
-        itemsReference.forEach(item => {
+        itemsReference.forEach((item) => {
             toggleEditingMode(page, item.id, listId);
         });
     }
 }
 function ensureItemEditingModeIsClosed(page, listId, id) {
     const item = document.getElementById(id);
-    if (item.classList.contains('editing-mode')) {
+    if (item.classList.contains("editing-mode")) {
         toggleEditingMode(page, id, listId);
     }
 }
@@ -590,31 +646,31 @@ function ensureItemEditingModeIsClosed(page, listId, id) {
  */
 function determineSaveButtonText(page, listId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const currentListAsArray = convertListToArray(page, 'activeList'); // eg. Array(3) [ (4) […], (4) […], (4) […] ] -> 0: Array(4) [ "37", "fear is the key", "alistair maclean", … ]
-        if (page == 'index') {
+        const currentListAsArray = convertListToArray(page, "activeList"); // eg. Array(3) [ (4) […], (4) […], (4) […] ] -> 0: Array(4) [ "37", "fear is the key", "alistair maclean", … ]
+        if (page == "index") {
             const infoForPhp = { POSTValue: listId };
-            const data = yield fetchFileAndPostData('php/findLists.php', infoForPhp);
+            const data = yield fetchFileAndPostData("php/findLists.php", infoForPhp);
             const lastSavedListAsArray = data;
             if (JSON.stringify(currentListAsArray) == JSON.stringify(lastSavedListAsArray)) {
-                setSaveButtonTextTo('&check; Saved');
+                setSaveButtonTextTo("&check; Saved");
             }
             else {
-                setSaveButtonTextTo('● Save lists');
+                setSaveButtonTextTo("● Save lists");
             }
         }
         else {
             const infoForPhp = { POSTValue: listId };
-            const data = yield fetchFileAndPostData('php/findListItems.php', infoForPhp);
+            const data = yield fetchFileAndPostData("php/findListItems.php", infoForPhp);
             data.forEach((element) => {
                 // remove entry 1 and 2 (in_list and place)
                 element.splice(1, 2);
             });
             const lastSavedListAsArray = data;
             if (JSON.stringify(currentListAsArray) == JSON.stringify(lastSavedListAsArray)) {
-                setSaveButtonTextTo('&check; Saved');
+                setSaveButtonTextTo("&check; Saved");
             }
             else {
-                setSaveButtonTextTo('● Save changes');
+                setSaveButtonTextTo("● Save changes");
             }
         }
     });
@@ -623,7 +679,7 @@ function determineSaveButtonText(page, listId) {
  * Define the saveButton's text
  */
 function setSaveButtonTextTo(text) {
-    const saveButton = document.getElementById('saveButton');
+    const saveButton = document.getElementById("saveButton");
     saveButton.innerHTML = text;
 }
 /**
@@ -645,21 +701,21 @@ function convertListToArray(page, activeListOrTrashList) {
 }
 function convertItemToArray(page, activeListOrTrashList, listItem) {
     const id = listItem.id;
-    const title = listItem.querySelector('.title').innerHTML;
-    if (page == 'index') {
+    const title = listItem.querySelector(".title").innerHTML;
+    if (page == "index") {
         var itemAsArray = [id, title];
     }
     else {
-        const artist = listItem.querySelector('.artist').innerHTML;
-        const imageSourcePath = listItem.querySelector('img').src;
-        const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf('images/') + 7);
-        if (activeListOrTrashList == 'trashList') {
+        const artist = listItem.querySelector(".artist").innerHTML;
+        const imageSourcePath = listItem.querySelector("img").src;
+        const imageFilename = imageSourcePath.substring(imageSourcePath.indexOf("images/") + 7);
+        if (activeListOrTrashList == "trashList") {
             const place = findItemPlaceBeforeItWasTrashed(listItem);
-            const isTrashed = '1';
+            const isTrashed = "1";
             var itemAsArray = [id, title, artist, imageFilename, place, isTrashed];
         }
         else {
-            const isTrashed = '0';
+            const isTrashed = "0";
             var itemAsArray = [id, title, artist, imageFilename, isTrashed];
         }
     }
@@ -671,17 +727,17 @@ function convertItemToArray(page, activeListOrTrashList, listItem) {
  * Class name example: "its-activelist-place-was-4"
  */
 function findItemPlaceBeforeItWasTrashed(item) {
-    if (item.className.slice(0, 25) != 'its-activelist-place-was-') {
-        console.error('Items className is changed from its-activelist-place-was-[number]. findItemPlaceBeforeItWasTrashed() expects the item className to be 26 chars long');
-        console.info('item.className:', item.className);
-        console.info('item.className.length:', item.className.length);
+    if (item.className.slice(0, 25) != "its-activelist-place-was-") {
+        console.error("Items className is changed from its-activelist-place-was-[number]. findItemPlaceBeforeItWasTrashed() expects the item className to be 26 chars long");
+        console.info("item.className:", item.className);
+        console.info("item.className.length:", item.className.length);
     }
     return item.className.slice(25, 26); // eg. 4
 }
 function goToList(listId) {
-    const isSaved = document.getElementById('saveButton').innerHTML;
-    if (isSaved != '✓ Saved') {
-        const willRemoveChanges = confirm('Leaving this page will remove unsaved changes, continue?');
+    const isSaved = document.getElementById("saveButton").innerHTML;
+    if (isSaved != "✓ Saved") {
+        const willRemoveChanges = confirm("Leaving this page will remove unsaved changes, continue?");
         if (willRemoveChanges == true) {
             location.assign(`list.html?list=${listId}`);
         }
@@ -691,15 +747,15 @@ function goToList(listId) {
     }
 }
 function returnHome() {
-    const isSaved = document.getElementById('saveButton').innerHTML;
-    if (isSaved != '✓ Saved') {
-        const willRemoveChanges = confirm('Leaving this page will remove unsaved changes, continue?');
+    const isSaved = document.getElementById("saveButton").innerHTML;
+    if (isSaved != "✓ Saved") {
+        const willRemoveChanges = confirm("Leaving this page will remove unsaved changes, continue?");
         if (willRemoveChanges == true) {
-            location.assign('index.html');
+            location.assign("index.html");
         }
     }
     else {
-        location.assign('index.html');
+        location.assign("index.html");
     }
 }
 /**

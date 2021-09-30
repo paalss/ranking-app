@@ -84,3 +84,11 @@ npm test
 * sprintcube/docker-compose-lamp for making this app serve-able with Docker. See more: https://github.com/sprintcube/docker-compose-lamp
 
 * SortableJS/sortablejs for drag and drop functionality. See more: https://github.com/SortableJS/sortablejs
+
+## Development
+
+Compile TS to JS ES6:
+
+```
+tsc www/app/script.ts --target es6
+```
