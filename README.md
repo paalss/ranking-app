@@ -1,4 +1,5 @@
 # Ranking app (work in progress)
+
 A little web app for ranking your own defined elements, particularly products like books, movies and games. I will possibly implement options to import elements from web API (eg. music from Spotify).
 
 ![App_interaction](www/app/images/app/app-recording1.gif)
@@ -6,13 +7,14 @@ A little web app for ranking your own defined elements, particularly products li
 ## How to serve locally
 
 ### Serve with XAMPP
+
 [XAMPP README](https://github.com/paalss/Ranking-app/blob/master/www/app/)
 
 ### Serve with Docker
 
 **Prerequisites**
 
-* Docker
+- Docker
 
 **Start Docker Desktop**
 
@@ -65,6 +67,7 @@ When deleting items and saving changes, the database doesn't always remove the c
 When an item is trashed, it can be deleted from GUI. Upon next saving, the app will tell the database which records to delete. Sometimes the database ignores it, even when the request data is all correct and the queries returns true.
 
 ## Run e2e tests (jest&puppeteer)
+
 **Navigate to the app folder and install the dependencies**
 
 If none of the tests work, try opening the site manually and navigate to a list. Then run the tests again.
@@ -80,7 +83,18 @@ npm install
 npm test
 ```
 
-## I've used code from 
-* sprintcube/docker-compose-lamp for making this app serve-able with Docker. See more: https://github.com/sprintcube/docker-compose-lamp
+## I've used code from
 
-* SortableJS/sortablejs for drag and drop functionality. See more: https://github.com/SortableJS/sortablejs
+- sprintcube/docker-compose-lamp for making this app serve-able with Docker. See more: https://github.com/sprintcube/docker-compose-lamp
+
+- SortableJS/sortablejs for drag and drop functionality. See more: https://github.com/SortableJS/sortablejs
+
+## Development
+
+convert typescript to javascript with:
+
+```
+tsc www/app/script.ts
+```
+
+<!-- remember to www/app/php/reset db_connection.php before each stage-commit-push -->

@@ -160,10 +160,14 @@ function renderItem(page: PageAlternatives, listId: string, id: string, itemCont
  */
 function addClickListenerToHeaderButtons(page: PageAlternatives, listId: string, GETparameter?: string) {
   if (page == 'index') {
-    document.getElementById('createItemButton')!.addEventListener('click', () => createItem(page))
+    document
+      .getElementById("createItemButton")!
+      .addEventListener("click", () =>
+        createItem(page, { title: "" })
+      );
     document.getElementById('saveButton')!.addEventListener('click', () => saveList(page, listId))
   } else {
-    document.getElementById('createItemButton')!.addEventListener('click', () => createItem(page, listId, { title: '', artist: '', image: 'default.png' }))
+    document.getElementById('createItemButton')!.addEventListener('click', () => createItem(page, { title: '', artist: '', image: 'default.png' }, listId))
     document.getElementById('returnHomeButton')!.addEventListener('click', () => returnHome())
     document.getElementById('saveButton')!.addEventListener('click', () => saveList(page, listId))
     document.getElementById('refreshButton')!.addEventListener('click', () => location.assign('list.html?' + GETparameter))
@@ -204,22 +208,29 @@ new Sortable(activeList, {
   ghostClass: 'blue-background-class'
 });
 
-async function createItem(page: PageAlternatives, listId?: string, itemContent?: ItemContentObject) {
-  const id = await findFreeLiId(page)
-  if (id != undefined && itemContent != undefined && listId != undefined) {
-    if (page == 'index') {
-      renderItem(page, '', id, itemContent)
-      toggleEditingMode(page, id) // turn on editing mode for this item
+async function createItem(
+  page: PageAlternatives,
+  itemContent: ItemContentObject,
+  listId?: string
+) {
+  const id = await findFreeLiId(page);
+  if (id != undefined && itemContent != undefined) {
+    if (page == "index") {
+      renderItem(page, "", id, itemContent);
+      toggleEditingMode(page, id); // turn on editing mode for this item
     } else {
-      renderItem(page, listId, id, itemContent)
-      toggleEditingMode(page, id, listId) // turn on editing mode for this item
-      determineSaveButtonText(page, listId)
+      if (listId != undefined) {
+        renderItem(page, listId, id, itemContent);
+        toggleEditingMode(page, id, listId); // turn on editing mode for this item
+        determineSaveButtonText(page, listId);
+      } else {
+        console.log("listId: ", listId);
+      }
     }
   } else {
-    console.error('undefined value:')
-    console.log('id: ', id)
-    console.log('itemContent: ', itemContent)
-    console.log('listId: ', listId)
+    console.error("some of these values are undefined (see console.logs below):");
+    console.log("id: ", id);
+    console.log("itemContent: ", itemContent);
   }
 }
 
