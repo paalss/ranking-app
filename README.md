@@ -1,4 +1,4 @@
-# Ranking app (work in progress)
+# Ranking app (discontinued)
 A little web app for ranking your own defined elements, particularly products like books, movies and games. I will possibly implement options to import elements from web API (eg. music from Spotify).
 
 ![App_interaction](www/app/images/app/app-recording1.gif)
